@@ -1,0 +1,107 @@
+name: Dispatch Test
+run-name: >-
+  ${{ github.workflow }}
+  ${{ format('(1:{0}; 2:{1};)', inputs.first-input, inputs.second-input) }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      first-input:
+        description: "My first input"
+        required: false
+        type: string
+      second-input:
+        description: "My second input"
+        required: false
+        type: string
+
+env:
+  FIRST_INPUT: ${{ inputs.first-input }}
+  SECOND_INPUT: ${{ inputs.second-input }}
+
+jobs:
+  test-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run test
+        run: |
+          echo "Inputs toJSON (raw block deserialized):"
+          echo "${{ toJSON(inputs) }}"
+          echo
+          echo
+          echo "---       1       ---"
+          echo "First input raw:"
+          echo "${{ inputs.first-input }}"
+          echo
+          echo "First input fromenv:"
+          echo "${{ env.FIRST_INPUT }}"
+          echo
+          echo "First input fromJSON:"
+          echo "${{ fromJSON(inputs.first-input) }}"
+          echo
+          echo "First input toJSON(fromJSON()):"
+          echo "${{ toJSON(fromJSON(inputs.first-input)) }}"
+          echo
+          echo "First contains double quotes:"
+          echo "${{ contains(inputs.first-input, '"') }}"
+          echo
+          echo "First contains comma:"
+          echo "${{ contains(inputs.first-input, ',') }}"
+          echo
+          echo
+          echo "Contains double quote:"
+          echo "${{ contains(inputs.first-input, '"') && 'yes' || 'no' }}"
+          echo
+          echo "Contains single quote:"
+          echo "${{ contains(inputs.first-input, '''') && 'yes' || 'no' }}"
+          echo
+          echo "Same as runs-on:"
+          echo "${{ ( contains(inputs.first-input, '"') || contains(inputs.first-input, '''') ) && fromJSON(inputs.first-input) || inputs.first-input }}"
+          echo
+          echo "COntains any of them using array"
+          echo "${{ contains(inputs.first-input, fromJSON('["''", "\""]')) && 'yes' || 'no' }}"
+          echo
+          echo "Arraying runs-on:"
+          echo "${{ contains(inputs.first-input, fromJSON('["''", "\""]')) && fromJSON(inputs.first-input) || inputs.first-input }}"
+          echo
+          echo
+          echo "---       2       ---"
+          echo "Second input raw:"
+          echo "${{ inputs.second-input }}"
+          echo
+          echo "Second input fromenv:"
+          echo "${{ env.SECOND_INPUT }}"
+          echo
+          echo "Second env fromJSON:"
+          echo "${{ fromJSON(env.SECOND_INPUT) }}"
+          echo
+          echo "Second env toJSON(fromJSON()):"
+          echo "${{ toJSON(fromJSON(env.SECOND_INPUT)) }}"
+          echo
+          echo "Second contains double quotes:"
+          echo "${{ contains(env.SECOND_INPUT, '"') }}"
+          echo
+          echo "Second contains comma:"
+          echo "${{ contains(env.SECOND_INPUT, ',') }}"
+          echo
+          echo
+          echo "Contains double quote:"
+          echo "${{ contains(inputs.second-input, '"') && 'yes' || 'no' }}"
+          echo
+          echo "Contains single quote:"
+          echo "${{ contains(inputs.second-input, '''') && 'yes' || 'no' }}"
+          echo
+          echo "Same as runs-on:"
+          echo "${{ ( contains(inputs.second-input, '"') || contains(inputs.second-input, '''') ) && fromJSON(inputs.second-input) || inputs.second-input }}"
+          echo
+          echo "COntains any of them using array"
+          echo "${{ contains(inputs.second-input, fromJSON('["''", "\""]')) && 'yes' || 'no' }}"
+          echo
+          echo "Arraying runs-on:"
+          echo "${{ contains(inputs.second-input, fromJSON('["''", "\""]')) && fromJSON(inputs.second-input) || inputs.second-input }}"
+
+  call-reusable-first-noquote:
+    uses: ./.github/workflows/reusable.yaml
+    with:
+      input: ${{ inputs.second-input }}
+      runs-on: ${{ inputs.first-input }}
