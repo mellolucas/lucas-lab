@@ -1,0 +1,56 @@
+name: Dispatch Test
+run-name: >-
+  ${{ github.workflow }}
+  ${{ format('(1:{0}; 2:{1};)', inputs.first-input, inputs.second-input) }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      first-input:
+        description: "My first input"
+        required: false
+        type: string
+      second-input:
+        description: "My second input"
+        required: false
+        type: string
+      break:
+        description: "Break the workflow"
+        required: false
+        type: boolean
+        default: false
+
+env:
+  FIRST_INPUT: ${{ inputs.first-input }}
+  SECOND_INPUT: ${{ inputs.second-input }}
+
+jobs:
+  test-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run test
+        run: |
+          echo "Inputs toJSON (raw block deserialized):"
+          echo "${{ toJSON(inputs) }}"
+          echo
+          echo
+          echo "---       1       ---"
+          echo "First input raw:"
+          echo "${{ inputs.first-input }}"
+          echo
+          echo "First input fromenv:"
+          echo "${{ env.FIRST_INPUT }}"
+          echo
+          echo
+          echo
+          echo "---       2       ---"
+          echo "Second input raw:"
+          echo "${{ inputs.second-input }}"
+          echo
+          echo "Second input fromenv:"
+          echo "${{ env.SECOND_INPUT }}"
+          echo
+          echo
+          echo "---      ---      ---"
+          ${{ inputs.break == 1 && true || false }} && exit 1 || true
+          echo

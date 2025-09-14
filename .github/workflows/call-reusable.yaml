@@ -1,0 +1,43 @@
+name: Call Reusable Test
+run-name: >-
+  ${{ github.workflow }}
+  ${{ format('(input:{0}; runs-on:{1};)', inputs.my-input, inputs.runs-on) }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      my-input:
+        description: "My input"
+        required: false
+        type: string
+        default: '{"foo": ["bar", "baz"]}'
+      runs-on:
+        description: "runs-on argument"
+        required: false
+        type: string
+        default: '["ubuntu-latest"]'
+
+env:
+  MY_INPUT: ${{ inputs.my-input }}
+  RUNS_ON: ${{ inputs.runs-on }}
+
+jobs:
+  print-context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run test
+        run: |
+          echo "Inputs toJSON (raw block deserialized):"
+          echo "${{ toJSON(inputs) }}"
+          echo
+          echo
+          echo "---"
+          echo "Context:"
+          jq . <<< '${{ toJSON(github) }}'
+          echo
+
+  call-reusable:
+    uses: ./.github/workflows/reusable.yaml
+    with:
+      input: ${{ inputs.my-input }}
+      runs-on: ${{ inputs.runs-on }}

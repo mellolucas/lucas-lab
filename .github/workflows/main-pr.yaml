@@ -1,0 +1,14 @@
+name: Main PR Test
+run-name: >-
+  ${{ github.workflow }}
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+  
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/call-reusable.yaml
+    with:
+      my-input: '{"foo": ["bar", "baz"]}'
+      runs-on: '["ubuntu-latest"]'

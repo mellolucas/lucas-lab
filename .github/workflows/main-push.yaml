@@ -1,0 +1,15 @@
+name: Main Push Test
+run-name: >-
+  ${{ github.workflow }}
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/call-reusable.yaml
+    with:
+      my-input: '{"foo": ["bar", "baz"]}'
+      runs-on: '["ubuntu-latest"]'

@@ -1,0 +1,65 @@
+name: Reusable Test
+run-name: >-
+  ${{ github.workflow }}
+  ${{ format('(runs-on:{0}; input:{1};)', inputs.runs-on, inputs.input) }}
+
+on:
+  workflow_call:
+    inputs:
+      input:
+        description: "Reusable input"
+        required: false
+        type: string
+        default: '{"foo": ["bar", "baz"]}'
+      runs-on:
+        description: "runs-on argument"
+        required: false
+        type: string
+
+env:
+  INPUT: ${{ inputs.input }}
+  RUNS_ON: ${{ inputs.runs-on }}
+
+jobs:
+  test-reusable:
+    runs-on: >-
+      ${{
+        ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
+        fromJSON(inputs.runs-on) ||
+        inputs.runs-on
+      }}
+    steps:
+      - name: Run test
+        run: |
+          echo "Inputs toJSON (raw block deserialized):"
+          echo "${{ toJSON(inputs) }}"
+          echo
+          echo
+          echo "---       1       ---"
+          echo "First input raw:"
+          echo "${{ inputs.input }}"
+          echo
+          echo "First input fromenv:"
+          echo "${{ env.INPUT }}"
+          echo
+          echo "First input fromJSON:"
+          echo "${{ fromJSON(inputs.input) }}"
+          echo
+          echo "First input toJSON(fromJSON()):"
+          echo "${{ toJSON(fromJSON(inputs.input)) }}"
+          echo
+          echo "First contains double quotes:"
+          echo "${{ contains(inputs.input, '"') }}"
+          echo
+          echo "First contains comma:"
+          echo "${{ contains(inputs.input, ',') }}"
+          echo
+          echo "Contains single quote:"
+          echo "${{ contains('"', inputs.runs-on) && 'yes' || 'no' }}"
+          echo
+          echo "Contains single quote:"
+          echo "${{ contains('''', inputs.runs-on) && 'yes' || 'no' }}"
+          echo
+          echo "Same as runs-on:"
+          echo "${{ ( contains(inputs.input, '"') || contains(inputs.input, '''') ) && fromJSON(inputs.input) || inputs.input }}"
+          echo
