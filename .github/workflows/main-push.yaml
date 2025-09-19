@@ -9,7 +9,8 @@ on:
 
 jobs:
   call-reusable:
-    uses: ./.github/workflows/call-reusable.yaml
+    uses: ./.github/workflows/reusable.yaml
     with:
       my-input: '{"foo": ["bar", "baz"]}'
       runs-on: '["ubuntu-latest"]'
+
