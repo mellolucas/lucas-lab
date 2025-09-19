@@ -1,0 +1,67 @@
+name: Context Exploration
+run-name: >-
+  ${{ github.workflow }}
+  ${{ github.event_name }}-event
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: 
+
+jobs:
+  explore_contexts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          echo "GitHub Context:"
+          echo "$GITHUB_CONTEXT" | jq .
+
+      - name: Dump Job context
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          echo "Job Context:"
+          echo "$JOB_CONTEXT" | jq .
+
+      - name: Dump Steps context
+        env:
+          STEPS_CONTEXT: ${{ toJSON(steps) }}
+        run: |
+          echo "Steps Context:"
+          echo "$STEPS_CONTEXT" | jq .
+
+      - name: Dump Runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJSON(runner) }}
+        run: |
+          echo "Runner Context:"
+          echo "$RUNNER_CONTEXT" | jq .
+
+      - name: Dump Secrets context (example)
+        # Secrets context is typically accessed for specific secrets, not dumped entirely
+        run: |
+          echo "Accessing a specific secret (if available):"
+          echo "My Secret Value: ${{ secrets.MY_SECRET_NAME }}" # Replace MY_SECRET_NAME with an actual secret
+
+      - name: Use context in conditional statements
+        if: ${{ github.ref == 'refs/heads/main' }} # Check if the workflow is running on the 'main' branch
+        run: |
+          echo "This step runs only on the main branch."
+
+      - name: Use context in environment variables
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo "Commit SHA: $COMMIT_SHA"
+          echo "Pull Request Number: $PR_NUMBER" # This will be empty if not a PR event
