@@ -45,10 +45,13 @@ jobs:
       - name: Run testee
         env:
           FILEHERE: ${{ hashFiles(inputs.first-input) }}
+          FILEHERENOT: ${{ hashFiles(inputs.second-input) }}
         run: |
           echo "check "
           echo ${FILEHERE}
           echo ${{ env.FILEHERE }}
+          echo ${FILEHERENOT}
+          echo ${{ env.FILEHERENOT }}
           echo ${{ hashFiles(inputs.first-input) }}
           echo ${{ inputs.first-input }}
           echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
@@ -83,6 +86,7 @@ jobs:
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
+
 
 
 
