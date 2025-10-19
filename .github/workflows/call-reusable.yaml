@@ -10,7 +10,7 @@ on:
         description: "My input"
         required: false
         type: string
-        default: '{"foo": ["bar", "baz"]}'
+        # default: '{"foo": ["bar", "baz"]}'
       runs-on:
         description: "runs-on argument"
         required: false
