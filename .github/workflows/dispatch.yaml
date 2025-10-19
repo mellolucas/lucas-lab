@@ -41,9 +41,10 @@ jobs:
           echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
           echo ${{ inputs.first-input == 0 && 'empty' || 'notfalse' }}  
           echo 
-          echo create file
+          echo create file and ls
           echo 
-          [[ -n "${{ inputs.first-input }}" ]] && touch ${{ inputs.first-input }}
+          touch ${{ inputs.first-input }}
+          ls
           echo
           echo "check result of empty input or inexistent file are the same: "
           echo ${{ hashFiles(inputs.first-input) }}
@@ -80,4 +81,5 @@ jobs:
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
+
 
