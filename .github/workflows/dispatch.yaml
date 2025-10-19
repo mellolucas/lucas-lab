@@ -29,6 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run test
+        env:
+          DEBIAN_FRONTEND: >-
+            ${{
+              inputs.first-input != 0 && inputs.first-input || ''
+            }}
         run: |
           echo "printenv output: "
           printenv
