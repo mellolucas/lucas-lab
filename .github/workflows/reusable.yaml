@@ -10,7 +10,10 @@ on:
         description: "Reusable input"
         required: false
         type: string
-        default: '{"foo": ["bar", "baz"]}'
+      another-input:
+        description: "Another reusable input"
+        required: false
+        type: string
       runs-on:
         description: "runs-on argument"
         required: false
@@ -30,36 +33,23 @@ jobs:
       }}
     steps:
       - name: Run test
+        env:
+          BOTH_EMPTY_BOOL_EVAL: >-
+            ${{
+              ( inputs.input == 0 && inputs.another-input == 0 ) &&
+              'fallback' ||
+              inputs.input
+            }}
+          BOTH_EMPTY_SIMPLE_EVAL: >-
+            ${{
+              ( inputs.input && inputs.another-input ) &&
+              'fallback' ||
+              inputs.input
+            }}
         run: |
           echo "Inputs toJSON (raw block deserialized):"
-          echo "${{ toJSON(inputs) }}"
-          echo
-          echo
-          echo "---       1       ---"
-          echo "First input raw:"
-          echo "${{ inputs.input }}"
-          echo
-          echo "First input fromenv:"
-          echo "${{ env.INPUT }}"
-          echo
-          echo "First input fromJSON:"
-          echo "${{ fromJSON(inputs.input) }}"
-          echo
-          echo "First input toJSON(fromJSON()):"
-          echo "${{ toJSON(fromJSON(inputs.input)) }}"
-          echo
-          echo "First contains double quotes:"
-          echo "${{ contains(inputs.input, '"') }}"
-          echo
-          echo "First contains comma:"
-          echo "${{ contains(inputs.input, ',') }}"
-          echo
-          echo "Contains single quote:"
-          echo "${{ contains('"', inputs.runs-on) && 'yes' || 'no' }}"
-          echo
-          echo "Contains single quote:"
-          echo "${{ contains('''', inputs.runs-on) && 'yes' || 'no' }}"
-          echo
-          echo "Same as runs-on:"
-          echo "${{ ( contains(inputs.input, '"') || contains(inputs.input, '''') ) && fromJSON(inputs.input) || inputs.input }}"
+          echo "Input: ${{ inputs.input }}"
+          echo "Another input: ${{ inputs.another-input }}"
+          echo "Both empty evals to fallback or else input: ${{ env.BOTH_EMPTY }}"
+          echo "Both empty evals to fallback or else input: ${{ env.BOTH_EMPTY_SIMPLE_EVAL }}"
           echo
