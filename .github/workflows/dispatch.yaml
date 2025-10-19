@@ -30,6 +30,9 @@ jobs:
     steps:
       - name: Run test
         run: |
+          echo "printenv output: "
+          printenv
+          echo
           echo "Inputs toJSON (raw block deserialized):"
           echo "${{ toJSON(inputs) }}"
           echo
