@@ -45,6 +45,7 @@ jobs:
           echo 
           touch ${{ inputs.first-input }}
           ls
+          echo hashfile forced ${{ hashFiles('./myfile') }}
           echo
           echo "check result of empty input or inexistent file are the same: "
           echo ${{ hashFiles(inputs.first-input) }}
@@ -81,5 +82,6 @@ jobs:
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
+
 
 
