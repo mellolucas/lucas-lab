@@ -29,13 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run test
-        env:
-          DEBIAN_FRONTEND: >-
-            ${{
-              inputs.first-input != 0 && inputs.first-input || ''
-            }}
         run: |
-          echo "check result of empty input or inexistent file are the same: "
           echo ${{ hashFiles(inputs.first-input) }}
           echo ${{ inputs.first-input }}
           echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
@@ -48,7 +42,13 @@ jobs:
           echo hashfile relative ${{ hashFiles('./myfile') }}
           echo hashfile absolute ${{ hashFiles('/myfile') }}
           echo
-          echo "check result of empty input or inexistent file are the same: "
+      - name: Run testee
+        env:
+          FILEHERE: ${{ hashFiles(inputs.first-input) }}
+        run: |
+          echo "check "
+          echo ${FILEHERE}
+          echo ${{ env.FILEHERE }}
           echo ${{ hashFiles(inputs.first-input) }}
           echo ${{ inputs.first-input }}
           echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
@@ -83,6 +83,7 @@ jobs:
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
+
 
 
 
