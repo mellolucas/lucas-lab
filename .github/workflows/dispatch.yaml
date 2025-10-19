@@ -35,8 +35,26 @@ jobs:
               inputs.first-input != 0 && inputs.first-input || ''
             }}
         run: |
-          echo "printenv output: "
-          printenv
+          echo "check result of empty input or inexistent file are the same: "
+          echo ${{ hashFiles(inputs.first-input) }}
+          echo ${{ inputs.first-input }}
+          echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
+          echo ${{ inputs.first-input == 0 && 'empty' || 'notfalse' }}  
+          echo 
+          echo create file
+          echo 
+          [[ -n "${{ inputs.first-input }}" ]] && touch ${{ inputs.first-input }}
+          echo
+          echo "check result of empty input or inexistent file are the same: "
+          echo ${{ hashFiles(inputs.first-input) }}
+          echo ${{ inputs.first-input }}
+          echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
+          echo ${{ inputs.first-input == 0 && 'empty' || 'notfalse' }}  
+          echo
+          echo ${{ hashFiles(inputs.second-input) }}
+          echo ${{ inputs.second-input }}
+          echo ${{ hashFiles(inputs.second-input) == 0 && 'empty' || 'notfalse' }}
+          echo ${{ inputs.second-input == 0 && 'empty' || 'notfalse' }}  
           echo
           echo "Inputs toJSON (raw block deserialized):"
           echo "${{ toJSON(inputs) }}"
@@ -62,3 +80,4 @@ jobs:
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
+
