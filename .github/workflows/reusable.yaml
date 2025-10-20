@@ -34,22 +34,13 @@ jobs:
     steps:
       - name: Run test
         env:
-          BOTH_EMPTY_BOOL_EVAL: >-
-            ${{
-              ( inputs.input == 0 && inputs.another-input == 0 ) &&
-              'fallback' ||
-              inputs.input
-            }}
-          BOTH_EMPTY_SIMPLE_EVAL: >-
-            ${{
-              ( inputs.input && inputs.another-input ) &&
-              'fallback' ||
-              inputs.input
-            }}
+          GH_CONTEXT: ${{ toJSON(github) }}
         run: |
           echo "Inputs toJSON (raw block deserialized):"
-          echo "Input: ${{ inputs.input }}"
-          echo "Another input: ${{ inputs.another-input }}"
-          echo "Both empty evals to fallback or else input: ${{ env.BOTH_EMPTY_BOOL_EVAL }}"
-          echo "Both empty evals to fallback or else input: ${{ env.BOTH_EMPTY_SIMPLE_EVAL }}"
+          echo "${{ toJSON(inputs) }}"
+          echo
+          echo
+          echo "---"
+          echo "Context:"
+          jq . <<< "$GH_CONTEXT"
           echo
