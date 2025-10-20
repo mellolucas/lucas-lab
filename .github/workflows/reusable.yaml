@@ -42,6 +42,7 @@ jobs:
           GH_CONTEXT: ${{ toJSON(github) }}
           GH_INPUTS: ${{ toJSON(inputs) }}
           GH_RUNNER: ${{ toJSON(runner) }}
+          GH_EVENT: ${{ toJSON(github.event) }}
         run: |
           echo "::group::Inputs toJSON (raw block deserialized):"
           jq . <<< "${GH_INPUTS}"
@@ -51,6 +52,12 @@ jobs:
           echo
           echo "::group::GitHub context toJSON:"
           jq . <<< "${GH_CONTEXT}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::GitHub event toJSON:"
+          jq . <<< "${GH_EVENT}"
           echo "::endgroup::"
           echo
           echo "---"
