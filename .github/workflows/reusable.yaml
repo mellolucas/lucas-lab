@@ -38,6 +38,10 @@ jobs:
       }}
     steps:
       - name: Print context
+        env:
+          GH_CONTEXT: ${{ toJSON(github) }}
+          GH_INPUTS: ${{ toJSON(inputs) }}
+          GH_RUNNER: ${{ toJSON(runner) }}
         run: |
           echo "::group::Inputs toJSON (raw block deserialized):"
           jq . <<< "${GH_INPUTS}"
