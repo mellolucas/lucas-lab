@@ -32,15 +32,23 @@ jobs:
         env:
           GH_CONTEXT: ${{ toJSON(github) }}
           GH_INPUTS: ${{ toJSON(inputs) }}
+          GH_RUNNER: ${{ toJSON(runner) }}
         run: |
-          echo "Inputs toJSON (raw block deserialized):"
-          echo "${{ toJSON(inputs) }}"
-          echo echo "Inputs from env var (string):"
-          echo "$GH_INPUTS"
+          echo "::group::Inputs toJSON (raw block deserialized):"
+          jq . <<< "${GH_INPUTS}"
+          echo "::endgroup::"
           echo
           echo "---"
-          echo "Context:"
-          jq . <<< "$GH_CONTEXT"
+          echo
+          echo "::group::GitHub context toJSON:"
+          jq . <<< "${GH_CONTEXT}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::Runner context toJSON:"
+          jq . <<< "${GH_RUNNER}"
+          echo "::endgroup::"
           echo
 
       - name: Run test

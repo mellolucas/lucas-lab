@@ -18,6 +18,11 @@ on:
         description: "runs-on argument"
         required: false
         type: string
+      break:
+        description: "Break the workflow"
+        required: false
+        type: boolean
+        default: false
 
 env:
   INPUT: ${{ inputs.input }}
@@ -32,15 +37,29 @@ jobs:
         inputs.runs-on
       }}
     steps:
-      - name: Run test
-        env:
-          GH_CONTEXT: ${{ toJSON(github) }}
+      - name: Print context
         run: |
-          echo "Inputs toJSON (raw block deserialized):"
-          echo "${{ toJSON(inputs) }}"
-          echo
+          echo "::group::Inputs toJSON (raw block deserialized):"
+          jq . <<< "${GH_INPUTS}"
+          echo "::endgroup::"
           echo
           echo "---"
-          echo "Context:"
-          jq . <<< "$GH_CONTEXT"
           echo
+          echo "::group::GitHub context toJSON:"
+          jq . <<< "${GH_CONTEXT}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::Runner context toJSON:"
+          jq . <<< "${GH_RUNNER}"
+          echo "::endgroup::"
+          echo
+
+      - name: Run test
+        run: |
+          echo test
+          echo "---      ---      ---"
+          ${{ inputs.break == 1 && true || false }} && exit 1 || true
+          echo
+

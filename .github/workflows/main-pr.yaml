@@ -7,6 +7,33 @@ on:
     types: [opened, synchronize, reopened, edited, ready_for_review]
   
 jobs:
+  context:
+    runs-on: ubuntu-latest
+    env:
+      GH_CONTEXT: ${{ toJSON(github) }}
+      GH_INPUTS: ${{ toJSON(inputs) }}
+    steps:
+      - name: Print context
+        env:
+          GH_RUNNER: ${{ toJSON(runner) }}
+        run: |
+          echo "::group::Inputs toJSON (raw block deserialized):"
+          jq . <<< "${GH_INPUTS}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::GitHub context toJSON:"
+          jq . <<< "${GH_CONTEXT}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::Runner context toJSON:"
+          jq . <<< "${GH_RUNNER}"
+          echo "::endgroup::"
+          echo
+
   call-reusable:
     uses: ./.github/workflows/call-reusable.yaml
     with:
