@@ -28,12 +28,23 @@ jobs:
   test-dispatch:
     runs-on: ubuntu-latest
     steps:
-      - name: Run test
+      - name: Print context
+        env:
+          GH_CONTEXT: ${{ toJSON(github) }}
+          GH_INPUTS: ${{ toJSON(inputs) }}
         run: |
           echo "Inputs toJSON (raw block deserialized):"
           echo "${{ toJSON(inputs) }}"
-          echo ${{ github.event.pull_request.commits || 1 }}
+          echo echo "Inputs from env var (string):"
+          echo "$GH_INPUTS"
           echo
+          echo "---"
+          echo "Context:"
+          jq . <<< "$GH_CONTEXT"
+          echo
+
+      - name: Run test
+        run: |
           echo "---       1       ---"
           echo "First input raw:"
           echo "${{ inputs.first-input }}"
