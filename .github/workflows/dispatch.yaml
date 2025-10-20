@@ -30,41 +30,9 @@ jobs:
     steps:
       - name: Run test
         run: |
-          echo ${{ hashFiles(inputs.first-input) }}
-          echo ${{ inputs.first-input }}
-          echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
-          echo ${{ inputs.first-input == 0 && 'empty' || 'notfalse' }}  
-          echo 
-          echo create file and ls
-          echo 
-          echo asdasdasd > ${{ inputs.first-input }}
-          ls
-          echo hashfile relative ${{ hashFiles('./myfile') }}
-          echo hashfile absolute ${{ hashFiles('/myfile') }}
-          echo
-      - name: Run testee
-        env:
-          FILEHERE: ${{ hashFiles(inputs.first-input) }}
-          FILEHERENOT: ${{ hashFiles(inputs.second-input) }}
-        run: |
-          echo "check "
-          echo ${FILEHERE}
-          echo ${{ env.FILEHERE }}
-          echo ${FILEHERENOT}
-          echo ${{ env.FILEHERENOT }}
-          echo ${{ hashFiles(inputs.first-input) }}
-          echo ${{ inputs.first-input }}
-          echo ${{ hashFiles(inputs.first-input) == 0 && 'empty' || 'notfalse' }}
-          echo ${{ inputs.first-input == 0 && 'empty' || 'notfalse' }}  
-          echo
-          echo ${{ hashFiles(inputs.second-input) }}
-          echo ${{ inputs.second-input }}
-          echo ${{ hashFiles(inputs.second-input) == 0 && 'empty' || 'notfalse' }}
-          echo ${{ inputs.second-input == 0 && 'empty' || 'notfalse' }}  
-          echo
           echo "Inputs toJSON (raw block deserialized):"
           echo "${{ toJSON(inputs) }}"
-          echo
+          echo ${{ github.event.pull_request.commits || 1 }}
           echo
           echo "---       1       ---"
           echo "First input raw:"
