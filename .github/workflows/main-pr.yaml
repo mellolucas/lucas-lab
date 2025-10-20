@@ -37,5 +37,5 @@ jobs:
   call-reusable:
     uses: ./.github/workflows/reusable.yaml
     with:
-      my-input: '{"foo": ["bar", "baz"]}'
+      input: '{"foo": ["bar", "baz"]}'
       runs-on: '["ubuntu-latest"]'
