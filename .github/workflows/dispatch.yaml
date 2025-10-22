@@ -56,21 +56,64 @@ jobs:
           FIRST_INPUT_EXISTS: ${{ inputs.first-input != 0 && true || false }}
           SECOND_INPUT_EXISTS: ${{ inputs.second-input == 1 && 1 || 0 }}
         run: |
+          echo env set as:
+          echo 'FIRST_INPUT_EXISTS: {{ inputs.first-input != 0 && true || false }}'
+          echo 'SECOND_INPUT_EXISTS: {{ inputs.second-input == 1 && 1 || 0 }}'
           echo "---       1       ---"
-          echo "First input raw:"
-          echo "${{ inputs.first-input }}"
+          echo "First raw:"
+          echo "${{ env.FIRST_INPUT_EXISTS }}"
           echo
-          echo "First input fromenv:"
-          echo "${{ env.FIRST_INPUT }}"
+          echo "First evaluated:"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == true ]] && echo "FIRST_INPUT_EXISTS == true" || echo "FIRST_INPUT_EXISTS != true"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == false ]] && echo "FIRST_INPUT_EXISTS == false" || echo "FIRST_INPUT_EXISTS != false"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" != true ]] && echo "FIRST_INPUT_EXISTS != true" || echo "FIRST_INPUT_EXISTS == true"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" != false ]] && echo "FIRST_INPUT_EXISTS != false" || echo "FIRST_INPUT_EXISTS == false"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 1 ]] && echo "FIRST_INPUT_EXISTS == 1" || echo "FIRST_INPUT_EXISTS != 1"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" != 1 ]] && echo "FIRST_INPUT_EXISTS != 1" || echo "FIRST_INPUT_EXISTS == 1"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 0 ]] && echo "FIRST_INPUT_EXISTS == 0" || echo "FIRST_INPUT_EXISTS != 0"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" != 0 ]] && echo "FIRST_INPUT_EXISTS != 0" || echo "FIRST_INPUT_EXISTS == 0"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == "true" ]] && echo "FIRST_INPUT_EXISTS == true" || echo "FIRST_INPUT_EXISTS != true"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == "false" ]] && echo "FIRST_INPUT_EXISTS == false" || echo "FIRST_INPUT_EXISTS != false"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 1 ]] && echo "FIRST_INPUT_EXISTS == 1" || echo "FIRST_INPUT_EXISTS != 1"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 0 ]] && echo "FIRST_INPUT_EXISTS == 0" || echo "FIRST_INPUT_EXISTS != 0"
+          (( ${{ env.FIRST_INPUT_EXISTS }} )) && echo "(( FIRST_INPUT_EXISTS ))" || echo "(( !FIRST_INPUT_EXISTS ))"
+          (( !${{ env.FIRST_INPUT_EXISTS }} )) && echo "(( !FIRST_INPUT_EXISTS ))" || echo "(( FIRST_INPUT_EXISTS ))"
+          (( ${{ env.FIRST_INPUT_EXISTS }} == 1 )) && echo "FIRST_INPUT_EXISTS == 1" || echo "FIRST_INPUT_EXISTS != 1"
+          (( ${{ env.FIRST_INPUT_EXISTS }} != 1 )) && echo "FIRST_INPUT_EXISTS != 1" || echo "FIRST_INPUT_EXISTS == 1"
+          (( ${{ env.FIRST_INPUT_EXISTS }} > 0 )) && echo "FIRST_INPUT_EXISTS > 0" || echo "FIRST_INPUT_EXISTS <= 0"
+          (( ${{ env.FIRST_INPUT_EXISTS }} < 1 )) && echo "FIRST_INPUT_EXISTS < 1" || echo "FIRST_INPUT_EXISTS >= 1"
+          (( ${{ env.FIRST_INPUT_EXISTS }} == 0 )) && echo "FIRST_INPUT_EXISTS == 0" || echo "FIRST_INPUT_EXISTS != 0"
+          (( ${{ env.FIRST_INPUT_EXISTS }} != 0 )) && echo "FIRST_INPUT_EXISTS != 0" || echo "FIRST_INPUT_EXISTS == 0"
+          ${{ env.FIRST_INPUT_EXISTS }} && echo "FIRST_INPUT_EXISTS && echo THIS" || echo "FIRST_INPUT_EXISTS || echo THIS"
           echo
           echo
           echo
           echo "---       2       ---"
-          echo "Second input raw:"
-          echo "${{ inputs.second-input }}"
+          echo "Second raw:"
+          echo "${{ env.SECOND_INPUT_EXISTS }}"
           echo
-          echo "Second input fromenv:"
-          echo "${{ env.SECOND_INPUT }}"
+          echo "Second evaluated:"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == true ]] && echo "SECOND_INPUT_EXISTS == true" || echo "SECOND_INPUT_EXISTS != true"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == false ]] && echo "SECOND_INPUT_EXISTS == false" || echo "SECOND_INPUT_EXISTS != false"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" != true ]] && echo "SECOND_INPUT_EXISTS != true" || echo "SECOND_INPUT_EXISTS == true"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" != false ]] && echo "SECOND_INPUT_EXISTS != false" || echo "SECOND_INPUT_EXISTS == false"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 1 ]] && echo "SECOND_INPUT_EXISTS == 1" || echo "SECOND_INPUT_EXISTS != 1"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" != 1 ]] && echo "SECOND_INPUT_EXISTS != 1" || echo "SECOND_INPUT_EXISTS == 1"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 0 ]] && echo "SECOND_INPUT_EXISTS == 0" || echo "SECOND_INPUT_EXISTS != 0"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" != 0 ]] && echo "SECOND_INPUT_EXISTS != 0" || echo "SECOND_INPUT_EXISTS == 0"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == "true" ]] && echo "SECOND_INPUT_EXISTS == true" || echo "SECOND_INPUT_EXISTS != true"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == "false" ]] && echo "SECOND_INPUT_EXISTS == false" || echo "SECOND_INPUT_EXISTS != false"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 1 ]] && echo "SECOND_INPUT_EXISTS == 1" || echo "SECOND_INPUT_EXISTS != 1"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 0 ]] && echo "SECOND_INPUT_EXISTS == 0" || echo "SECOND_INPUT_EXISTS != 0"
+          (( ${{ env.SECOND_INPUT_EXISTS }} )) && echo "(( SECOND_INPUT_EXISTS ))" || echo "(( !SECOND_INPUT_EXISTS ))"
+          (( !${{ env.SECOND_INPUT_EXISTS }} )) && echo "(( !SECOND_INPUT_EXISTS ))" || echo "(( SECOND_INPUT_EXISTS ))"
+          (( ${{ env.SECOND_INPUT_EXISTS }} == 1 )) && echo "SECOND_INPUT_EXISTS == 1" || echo "SECOND_INPUT_EXISTS != 1"
+          (( ${{ env.SECOND_INPUT_EXISTS }} != 1 )) && echo "SECOND_INPUT_EXISTS != 1" || echo "SECOND_INPUT_EXISTS == 1"
+          (( ${{ env.SECOND_INPUT_EXISTS }} > 0 )) && echo "SECOND_INPUT_EXISTS > 0" || echo "SECOND_INPUT_EXISTS <= 0"
+          (( ${{ env.SECOND_INPUT_EXISTS }} < 1 )) && echo "SECOND_INPUT_EXISTS < 1" || echo "SECOND_INPUT_EXISTS >= 1"
+          (( ${{ env.SECOND_INPUT_EXISTS }} == 0 )) && echo "SECOND_INPUT_EXISTS == 0" || echo "SECOND_INPUT_EXISTS != 0"
+          (( ${{ env.SECOND_INPUT_EXISTS }} != 0 )) && echo "SECOND_INPUT_EXISTS != 0" || echo "SECOND_INPUT_EXISTS == 0"
+          ${{ env.SECOND_INPUT_EXISTS }} && echo "SECOND_INPUT_EXISTS && echo THIS" || echo "SECOND_INPUT_EXISTS || echo THIS"
           echo
           echo
           echo "---      ---      ---"
