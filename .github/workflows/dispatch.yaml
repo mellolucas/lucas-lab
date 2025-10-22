@@ -52,6 +52,9 @@ jobs:
           echo
 
       - name: Run test
+        env:
+          FIRST_INPUT_EXISTS: ${{ inputs.first-input != 0 && true || false }}
+          SECOND_INPUT_EXISTS: ${{ inputs.second-input == 1 && 1 || 0 }}
         run: |
           echo "---       1       ---"
           echo "First input raw:"
