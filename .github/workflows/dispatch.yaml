@@ -53,8 +53,8 @@ jobs:
 
       - name: Run test
         env:
-          FIRST_INPUT_EXISTS: ${{ inputs.first-input != 0 && true || false }}
-          SECOND_INPUT_EXISTS: ${{ inputs.second-input != 0 && 1 || 0 }}
+          FIRST_INPUT_EXISTS: "${{ inputs.first-input != 0 && true || false }}"
+          SECOND_INPUT_EXISTS: '${{ inputs.second-input != 0 && true || false }}'
         run: |
           echo env set as:
           echo 'FIRST_INPUT_EXISTS: {{ inputs.first-input != 0 && true || false }}'
@@ -68,22 +68,10 @@ jobs:
           [[ "${{ env.FIRST_INPUT_EXISTS }}" == false ]] && echo "FIRST_INPUT_EXISTS == false" || echo "FIRST_INPUT_EXISTS != false"
           [[ "${{ env.FIRST_INPUT_EXISTS }}" != true ]] && echo "FIRST_INPUT_EXISTS != true" || echo "FIRST_INPUT_EXISTS == true"
           [[ "${{ env.FIRST_INPUT_EXISTS }}" != false ]] && echo "FIRST_INPUT_EXISTS != false" || echo "FIRST_INPUT_EXISTS == false"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 1 ]] && echo "FIRST_INPUT_EXISTS == 1" || echo "FIRST_INPUT_EXISTS != 1"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" != 1 ]] && echo "FIRST_INPUT_EXISTS != 1" || echo "FIRST_INPUT_EXISTS == 1"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 0 ]] && echo "FIRST_INPUT_EXISTS == 0" || echo "FIRST_INPUT_EXISTS != 0"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" != 0 ]] && echo "FIRST_INPUT_EXISTS != 0" || echo "FIRST_INPUT_EXISTS == 0"
           [[ "${{ env.FIRST_INPUT_EXISTS }}" == "true" ]] && echo "FIRST_INPUT_EXISTS == true" || echo "FIRST_INPUT_EXISTS != true"
           [[ "${{ env.FIRST_INPUT_EXISTS }}" == "false" ]] && echo "FIRST_INPUT_EXISTS == false" || echo "FIRST_INPUT_EXISTS != false"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 1 ]] && echo "FIRST_INPUT_EXISTS == 1" || echo "FIRST_INPUT_EXISTS != 1"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == 0 ]] && echo "FIRST_INPUT_EXISTS == 0" || echo "FIRST_INPUT_EXISTS != 0"
-          (( ${{ env.FIRST_INPUT_EXISTS }} )) && echo "(( FIRST_INPUT_EXISTS ))" || echo "(( !FIRST_INPUT_EXISTS ))"
-          (( !${{ env.FIRST_INPUT_EXISTS }} )) && echo "(( !FIRST_INPUT_EXISTS ))" || echo "(( FIRST_INPUT_EXISTS ))"
-          (( ${{ env.FIRST_INPUT_EXISTS }} == 1 )) && echo "FIRST_INPUT_EXISTS == 1" || echo "FIRST_INPUT_EXISTS != 1"
-          (( ${{ env.FIRST_INPUT_EXISTS }} != 1 )) && echo "FIRST_INPUT_EXISTS != 1" || echo "FIRST_INPUT_EXISTS == 1"
-          (( ${{ env.FIRST_INPUT_EXISTS }} > 0 )) && echo "FIRST_INPUT_EXISTS > 0" || echo "FIRST_INPUT_EXISTS <= 0"
-          (( ${{ env.FIRST_INPUT_EXISTS }} < 1 )) && echo "FIRST_INPUT_EXISTS < 1" || echo "FIRST_INPUT_EXISTS >= 1"
-          (( ${{ env.FIRST_INPUT_EXISTS }} == 0 )) && echo "FIRST_INPUT_EXISTS == 0" || echo "FIRST_INPUT_EXISTS != 0"
-          (( ${{ env.FIRST_INPUT_EXISTS }} != 0 )) && echo "FIRST_INPUT_EXISTS != 0" || echo "FIRST_INPUT_EXISTS == 0"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" != "true" ]] && echo "FIRST_INPUT_EXISTS != true" || echo "FIRST_INPUT_EXISTS == true"
+          [[ "${{ env.FIRST_INPUT_EXISTS }}" != "false" ]] && echo "FIRST_INPUT_EXISTS != false" || echo "FIRST_INPUT_EXISTS == false"
           ${{ env.FIRST_INPUT_EXISTS }} && echo "FIRST_INPUT_EXISTS && echo THIS" || echo "FIRST_INPUT_EXISTS || echo THIS"
           echo
           echo
@@ -97,22 +85,10 @@ jobs:
           [[ "${{ env.SECOND_INPUT_EXISTS }}" == false ]] && echo "SECOND_INPUT_EXISTS == false" || echo "SECOND_INPUT_EXISTS != false"
           [[ "${{ env.SECOND_INPUT_EXISTS }}" != true ]] && echo "SECOND_INPUT_EXISTS != true" || echo "SECOND_INPUT_EXISTS == true"
           [[ "${{ env.SECOND_INPUT_EXISTS }}" != false ]] && echo "SECOND_INPUT_EXISTS != false" || echo "SECOND_INPUT_EXISTS == false"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 1 ]] && echo "SECOND_INPUT_EXISTS == 1" || echo "SECOND_INPUT_EXISTS != 1"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" != 1 ]] && echo "SECOND_INPUT_EXISTS != 1" || echo "SECOND_INPUT_EXISTS == 1"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 0 ]] && echo "SECOND_INPUT_EXISTS == 0" || echo "SECOND_INPUT_EXISTS != 0"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" != 0 ]] && echo "SECOND_INPUT_EXISTS != 0" || echo "SECOND_INPUT_EXISTS == 0"
           [[ "${{ env.SECOND_INPUT_EXISTS }}" == "true" ]] && echo "SECOND_INPUT_EXISTS == true" || echo "SECOND_INPUT_EXISTS != true"
           [[ "${{ env.SECOND_INPUT_EXISTS }}" == "false" ]] && echo "SECOND_INPUT_EXISTS == false" || echo "SECOND_INPUT_EXISTS != false"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 1 ]] && echo "SECOND_INPUT_EXISTS == 1" || echo "SECOND_INPUT_EXISTS != 1"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == 0 ]] && echo "SECOND_INPUT_EXISTS == 0" || echo "SECOND_INPUT_EXISTS != 0"
-          (( ${{ env.SECOND_INPUT_EXISTS }} )) && echo "(( SECOND_INPUT_EXISTS ))" || echo "(( !SECOND_INPUT_EXISTS ))"
-          (( !${{ env.SECOND_INPUT_EXISTS }} )) && echo "(( !SECOND_INPUT_EXISTS ))" || echo "(( SECOND_INPUT_EXISTS ))"
-          (( ${{ env.SECOND_INPUT_EXISTS }} == 1 )) && echo "SECOND_INPUT_EXISTS == 1" || echo "SECOND_INPUT_EXISTS != 1"
-          (( ${{ env.SECOND_INPUT_EXISTS }} != 1 )) && echo "SECOND_INPUT_EXISTS != 1" || echo "SECOND_INPUT_EXISTS == 1"
-          (( ${{ env.SECOND_INPUT_EXISTS }} > 0 )) && echo "SECOND_INPUT_EXISTS > 0" || echo "SECOND_INPUT_EXISTS <= 0"
-          (( ${{ env.SECOND_INPUT_EXISTS }} < 1 )) && echo "SECOND_INPUT_EXISTS < 1" || echo "SECOND_INPUT_EXISTS >= 1"
-          (( ${{ env.SECOND_INPUT_EXISTS }} == 0 )) && echo "SECOND_INPUT_EXISTS == 0" || echo "SECOND_INPUT_EXISTS != 0"
-          (( ${{ env.SECOND_INPUT_EXISTS }} != 0 )) && echo "SECOND_INPUT_EXISTS != 0" || echo "SECOND_INPUT_EXISTS == 0"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" != "true" ]] && echo "SECOND_INPUT_EXISTS != true" || echo "SECOND_INPUT_EXISTS == true"
+          [[ "${{ env.SECOND_INPUT_EXISTS }}" != "false" ]] && echo "SECOND_INPUT_EXISTS != false" || echo "SECOND_INPUT_EXISTS == false"
           ${{ env.SECOND_INPUT_EXISTS }} && echo "SECOND_INPUT_EXISTS && echo THIS" || echo "SECOND_INPUT_EXISTS || echo THIS"
           echo
           echo
