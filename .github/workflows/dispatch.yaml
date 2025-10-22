@@ -54,11 +54,11 @@ jobs:
       - name: Run test
         env:
           FIRST_INPUT_EXISTS: ${{ inputs.first-input != 0 && true || false }}
-          SECOND_INPUT_EXISTS: ${{ inputs.second-input == 1 && 1 || 0 }}
+          SECOND_INPUT_EXISTS: ${{ inputs.second-input != 0 && 1 || 0 }}
         run: |
           echo env set as:
           echo 'FIRST_INPUT_EXISTS: {{ inputs.first-input != 0 && true || false }}'
-          echo 'SECOND_INPUT_EXISTS: {{ inputs.second-input == 1 && 1 || 0 }}'
+          echo 'SECOND_INPUT_EXISTS: {{ inputs.second-input != 0 && 1 || 0 }}'
           echo "---       1       ---"
           echo "First raw:"
           echo "${{ env.FIRST_INPUT_EXISTS }}"
