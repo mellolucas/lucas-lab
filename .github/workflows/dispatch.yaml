@@ -91,22 +91,22 @@ jobs:
               "pnpm": {
                 "name": "pnpm",
                 "lockfile": "pnpm-lock.yaml",
-                "hash": ${{ hashFiles('**/pnpm-lock.yaml') || 0 }}
+                "hash": "${{ hashFiles('**/pnpm-lock.yaml') || 0 }}"
               },
               "yarn": {
                 "name": "yarn",
                 "lockfile": "yarn.lock",
-                "hash": ${{ hashFiles('**/yarn.lock') || 0 }}
+                "hash": "${{ hashFiles('**/yarn.lock') || 0 }}"
               },
               "npm": {
                 "name": "npm",
                 "lockfile": "package-lock.json",
-                "hash": ${{ hashFiles('**/package-lock.json') || 0 }}
+                "hash": "${{ hashFiles('**/package-lock.json') || 0 }}"
               },
               "default": {
                 "name": "npm",
                 "lockfile": "package-lock.json",
-                "hash": ${{ hashFiles('**/package-lock.json') || 0 }}
+                "hash": "${{ hashFiles('**/package-lock.json') || 0 }}"
               }
             }
           TEST_JOIN: "${{ join(fromJSON(env.PACKAGE_MANAGERS).*.name, ' ') }}"
@@ -122,10 +122,25 @@ jobs:
         #     }}
           
         run: |
-          echo
+          ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
           echo "---      ---      ---"
-          ${{ inputs.break == 1 && true || false }} && exit 1 || true
           TEST_ARRAY=( "${{ inputs.package-manager || join(fromJSON(env.TEST).*.hash, ' ') }}" )
-          
+          echo "TEST_ARRAY: ${TEST_ARRAY[@]}"
+          echo "TEST_ARRAY length: ${#TEST_ARRAY[@]}"
+          echo "TEST_ARRAY[0]: ${TEST_ARRAY[0]}"
+          echo "TEST_ARRAY[1]: ${TEST_ARRAY[1]}"
+          echo
+          echo "Perform shell array elements expansion and print array elements:"
+          TEST_ARRAY_REPLACED=( "${TEST_ARRAY[@]//0}" )
+          echo "TEST_ARRAY_REPLACED: ${TEST_ARRAY_REPLACED[@]}"
+          echo "TEST_ARRAY_REPLACED length: ${#TEST_ARRAY_REPLACED[@]}"
+          echo "TEST_ARRAY_REPLACED[0]: ${TEST_ARRAY_REPLACED[0]}"
+          echo "TEST_ARRAY_REPLACED[1]: ${TEST_ARRAY_REPLACED[1]}"
+          echo
+
+
+
+
+
 
