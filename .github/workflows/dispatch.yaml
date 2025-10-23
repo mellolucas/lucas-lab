@@ -80,7 +80,7 @@ jobs:
 
       - name: Create lockfile
         run: |
-          echo ${{ toJSON(fromJSON(env.PACKAGE_MANAGERS)) }}
+          echo '${{ toJSON(fromJSON(env.PACKAGE_MANAGERS)) }}' | jq .
           echo ${{ fromJSON(env.PACKAGE_MANAGERS).default.lockfile }}
           echo "my fake lockfile content" > ${{ fromJSON(env.PACKAGE_MANAGERS)['default'].lockfile }}
 
