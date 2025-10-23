@@ -77,8 +77,9 @@ jobs:
           echo "::endgroup::"
           echo
 
-      - name: Checkout source
-        uses: actions/checkout@v5
+      - name: Create lockfile
+        run: |
+          echo "my fake lockfile content" > ${{ fromJSON(env.PACKAGE_MANAGERS)[inputs.first-input || 'default'].lockfile }}
 
       - name: Run test
         env:
