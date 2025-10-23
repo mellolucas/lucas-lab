@@ -132,7 +132,7 @@ jobs:
           echo "TEST_ARRAY[1]: ${TEST_ARRAY[1]}"
           echo
           echo "Perform shell array elements expansion and print array elements:"
-          echo TEST_ARRAY_REPLACED=( "${TEST_ARRAY[@]//0}" )
+          TEST_ARRAY_REPLACED=( "${TEST_ARRAY[@]//0}" )
           echo "TEST_ARRAY_REPLACED: ${TEST_ARRAY_REPLACED[@]}"
           echo "TEST_ARRAY_REPLACED length: ${#TEST_ARRAY_REPLACED[@]}"
           echo "TEST_ARRAY_REPLACED[0]: ${TEST_ARRAY_REPLACED[0]}"
