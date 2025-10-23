@@ -48,6 +48,7 @@ env:
         "name": "npm",
         "lockfile": "package-lock.json"
       }
+    }
 
 jobs:
   test-dispatch:
