@@ -126,24 +126,6 @@ jobs:
           echo
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
-          TEST_ARRAY=(
-            ${{ inputs.package-manager || join(fromJSON(env.TEST).*.hash, ' ') }}
-          )
-          echo "TEST_ARRAY: ${TEST_ARRAY[@]}"
-          echo "TEST_ARRAY length: ${#TEST_ARRAY[@]}"
-          echo "TEST_ARRAY[0]: ${TEST_ARRAY[0]}"
-          echo "TEST_ARRAY[1]: ${TEST_ARRAY[1]}"
-          echo
-          echo "Perform shell array elements expansion and print array elements:"
-          TEST_ARRAY_REPLACED=( "${TEST_ARRAY[@]//0}" )
-          echo "TEST_ARRAY_REPLACED: ${TEST_ARRAY_REPLACED[@]}"
-          echo "TEST_ARRAY_REPLACED length: ${#TEST_ARRAY_REPLACED[@]}"
-          echo "TEST_ARRAY_REPLACED[0]: ${TEST_ARRAY_REPLACED[0]}"
-          echo "TEST_ARRAY_REPLACED[1]: ${TEST_ARRAY_REPLACED[1]}"
-          echo
-
-
-
-
-
+          TEST_ARRAY=( "${{ inputs.package-manager || join(fromJSON(env.TEST).*.hash, ' ') }}" )
+          
 
