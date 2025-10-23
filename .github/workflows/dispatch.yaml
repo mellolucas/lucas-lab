@@ -6,6 +6,11 @@ run-name: >-
 on:
   workflow_dispatch:
     inputs:
+      break:
+        description: "Break the workflow"
+        required: false
+        type: boolean
+        default: false
       first-input:
         description: "My first input"
         required: false
@@ -14,19 +19,40 @@ on:
         description: "My second input"
         required: false
         type: string
-      break:
-        description: "Break the workflow"
+      package-manager:
+        description: |
+          Node.js package manager to handle dependencies, scripts, and caching.
+          Examples: `npm`, `yarn`, `pnpm`, etc.
+          If unset, attempts to detect from lock files, falling back to `npm`.
         required: false
-        type: boolean
-        default: false
+        type: string
 
 env:
   FIRST_INPUT: ${{ inputs.first-input }}
   SECOND_INPUT: ${{ inputs.second-input }}
+  PACKAGE_MANAGERS: >-
+    {
+      "pnpm": {
+        "name": "pnpm",
+        "lockfile": "pnpm-lock.yaml"
+      },
+      "yarn": {
+        "name": "yarn",
+        "lockfile": "yarn.lock"
+      },
+      "npm": {
+        "name": "npm",
+        "lockfile": "package-lock.json"
+      },
+      "default": {
+        "name": "npm",
+        "lockfile": "package-lock.json"
+      }
 
 jobs:
   test-dispatch:
     runs-on: ubuntu-latest
+
     steps:
       - name: Print context
         env:
@@ -51,50 +77,55 @@ jobs:
           echo "::endgroup::"
           echo
 
+      - name: Checkout source
+        uses: actions/checkout@v5
+
       - name: Run test
         env:
-          FIRST_INPUT_EXISTS: "${{ inputs.first-input != 0 && true || false }}"
-          SECOND_INPUT_EXISTS: '${{ inputs.second-input != 0 && true || false }}'
+          TEST: >-
+            {
+              "pnpm": {
+                "name": "pnpm",
+                "lockfile": "pnpm-lock.yaml",
+                "hash": ${{ hashFiles('**/pnpm-lock.yaml') }}
+              },
+              "yarn": {
+                "name": "yarn",
+                "lockfile": "yarn.lock",
+                "hash": ${{ hashFiles('**/yarn.lock') }}
+              },
+              "npm": {
+                "name": "npm",
+                "lockfile": "package-lock.json",
+                "hash": ${{ hashFiles('**/package-lock.json') }}
+              },
+              "default": {
+                "name": "npm",
+                "lockfile": "package-lock.json",
+                "hash": ${{ hashFiles('**/package-lock.json') }}
+              }
+            }
+
+        # env:
+        #   PACKAGE_MANAGER: >-
+        #     ${{ 
+        #       fromJSON(env.PACKAGE_MANAGERS)[
+        #         inputs.package-manager ||
+        #         hashFiles(fromJSON(env.PACKAGE_MANAGERS)
+
+                
+        #     }}
+          
         run: |
-          echo env set as:
-          echo 'FIRST_INPUT_EXISTS: {{ inputs.first-input != 0 && true || false }}'
-          echo 'SECOND_INPUT_EXISTS: {{ inputs.second-input != 0 && 1 || 0 }}'
-          echo "---       1       ---"
-          echo "First raw:"
-          echo "${{ env.FIRST_INPUT_EXISTS }}"
-          echo
-          echo "First evaluated:"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == true ]] && echo "FIRST_INPUT_EXISTS == true" || echo "FIRST_INPUT_EXISTS != true"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == false ]] && echo "FIRST_INPUT_EXISTS == false" || echo "FIRST_INPUT_EXISTS != false"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" != true ]] && echo "FIRST_INPUT_EXISTS != true" || echo "FIRST_INPUT_EXISTS == true"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" != false ]] && echo "FIRST_INPUT_EXISTS != false" || echo "FIRST_INPUT_EXISTS == false"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == "true" ]] && echo "FIRST_INPUT_EXISTS == true" || echo "FIRST_INPUT_EXISTS != true"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" == "false" ]] && echo "FIRST_INPUT_EXISTS == false" || echo "FIRST_INPUT_EXISTS != false"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" != "true" ]] && echo "FIRST_INPUT_EXISTS != true" || echo "FIRST_INPUT_EXISTS == true"
-          [[ "${{ env.FIRST_INPUT_EXISTS }}" != "false" ]] && echo "FIRST_INPUT_EXISTS != false" || echo "FIRST_INPUT_EXISTS == false"
-          ${{ env.FIRST_INPUT_EXISTS }} && echo "FIRST_INPUT_EXISTS && echo THIS" || echo "FIRST_INPUT_EXISTS || echo THIS"
-          echo
-          echo
-          echo
-          echo "---       2       ---"
-          echo "Second raw:"
-          echo "${{ env.SECOND_INPUT_EXISTS }}"
-          echo
-          echo "Second evaluated:"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == true ]] && echo "SECOND_INPUT_EXISTS == true" || echo "SECOND_INPUT_EXISTS != true"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == false ]] && echo "SECOND_INPUT_EXISTS == false" || echo "SECOND_INPUT_EXISTS != false"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" != true ]] && echo "SECOND_INPUT_EXISTS != true" || echo "SECOND_INPUT_EXISTS == true"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" != false ]] && echo "SECOND_INPUT_EXISTS != false" || echo "SECOND_INPUT_EXISTS == false"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == "true" ]] && echo "SECOND_INPUT_EXISTS == true" || echo "SECOND_INPUT_EXISTS != true"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" == "false" ]] && echo "SECOND_INPUT_EXISTS == false" || echo "SECOND_INPUT_EXISTS != false"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" != "true" ]] && echo "SECOND_INPUT_EXISTS != true" || echo "SECOND_INPUT_EXISTS == true"
-          [[ "${{ env.SECOND_INPUT_EXISTS }}" != "false" ]] && echo "SECOND_INPUT_EXISTS != false" || echo "SECOND_INPUT_EXISTS == false"
-          ${{ env.SECOND_INPUT_EXISTS }} && echo "SECOND_INPUT_EXISTS && echo THIS" || echo "SECOND_INPUT_EXISTS || echo THIS"
           echo
           echo
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
-          echo
+          TEST_ARRAY=(${{ inputs.package-manager || join(env.TEST.*.hash, ' ') }})
+          echo "TEST_ARRAY: ${TEST_ARRAY[@]}"
+          echo "TEST_ARRAY length: ${#TEST_ARRAY[@]}"
+          echo "TEST_ARRAY[0]: ${TEST_ARRAY[0]}"
+          echo "TEST_ARRAY[1]: ${TEST_ARRAY[1]}"
 
 
 
