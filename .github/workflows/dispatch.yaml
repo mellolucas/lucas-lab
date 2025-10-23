@@ -109,6 +109,7 @@ jobs:
                 "hash": ${{ hashFiles('**/package-lock.json') || 0 }}
               }
             }
+          TEST_JOIN: "${{ join(fromJSON(env.PACKAGE_MANAGERS).*.name, ' ') }}"
 
         # env:
         #   PACKAGE_MANAGER: >-
@@ -125,7 +126,7 @@ jobs:
           echo
           echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
-          TEST_ARRAY=( ${{ inputs.package-manager || join(fromJSON(env.TEST).*.hash, ' ') }} )
+          TEST_ARRAY=( "${{ inputs.package-manager || join(fromJSON(env.TEST).*.hash, ' ') }}" )
           echo "TEST_ARRAY: ${TEST_ARRAY[@]}"
           echo "TEST_ARRAY length: ${#TEST_ARRAY[@]}"
           echo "TEST_ARRAY[0]: ${TEST_ARRAY[0]}"
