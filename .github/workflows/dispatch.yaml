@@ -81,8 +81,8 @@ jobs:
       - name: Create lockfile
         run: |
           echo '${{ toJSON(fromJSON(env.PACKAGE_MANAGERS)) }}' | jq .
-          echo ${{ fromJSON(env.PACKAGE_MANAGERS).default.lockfile }}
-          echo "my fake lockfile content" > ${{ fromJSON(env.PACKAGE_MANAGERS)['default'].lockfile }}
+          echo ${{ fromJSON(env.PACKAGE_MANAGERS).yarn.lockfile }}
+          echo "my fake lockfile content" > ${{ fromJSON(env.PACKAGE_MANAGERS)['yarn'].lockfile }}
 
       - name: Run test
         env:
@@ -115,6 +115,14 @@ jobs:
               }
             }
           TEST_DYNAMIC_SUBSET: "${{ fromJSON(env.PACKAGE_MANAGERS)[format('default{0}', inputs.first-input || 'name')] }}"
+          DETECT_PM_SINGLE_SHOT: >-
+            ${{ 
+              ( inputs.package-manager == 'pnpm' || hashFiles('**/pnpm-lock.yaml') != 0 ) && 'pnpm' ||
+              ( inputs.package-manager == 'yarn' || hashFiles('**/yarn.lock') != 0 ) && 'yarn' ||
+              ( inputs.package-manager == 'npm' || hashFiles('**/package-lock.json') != 0 ) && 'npm' ||
+              'npm'
+            }}
+
 
         # env:
         #   PACKAGE_MANAGER: >-
@@ -130,7 +138,8 @@ jobs:
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
           echo "---      ---      ---"
-          local -a arr_keys arr_values arr
+          declare -a arr_keys arr_values
+          declare -A arr
           read -ra arr_keys <<< "${{ join(fromJSON(env.TEST).*.name, ' ') }}"
           read -ra arr_values <<< "${{ join(fromJSON(env.TEST).*.hash, ' ') }}"
           if [ ${#arr_keys[@]} -ne ${#arr_values[@]} ]; then
