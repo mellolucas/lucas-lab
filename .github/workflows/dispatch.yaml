@@ -107,9 +107,14 @@ jobs:
                 "name": "npm",
                 "lockfile": "package-lock.json",
                 "hash": "${{ hashFiles('**/package-lock.json') || 0 }}"
+              },
+              "selected": {
+                "name": "${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.package-manager)].name || 0 }}",
+                "lockfile": "${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.package-manager)].lockfile || 0 }}",
+                "hash": "${{ hashFiles(fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.package-manager)].lockfile) || 0 }}"
               }
             }
-          TEST_DYNAMIC_SUBSET: "${{ fromJSON(env.PACKAGE_MANAGERS).default[format('{0}', inputs.first-input || 'name')] }}"
+          TEST_DYNAMIC_SUBSET: "${{ fromJSON(env.PACKAGE_MANAGERS)[format('default{0}', inputs.first-input || 'name')] }}"
 
         # env:
         #   PACKAGE_MANAGER: >-
