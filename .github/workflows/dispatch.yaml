@@ -81,8 +81,10 @@ jobs:
       - name: Create lockfile
         run: |
           echo '${{ toJSON(fromJSON(env.PACKAGE_MANAGERS)) }}' | jq .
-          echo ${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.first-input)].lockfile }}
-          echo "my fake lockfile content" > ${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.first-input)].lockfile }}
+          echo ${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.first-input || 'default')].lockfile }}
+          echo [[ -n "${{ inputs.first-input }}" ]] && \
+            touch "${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.first-input)].lockfile }}" || \
+            echo "No lockfile created because no package manager specified in 'first-input'."
 
       - name: Run test
         env:
