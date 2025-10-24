@@ -87,7 +87,7 @@ jobs:
             echo "No lockfile created because no package manager specified in 'first-input'."
 
       - name: Run test
-        env: &test_vars
+        env: 
           TEST: >-
             {
               "pnpm": {
@@ -133,7 +133,7 @@ jobs:
               inputs.package-manager == 'npm',
               hashFiles('**/package-lock.json') != 0
             ) }}
-          DETECT_PM_SINGLE_SHOT_EXTRA: >-
+          DETECT_PM_SINGLE_SHOT_EXTRA: &package_manager >-
             ${{
               ( 
                 inputs.package-manager == 'pnpm' || 
@@ -201,8 +201,9 @@ jobs:
           echo
 
       - name: Test anchor
-        env: *test_vars
+        env: 
+          PACKAGE_MANAGER: *package_manager
         run: |
           echo "Reusing anchored TEST env var:"
-          echo "Now, test if oneshot hash is truthy: '${{ fromJSON(env.DETECT_PM_SINGLE_SHOT_EXTRA).hash != 0 && 'it isnt' || 'it is' }}'"
+          echo "Now, test if oneshot hash is truthy: '${{ fromJSON(env.PACKAGE_MANAGER).hash != 0 && 'it isnt' || 'it is' }}'"
           
