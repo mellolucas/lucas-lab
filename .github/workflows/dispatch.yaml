@@ -88,7 +88,7 @@ jobs:
 
       - name: Run test
         env:
-          TEST: >-
+          TEST: &test_vars >-
             {
               "pnpm": {
                 "name": "pnpm",
@@ -191,3 +191,9 @@ jobs:
           echo "Detected package manager: ${arr["detected"]}"
           echo
 
+      - name: Run test
+        env: *test_vars
+        run: |
+          echo "Reusing anchored TEST env var:"
+          echo "${{ env.TEST }}" | jq .
+          echo "Now, test if oneshot hash is falsy: ${{ env.DETECT_PM_SINGLE_SHOT != 0 && 'it isnt' || 'it is' }}"
