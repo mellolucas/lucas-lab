@@ -81,8 +81,8 @@ jobs:
       - name: Create lockfile
         run: |
           echo '${{ toJSON(fromJSON(env.PACKAGE_MANAGERS)) }}' | jq .
-          echo ${{ fromJSON(env.PACKAGE_MANAGERS).yarn.lockfile }}
-          echo "my fake lockfile content" > ${{ fromJSON(env.PACKAGE_MANAGERS)['yarn'].lockfile }}
+          echo ${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.first-input)].lockfile }}
+          echo "my fake lockfile content" > ${{ fromJSON(env.PACKAGE_MANAGERS)[format('{0}', inputs.first-input)].lockfile }}
 
       - name: Run test
         env:
@@ -122,7 +122,32 @@ jobs:
               ( inputs.package-manager == 'npm' || hashFiles('**/package-lock.json') != 0 ) && 'npm' ||
               'npm'
             }}
-
+          DETECT_PM_SINGLE_SHOT_EXTRA: >-
+            ${{
+              ( inputs.package-manager == 'pnpm' || hashFiles('**/pnpm-lock.yaml') != 0 ) && 
+                format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                  'pnpm',
+                  'pnpm-lock.yaml',
+                  hashFiles('**/pnpm-lock.yaml') || 0
+                ) ||
+              ( inputs.package-manager == 'yarn' || hashFiles('**/yarn.lock') != 0 ) && 
+                format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                  'yarn',
+                  'yarn.lock',
+                  hashFiles('**/yarn.lock') || 0
+                ) ||
+              ( inputs.package-manager == 'npm' || hashFiles('**/package-lock.json') != 0 ) && 
+                format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                  'npm',
+                  'package-lock.json',
+                  hashFiles('**/package-lock.json') || 0
+                ) ||
+              format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                'npm',
+                'package-lock.json',
+                hashFiles('**/package-lock.json') || 0
+              )
+            }}
 
         # env:
         #   PACKAGE_MANAGER: >-
