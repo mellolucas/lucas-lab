@@ -117,18 +117,27 @@ jobs:
               }
             }
           TEST_DYNAMIC_SUBSET: "${{ fromJSON(env.PACKAGE_MANAGERS)[format('default{0}', inputs.first-input || 'name')] }}"
-          DETECT_PM_SINGLE_SHOT: >-
-            ${{ 
-              ( inputs.package-manager == 'pnpm' || hashFiles('**/pnpm-lock.yaml') != 0 ) && 'pnpm' ||
-              ( inputs.package-manager == 'yarn' || hashFiles('**/yarn.lock') != 0 ) && 'yarn' ||
-              ( inputs.package-manager == 'npm' || hashFiles('**/package-lock.json') != 0 ) && 'npm' ||
-              'npm'
-            }}
+          TEST_COMBINATION: >-
+            ${{ format('pm:hash;pm==x:hash!=0: {0}:{1};{2}:{3} | {0}:{4};{5}:{6} | {0}:{7};{8}:{9}',
+              inputs.package-manager,
+
+              hashFiles('**/pnpm-lock.yaml'),
+              inputs.package-manager == 'pnpm',
+              hashFiles('**/pnpm-lock.yaml') != 0,
+
+              hashFiles('**/yarn.lock'),
+              inputs.package-manager == 'yarn',
+              hashFiles('**/yarn.lock') != 0,
+
+              hashFiles('**/package-lock.json'),
+              inputs.package-manager == 'npm',
+              hashFiles('**/package-lock.json') != 0
+            ) }}
           DETECT_PM_SINGLE_SHOT_EXTRA: >-
             ${{
               ( 
                 inputs.package-manager == 'pnpm' || 
-                ( inputs.package-manager !=0 && hashFiles('**/pnpm-lock.yaml') != 0 ) 
+                ( inputs.package-manager == 0 && hashFiles('**/pnpm-lock.yaml') != 0 ) 
               ) && 
                 format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
                   'pnpm',
@@ -137,7 +146,7 @@ jobs:
                 ) ||
                 ( 
                   inputs.package-manager == 'yarn' || 
-                  ( inputs.package-manager !=0 && hashFiles('**/yarn.lock') != 0 ) 
+                  ( inputs.package-manager == 0 && hashFiles('**/yarn.lock') != 0 ) 
                 ) && 
                   format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
                     'yarn',
