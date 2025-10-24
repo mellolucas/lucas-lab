@@ -126,29 +126,29 @@ jobs:
             }}
           DETECT_PM_SINGLE_SHOT_EXTRA: >-
             ${{
-              ( inputs.package-manager == 'pnpm' || ( inputs.package-manager !=0 && hashFiles('**/pnpm-lock.yaml') != 0 ) ) && 
+              ( 
+                inputs.package-manager == 'pnpm' || 
+                ( inputs.package-manager !=0 && hashFiles('**/pnpm-lock.yaml') != 0 ) 
+              ) && 
                 format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
                   'pnpm',
                   'pnpm-lock.yaml',
                   hashFiles('**/pnpm-lock.yaml') || 0
                 ) ||
-              ( inputs.package-manager == 'yarn' || ( inputs.package-manager !=0 && hashFiles('**/yarn.lock') != 0 ) ) && 
-                format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
-                  'yarn',
-                  'yarn.lock',
-                  hashFiles('**/yarn.lock') || 0
-                ) ||
-              ( inputs.package-manager == 'npm' || ( inputs.package-manager !=0 && hashFiles('**/package-lock.json') != 0 ) ) && 
+                ( 
+                  inputs.package-manager == 'yarn' || 
+                  ( inputs.package-manager !=0 && hashFiles('**/yarn.lock') != 0 ) 
+                ) && 
+                  format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                    'yarn',
+                    'yarn.lock',
+                    hashFiles('**/yarn.lock') || 0
+                  ) ||
                 format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
                   'npm',
                   'package-lock.json',
                   hashFiles('**/package-lock.json') || 0
-                ) ||
-              format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
-                'npm',
-                'package-lock.json',
-                hashFiles('**/package-lock.json') || 0
-              )
+                )
             }}
 
         # env:
