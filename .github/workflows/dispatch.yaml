@@ -195,6 +195,5 @@ jobs:
         env: *test_vars
         run: |
           echo "Reusing anchored TEST env var:"
-          echo "${{ env.TEST }}" | jq .
           echo "Now, test if oneshot hash is falsy: '${{ fromJSON(env.DETECT_PM_SINGLE_SHOT_EXTRA).hash != 0 && 'it isnt' || 'it is' }}'"
           
