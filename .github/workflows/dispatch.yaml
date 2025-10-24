@@ -109,7 +109,7 @@ jobs:
                 "hash": "${{ hashFiles('**/package-lock.json') || 0 }}"
               }
             }
-          TEST_JOIN: "${{ join(fromJSON(env.PACKAGE_MANAGERS).*.name, ' ') }}"
+          TEST_DYNAMIC_SUBSET: "${{ fromJSON(env.TEST).default[inputs.first-input || 'name'] }}"
 
         # env:
         #   PACKAGE_MANAGER: >-
@@ -125,22 +125,28 @@ jobs:
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
           echo "---      ---      ---"
-          TEST_ARRAY=( "${{ inputs.package-manager || join(fromJSON(env.TEST).*.hash, ' ') }}" )
-          echo "TEST_ARRAY: ${TEST_ARRAY[@]}"
-          echo "TEST_ARRAY length: ${#TEST_ARRAY[@]}"
-          echo "TEST_ARRAY[0]: ${TEST_ARRAY[0]}"
-          echo "TEST_ARRAY[1]: ${TEST_ARRAY[1]}"
+          local -a arr_keys arr_values arr
+          read -ra arr_keys <<< "${{ join(fromJSON(env.TEST).*.name, ' ') }}"
+          read -ra arr_values <<< "${{ join(fromJSON(env.TEST).*.hash, ' ') }}"
+          if [ ${#arr_keys[@]} -ne ${#arr_values[@]} ]; then
+            echo "::error::Array lengths do not match!"
+            exit 1
+          fi
+          arr=()
+          for i in "${!arr_keys[@]}"; do
+            arr["${arr_keys[i]}"]="${arr_values[i]}"
+          done
+          echo "Constructed associative array:"
+          for key in "${!arr[@]}"; do
+            echo "  $key: ${arr[$key]}"
+          done
           echo
-          echo "Perform shell array elements expansion and print array elements:"
-          TEST_ARRAY_REPLACED=( "${TEST_ARRAY[@]//0}" )
-          echo "TEST_ARRAY_REPLACED: ${TEST_ARRAY_REPLACED[@]}"
-          echo "TEST_ARRAY_REPLACED length: ${#TEST_ARRAY_REPLACED[@]}"
-          echo "TEST_ARRAY_REPLACED[0]: ${TEST_ARRAY_REPLACED[0]}"
-          echo "TEST_ARRAY_REPLACED[1]: ${TEST_ARRAY_REPLACED[1]}"
+          for i in "${!arr_keys[@]}"; do
+          if [ "${arr_values[i]}" != "0" ]; then
+            arr["detected"]="${arr_keys[i]}"
+            break
+          fi
+          done
+          echo "Detected package manager: ${arr["detected"]}"
           echo
-
-
-
-
-
 
