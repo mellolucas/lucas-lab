@@ -5,6 +5,9 @@ import prettier from 'eslint-config-prettier';
 import pluginPrettier from 'eslint-plugin-prettier';
 
 export default [
+  {
+    ignores: ['node_modules/', 'dist/', 'coverage/'],
+  },
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   { languageOptions: { globals: globals.node } },
   pluginJs.configs.recommended,
