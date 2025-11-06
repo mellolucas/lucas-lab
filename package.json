@@ -1,0 +1,56 @@
+{
+  "name": "@mellolucas/lucas-lab",
+  "version": "0.0.0",
+  "description": "Curated reusable tsconfig base for modern Node ESM, with clean defaults and easy escape hatches",
+  "homepage": "https://github.com/mellolucas/lucas-lab#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mellolucas/lucas-lab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mellolucas/lucas-lab/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Lucas Mello <contact@melucas.com> (https://melucas.com/)",
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "spell:check": "npx cspell **/*.{ts,tsx,js,jsx,mjs,cjs,json,yaml,yml,css,html,md,txt}",
+    "spell": "npm run spell:check",
+    "format:check": "npx prettier --check **/*.{ts,tsx,js,jsx,mjs,cjs,json,css,md}",
+    "format:fix": "npx prettier --write **/*.{ts,tsx,js,jsx,mjs,cjs,json,css,md}",
+    "format": "npm run format:check",
+    "lint:check": "npx eslint . --ext .ts,.tsx,.js,.jsx,.mjs,.cjs",
+    "lint:fix": "npm run lint:check -- --fix",
+    "lint": "npm run lint:check",
+    "types:check": "npx tsc --noEmit",
+    "types": "npm run types:check",
+    "check": "npm run spell:check && npm run format:check && npm run lint:check && npm run types:check",
+    "fix": "npm run format:fix && npm run lint:fix",
+    "test": "vitest run",
+    "test:compilation": "node scripts/test-compilation.js",
+    "test:examples": "node scripts/test-examples.js",
+    "validate": "npm test",
+    "prepack": "npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.9.2",
+    "cspell": "^9.2.2",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3",
+    "vitest": "^4.0.7"
+  }
+}

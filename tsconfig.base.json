@@ -1,0 +1,65 @@
+/*
+ * Curated Base TSConfig: Runtime Mechanics & Quality Standards for Node.js ESM.
+ *
+ * This file defines the "how" (language rules, module system, strictness) and is
+ * intentionally minimal. It is not a list of all possible options. Extend this
+ * in your project's tsconfig.json and only add project-specific settings there.
+ * Comments ending with '!' indicate official typescriptlang.org recommendations.
+ */
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Base: Node ESM Runtime Mechanics & Quality",
+
+  "compilerOptions": {
+    /* --- Language and Environment --- */
+    "target": "ES2022" /* ECMAScript language target version to compile to. */,
+    "lib": [
+      "ES2023"
+    ] /* Bundled library declaration files describing the target runtime environment. */,
+    // "experimentalDecorators": true,                 /* Experimental support for ES7 decorators. */
+    // "emitDecoratorMetadata": true,                  /* Experimental support for emitting type metadata for decorators. */
+
+    /* --- Modules Base Options --- */
+    "module": "Node16" /* The module system for code generation. */,
+    "moduleResolution": "Node16" /* Module resolution strategy. */,
+    "moduleDetection": "auto" /* How TypeScript determines whether a file is a script or a module. */,
+    "resolveJsonModule": true /* Allow importing .json files as modules (common node practice). */,
+    // "types": ["node"],                           /* Type declaration files to be included in compilation. */
+
+    /* --- Modules Interop Constraints --- */
+    "esModuleInterop": true /* Emit inter-ops between CJS and ESM via creation of namespace objects for all imports! */,
+    "allowSyntheticDefaultImports": true /* Allow `import x from y` when module doesn't have default export. */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports! */,
+    "isolatedModules": true /* Ensure each file can be safely transpiled without relying on other imports. */,
+    // "verbatimModuleSyntax": true,                   /* Preserve import/export statements in emitted code (explicit .cjs/.mjs). */
+
+    /* --- Emit Base Options --- */
+    "sourceMap": true /* Create source map files for emitted JS code (transpile back to source). [<=> tsconfig.json] */,
+    "newLine": "lf" /* Newline character for the emitted files. [<=> tsconfig.json] */,
+
+    /* --- Strict Type Checking Options --- */
+    "strict": true /* Enable all strict type-checking options! */,
+    // "alwaysStrict": true,                           /* Parse in strict mode and emit "use strict" for each source file! */
+    // "noImplicitAny": true,                          /* Raise error on expressions and declarations with an implied `any` type! */
+    // "noImplicitThis": true,                         /* Raise error on `this` expressions with an implied `any` type! */
+    // "strictBindCallApply": true,                    /* Check if `call`, `bind`, and `apply` methods are invoked with correct argument types! */
+    // "strictBuiltinIteratorReturn": true,            /* Built-in iterators are instantiated with `TReturn` type instead of `any`! */
+    // "strictFunctionTypes": true,                    /* Enable strict checking of function parameters! */
+    // "strictNullChecks": true,                       /* Raise error on `null` and `undefined` values where a concrete value is expected! */
+    // "strictPropertyInitialization": true,           /* Raise error if class properties are not initialized in the constructor! */
+    // "useUnknownInCatchVariables": true,             /* Allow type `unknown` for catch clause variables instead of `any`! */
+
+    /* --- Additional Type Checking Options --- */
+    "noUnusedLocals": true /* Report errors on unused locals. */,
+    // "noUnusedParameters": true,                     /* Report errors on unused parameters. Can be noisy with frameworks (express middleware, event handlers). */
+    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+    "noUncheckedIndexedAccess": true /* Add `undefined` to a type when accessed using an index - modern safety best practice. */,
+    "noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an `override` modifier. */,
+    // "exactOptionalPropertyTypes": true,             /* Interpret optional property types as written! Very strict - can break many libraries. */
+    // "noPropertyAccessFromIndexSignature": true,     /* Enforces using indexed accessors for keys declared using an indexed type */
+
+    /* --- Completeness --- */
+    "skipLibCheck": true /* Skip type checking for declaration .d.ts files (skip node_modules)! */
+  }
+}

@@ -1,0 +1,52 @@
+/*
+ * Project-Specific TSConfig: Build Inputs & Outputs.
+ *
+ * This file defines the "what" and "where" (source/output paths, file inclusion)
+ * for this specific project. It extends the shared base config and should only
+ * contain options unique to this project's build process.
+ */
+{
+  /* Unique choices for the Typescript Project (extends runtime mechanics from tsconfig.base.json). */
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Project: Build Inputs & Outputs",
+
+  "extends": "./tsconfig.base.json",
+
+  "compilerOptions": {
+    /* --- Modules --- */
+    "rootDir": "./src" /* Specify root directory of input files (control output directory structure). */,
+    // "baseUrl": "./",                                     /* Base directory to resolve non-relative bare module names. */
+
+    /* --- Emit --- */
+    "outDir": "./dist" /* Output directory for generated files (redirect output structure to outDir). */,
+    "newLine": "lf" /* Newline character for the emitted files. */,
+    "sourceMap": true /* Create source map files for emitted JavaScript (transpile back to source). */
+    // "inlineSourceMap": true,                             /* Emit a single file with source maps instead of having a separate file. */
+    // "declaration": true,                                 /* Generate corresponding .d.ts file (enable for library projects). */
+    // "declarationMap": true,                              /* Create sourcemap for each corresponding .d.ts file. */
+    // "emitDeclarationOnly": true,                         /* Only output d.ts files and not the compiled JS files. */
+    // "emitBOM": true,                                     /* Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files. */
+    // "noEmit": true,                                      /* Do not emit output files. */
+    // "noEmitOnError": true,                               /* Do not emit output files if any errors were reported. */
+    // "noEmitHelpers": true,                               /* Do not generate custom helper functions like __extends in compiled output. */
+    // "removeComments": true,                              /* Do not emit comments to output. */
+    // "stripInternal": true,                               /* Do not emit declarations for code that has an @internal annotation. */
+
+    /* --- Projects --- */
+    // "composite": true,                                   /* Enable project references. */
+    // "incremental": true,                                 /* Enable incremental compilation. */
+    // "tsBuildInfoFile": "./dist/.tsbuildinfo",            /* Location to .tsbuildinfo incremental build info. */
+    // "disableReferencedProjectLoad": true,                /* Disable loading referenced projects from filesystem. */
+    // "disableSolutionSearching": true,                    /* Disable searching for tsconfig.json file when building project. */
+    // "disableSourceOfProjectReferenceRedirect": true,     /* Disable redirecting output structure to output directory. */
+
+    /* --- Compiler Diagnostics --- */
+    // "traceResolution": false,                            /* Report module resolution log messages. */
+    // "listEmittedFiles": false,                           /* Print names of generated files part of the compilation. */
+    // "listFiles": false,                                  /* Print names of files part of the compilation. */
+    // "pretty": true,                                      /* Stylize errors and messages using color and context. */
+  },
+
+  /* --- Source File Inclusion/Exclusion --- */
+  "include": ["src"]
+}
