@@ -1,0 +1,118 @@
+name: Node CI
+run-name: >-
+  ${{ github.workflow }}
+  ${{ inputs.dry-run == 1 && ' 🧪' || '' }}
+  ${{ github.event.pull_request.draft == 1 && ' 📝' || '' }}
+
+on:
+  pull_request:
+    branches: main
+  push:
+    branches: main
+  workflow_dispatch:
+    inputs:
+      # Static Code Analysis Options
+      require-lockfile:
+        description: |
+          Fail if lockfile is missing or out-of-date. Disable to allow
+          generating or updating an ephemeral lockfile on-the-fly.
+        required: false
+        type: boolean
+        default: true
+      check-spell:
+        description: |
+          Run `spell:check`, `check:spell`, `cspell` or `spell` package script
+          to check for spelling issues.
+        required: false
+        type: boolean
+        default: false
+      check-format:
+        description: |
+          Run `format:check`, `check:format` or `format` package script to
+          check code formatting.
+        required: false
+        type: boolean
+        default: true
+      check-lint:
+        description: |
+          Run `lint:check`, `check:lint` or `lint` package script to
+          check for linting issues.
+        required: false
+        type: boolean
+        default: true
+      check-types:
+        description: |
+          Run `types:check`, `check:types` or `types` package script to
+          check for type errors.
+        required: false
+        type: boolean
+        default: true
+
+      # Workflow Control Options
+      dry-run:
+        description: |
+          Enable dry-run mode. This will skip steps that make changes.
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: >-
+    ${{
+      format('ci-{0}-{1}-{3}',
+        github.workflow,
+        github.event.name || 'null',
+        github.event.number || github.ref
+      )
+    }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  call-analysis:
+    name: Call analysis
+    uses: lufomatics/reusables/.github/workflows/node-analysis.yaml@v1
+    secrets: 
+      registry-token: ${{ secrets.NPM_TOKEN }}
+    with:
+      runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
+      dry-run: >-
+        ${{ 
+          github.event_name == 'workflow_dispatch' &&
+          inputs.dry-run || 
+          false
+        }}
+      require-lockfile: >-
+        ${{ 
+          github.event_name == 'workflow_dispatch' &&
+          inputs.require-lockfile || 
+          true
+        }}
+      check-spell: >-
+        ${{ 
+          github.event_name == 'workflow_dispatch' &&
+          inputs.check-spell || 
+          true
+        }}
+      check-format: >-
+        ${{
+          github.event_name == 'workflow_dispatch' &&
+          inputs.check-format || 
+          true
+        }}
+      check-lint: >-
+        ${{ 
+          github.event_name == 'workflow_dispatch' &&
+          inputs.check-lint || 
+          true
+        }}
+      check-types: >-
+        ${{ 
+          github.event_name == 'workflow_dispatch' &&
+          inputs.check-types || 
+          true
+        }}
+      node-version-file: 'package.json'
