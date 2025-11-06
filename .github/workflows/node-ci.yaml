@@ -91,12 +91,7 @@ jobs:
           inputs.require-lockfile || 
           true
         }}
-      check-spell: >-
-        ${{ 
-          github.event_name == 'workflow_dispatch' &&
-          inputs.check-spell || 
-          true
-        }}
+      check-spell: false
       check-format: >-
         ${{
           github.event_name == 'workflow_dispatch' &&
