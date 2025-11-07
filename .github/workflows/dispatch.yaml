@@ -88,6 +88,23 @@ jobs:
           echo "${{ true && !inputs.boolean-input || 'default-value' }}"
           echo "Use boolean compared to false within contains() negated when ternary evaluates to true: "
           echo "${{ true && !contains(inputs.boolean-input, 'false') || 'default-value' }}"
+          echo
+          echo "Same as above contains(), but inverting contains() arguments to "contains('false', inputs.boolean-input)"
+          echo "Boolean within contains() evaluation compared to false: "
+          echo "${{ contains('false', inputs.boolean-input) }}"
+          echo "Boolean within contains() evaluation compared to true: "
+          echo "${{ contains('true', inputs.boolean-input) }}"
+          echo "Boolean within contains() evaluation compared to false  negated: "
+          echo "${{ !contains('false', inputs.boolean-input) }}"
+          echo "Boolean within contains() evaluation compared to true  negated: "
+          echo "${{ !contains('true', inputs.boolean-input) }}"
+          echo "Boolean within contains() evaluation compared to either true or false: "
+          echo "${{ contains('["true", "false"]', inputs.boolean-input) }}"
+          echo "Use boolean compared to false within contains() when ternary evaluates to true: "
+          echo "${{ true && contains('false', inputs.boolean-input) || 'default-value' }}"
+          echo "Use boolean compared to false within contains() negated when ternary evaluates to true: "
+          echo "${{ true && !contains('false', inputs.boolean-input) || 'default-value' }}"
+          echo
           
 
 
