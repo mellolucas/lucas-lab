@@ -73,39 +73,18 @@ jobs:
   call-analysis:
     name: Call analysis
     uses: lufomatics/reusables/.github/workflows/node-analysis.yaml@v1
-    secrets: 
+    secrets:
       registry-token: ${{ secrets.NPM_TOKEN }}
+
     with:
+      # Tips for handling boolean inputs that may not exist depending on event:
+      # - "!contains(inputs.dry-run, 'false')" to use input or fallback to true;
+      # - "contains(inputs.dry-run, 'true')" to use input or fallback to false.
       runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
-      dry-run: >-
-        ${{ 
-          github.event_name == 'workflow_dispatch' &&
-          inputs.dry-run || 
-          false
-        }}
-      require-lockfile: >-
-        ${{ 
-          github.event_name == 'workflow_dispatch' &&
-          inputs.require-lockfile || 
-          true
-        }}
-      check-spell: false
-      check-format: >-
-        ${{
-          github.event_name == 'workflow_dispatch' &&
-          inputs.check-format || 
-          true
-        }}
-      check-lint: >-
-        ${{ 
-          github.event_name == 'workflow_dispatch' &&
-          inputs.check-lint || 
-          true
-        }}
-      check-types: >-
-        ${{ 
-          github.event_name == 'workflow_dispatch' &&
-          inputs.check-types || 
-          true
-        }}
-      node-version-file: 'package.json'
+      dry-run: ${{ contains(inputs.dry-run, 'true') }}
+      require-lockfile: ${{ !contains(inputs.require-lockfile, 'false') }}
+      check-spell: ${{ !contains(inputs.check-spell, 'false') }}
+      check-format: ${{ !contains(inputs.check-format, 'false') }}
+      check-lint: ${{ !contains(inputs.check-lint, 'false') }}
+      check-types: ${{ !contains(inputs.check-types, 'false') }}
+      node-version-file: "package.json"
