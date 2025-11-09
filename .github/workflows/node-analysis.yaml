@@ -1,0 +1,362 @@
+name: Node Analysis
+run-name: >-
+  ${{ github.workflow }}
+  ${{ inputs.dry-run == 1 && ' 🧪' || '' }}
+  ${{ github.event.pull_request.draft == 1 && ' 📝' || '' }}
+
+on:
+  workflow_call:
+    inputs:
+      # Workflow Control Options
+      runs-on:
+        description: |
+          The type of machine to run the job on.
+          You can target runners based on labels assigned to them, group 
+          membership, or a combination of these, as `'["self-hosted", "linux"]'`,
+          `'{"group": "production","labels": ["self-hosted", "linux"]}'`, etc.
+        required: false
+        type: string
+        default: ubuntu-latest
+      dry-run:
+        description: |
+          Enable dry-run mode. This will skip steps that make changes.
+        required: false
+        type: boolean
+        default: false
+
+      # Static Code Analysis Options
+      require-lockfile:
+        description: |
+          Fail if lockfile is missing or out-of-date. Disable to allow
+          generating or updating an ephemeral lockfile on-the-fly.
+        required: false
+        type: boolean
+        default: true
+      check-spell:
+        description: |
+          Run `spell:check`, `check:spell`, `cspell` or `spell` package script
+          to check for spelling issues.
+        required: false
+        type: boolean
+        default: false
+      check-format:
+        description: |
+          Run `format:check`, `check:format` or `format` package script to
+          check code formatting.
+        required: false
+        type: boolean
+        default: true
+      check-lint:
+        description: |
+          Run `lint:check`, `check:lint` or `lint` package script to
+          check for linting issues.
+        required: false
+        type: boolean
+        default: true
+      check-types:
+        description: |
+          Run `types:check`, `check:types` or `types` package script to
+          check for type errors.
+        required: false
+        type: boolean
+        default: true
+
+      # Project Specific CI Config
+      # Additional configs can be set via `NODE_`, `NPM_`, or `YARN_` env vars.
+      node-version:
+        description: |
+          Node.js version spec to use. Falls back to `latest` if unset and 
+          `node-version-file` is unset or not found.
+          Examples: `24.x`, `24.8.1`, `>=24.8.1`, `latest`, `lts/Krypton`.
+        required: false
+        type: string
+      node-version-file:
+        description: |
+          File containing the Node.js version. Ignored if `node-version` is set.
+          Example: `package.json`, `.nvmrc`, `.node-version`, `.tool-versions`.
+        required: false
+        type: string
+      package-manager:
+        description: |
+          Node.js package manager to handle dependencies, scripts, and caching.
+          Examples: `npm`, `yarn`, `pnpm`, etc.
+          If unset, attempts to detect from lock files, falling back to `npm`.
+        required: false
+        type: string
+      registry-url:
+        description: |
+          Package registry URL to authenticate against and resolve dependencies
+          from. `env.NODE_AUTH_TOKEN` will be set as auth token when available.
+          Examples: `https://registry.npmjs.org`, `https://npm.pkg.github.com`.
+        required: false
+        type: string
+        default: https://registry.npmjs.org
+      npm-scope:
+        description: |
+          Scope for authenticating against scoped package registries.
+          Example: `@my-org`.
+          Falls back to repo owner when using GitHub Package Registry.
+        required: false
+        type: string
+      cache-dependencies:
+        description: |
+          Enable automatic caching of Node.js dependencies.
+        required: false
+        type: boolean
+        default: true
+
+    secrets:
+      registry-token:
+        description: |
+          Auth token for the package registry (E.g.: `secrets.NPM_TOKEN`).
+          Can also be set using the `NODE_AUTH_TOKEN` environment variable.
+          Defaults to `secrets.GITHUB_TOKEN` when using GitHub Package Registry.
+        required: false
+
+    outputs:
+      dry-run:
+        description: Whether dry-run mode is enabled.
+        value: ${{ jobs.analyze-code.outputs.dry-run }}
+      draft:
+        description: Whether the analyzed pull request is a draft.
+        value: ${{ jobs.analyze-code.outputs.draft }}
+      source-ref:
+        description: The source branch, tag or SHA ref that was checked out.
+        value: ${{ jobs.analyze-code.outputs.source-ref }}
+      source-commit:
+        description: The source commit SHA that was checked out.
+        value: ${{ jobs.analyze-code.outputs.source-commit }}
+      node-version:
+        description: The resolved Node.js version used in the workflow.
+        value: ${{ jobs.analyze-code.outputs.node-version }}
+      package-manager:
+        description: The package manager used in the workflow.
+        value: ${{ jobs.analyze-code.outputs.package-manager }}
+
+jobs:
+  analyze-code:
+    name: Analyze code
+
+    runs-on: >-
+      ${{
+        ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
+        fromJSON(inputs.runs-on) ||
+        inputs.runs-on
+      }}
+
+    outputs:
+      dry-run: ${{ inputs.dry-run == 1 }}
+      draft: ${{ github.event.pull_request.draft == 1 }}
+      source-ref: ${{ steps.checkout.outputs.ref }}
+      source-commit: ${{ steps.checkout.outputs.commit }}
+      node-version: ${{ steps.setup.outputs.node-version }}
+      package-manager: ${{ steps.install.outputs.package-manager }}
+
+    steps:
+      - name: Checkout source
+        id: checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: ${{ github.event.pull_request.commits || 1 }}
+
+      - name: >-
+          ${{ format('Setup node ({0})',
+            ( inputs.node-version != 0 &&
+              inputs.node-version ||
+              ( hashFiles(inputs.node-version-file) != 0 &&
+                inputs.node-version-file ||
+                'latest'
+              )
+            )
+          ) }}
+        id: setup
+        env:
+          NODE_AUTH_TOKEN: >-
+            ${{
+              secrets.registry-token ||
+              env.NODE_AUTH_TOKEN ||
+              ( contains(inputs.registry-url, 'npm.pkg.github.com') &&
+                secrets.GITHUB_TOKEN ||
+                ''
+              )
+            }}
+          PACKAGE_MANAGER_JSON: &package_manager_json >-
+            ${{
+              ( 
+                inputs.package-manager == 'pnpm' || 
+                ( inputs.package-manager == 0 && hashFiles('**/pnpm-lock.yaml') != 0 ) 
+              ) && 
+                format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                  'pnpm',
+                  'pnpm-lock.yaml',
+                  hashFiles('**/pnpm-lock.yaml') || 0
+                ) ||
+                ( 
+                  inputs.package-manager == 'yarn' || 
+                  ( inputs.package-manager == 0 && hashFiles('**/yarn.lock') != 0 ) 
+                ) && 
+                  format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                    'yarn',
+                    'yarn.lock',
+                    hashFiles('**/yarn.lock') || 0
+                  ) ||
+                format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
+                  'npm',
+                  'package-lock.json',
+                  hashFiles('**/package-lock.json') || 0
+                )
+            }}
+
+        uses: actions/setup-node@v6
+        with:
+          node-version: >-
+            ${{
+              ( inputs.node-version == 0 && 
+                hashFiles(inputs.node-version-file) == 0 
+              ) &&
+              'latest' ||
+              inputs.node-version
+            }}
+          node-version-file: ${{ inputs.node-version-file }}
+          cache: >-
+            ${{
+              inputs.cache-dependencies == 1 &&
+              fromJSON(env.PACKAGE_MANAGER_JSON).name ||
+              ''
+            }}
+          registry-url: ${{ inputs.registry-url }}
+          scope: ${{ inputs.npm-scope }}
+
+      - name: Install dependencies
+        id: install
+        env:
+          PACKAGE_MANAGER_JSON: *package_manager_json
+          REQUIRE_LOCKFILE: >-
+            ${{
+              inputs.require-lockfile != 0 &&
+              true ||
+              false
+            }}"
+        run: |
+          # Define global variables
+          PACKAGE_MANAGER_NAME="${{ fromJSON(env.PACKAGE_MANAGER_JSON).name || '' }}"
+          PACKAGE_MANAGER_LOCKFILE="${{ fromJSON(env.PACKAGE_MANAGER_JSON).lockfile }}"
+          SOURCE_LOCKFILE_HASH="${{ fromJSON(env.PACKAGE_MANAGER_JSON).hash || '' }}"
+          MANIFEST_FILE=$([[ -f "package.json" ]] && echo "package.json" || echo "")
+
+          # Null checks
+          if [ -z "${PACKAGE_MANAGER_NAME}" ]; then
+            echo "::error title=Package Manager Detection Failed::Could not detect a valid package manager. Please ensure that a supported lockfile is present or explicitly set the 'package-manager' input."
+            exit 1
+          fi
+
+          if [ -z "${MANIFEST_FILE}" ]; then
+            echo "::error title=Missing Manifest File::Could not find a valid 'package.json' manifest file in the repository root. Please ensure that the file is present."
+            exit 1
+          fi
+
+          # Output selected package manager and lockfile info
+          echo "Using package manager '${PACKAGE_MANAGER_NAME}'..."
+          echo "package-manager=${PACKAGE_MANAGER_NAME}" >> "${GITHUB_OUTPUT}"
+          echo "lockfile=${SOURCE_LOCKFILE_HASH:+${PACKAGE_MANAGER_LOCKFILE}}" >> "${GITHUB_OUTPUT}"
+          echo "manifest-file=${MANIFEST_FILE}" >> "${GITHUB_OUTPUT}"
+
+          # Check for lockfile presence
+          if [ "${SOURCE_LOCKFILE_HASH:-0}" = "0" ]; then
+
+            # Fail if lockfile is required but missing
+            if [ "${REQUIRE_LOCKFILE}" != "false" ]; then
+              echo "::error title=Missing Lockfile::Lockfile is required due to '${GITHUB_WORKFLOW}' Workflow enforcement but could not be found. Please ensure the lockfile (e.g., '${PACKAGE_MANAGER_LOCKFILE}') is committed to the repository."
+              exit 1
+            fi
+
+            # Warn if lockfile is missing but not required
+            echo "::warning title=Missing Lockfile::Lockfile '${PACKAGE_MANAGER_LOCKFILE}' not found. An ephemeral lockfile will be generated. Consider committing the lockfile and enforcing its presence by enabling 'require-lockfile' on '${GITHUB_WORKFLOW}' Workflow."
+          fi
+
+          # Install dependencies based on package manager and lockfile presence
+          case "${PACKAGE_MANAGER_NAME:-0}" in
+
+            npm)
+              if [ "${SOURCE_LOCKFILE_HASH:-0}" != "0" ]; then
+                npm ci
+              else
+                npm install
+              fi
+              ;;
+
+            yarn)
+              if [ "${SOURCE_LOCKFILE_HASH:-0}" != "0" ]; then
+                if yarn --version | grep --quiet --extended-regexp '^1\.'; then
+                  yarn install --frozen-lockfile
+                else
+                  yarn install --immutable
+                fi
+              else
+                yarn install
+              fi
+              ;;
+
+            pnpm)
+              if [ "${SOURCE_LOCKFILE_HASH:-0}" != "0" ]; then
+                pnpm install --frozen-lockfile
+              else
+                pnpm install
+              fi
+              ;;
+
+            *)
+              echo "::error title=Unsupported Package Manager::The package manager '${PACKAGE_MANAGER_NAME}' is not supported by this reuseable workflow."
+              exit 1
+              ;;
+          esac
+
+      - name: Check spell
+        id: spell
+        if: inputs.check-spell
+        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        env:
+          PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
+          RUN_CMDS: "spell:check check:spell cspell spell"
+          MANIFEST_FILE: "${{ steps.install.outputs.manifest-file }}"
+        run: &run_script_step |
+          STEP_ID="${GITHUB_ACTION:-null}"
+          for cmd in ${RUN_CMDS:-${STEP_ID^}}; do
+            if node -e "process.exit(require('./${MANIFEST_FILE}').scripts?.['${cmd}'] ? 0 : 1)" 2>/dev/null; then
+              echo "Running ${GITHUB_ACTION:-null} check via script '${cmd}'..."
+              ${PACKAGE_MANAGER} run ${cmd}
+              exit $?
+            fi
+          done
+          echo "::error title=${STEP_ID^} Check Script Not Found::No ${STEP_ID^} check script found. Please define one of the following scripts in your 'package.json': ${RUN_CMDS// /, }."
+          exit 1
+
+      - name: Check format
+        id: format
+        if: inputs.check-format
+        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        env:
+          PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
+          RUN_CMDS: "format:check check:format format"
+          MANIFEST_FILE: "${{ steps.install.outputs.manifest-file }}"
+        run: *run_script_step
+
+      - name: Check lint
+        id: lint
+        if: inputs.check-lint
+        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        env:
+          PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
+          RUN_CMDS: "lint:check check:lint lint"
+          MANIFEST_FILE: "${{ steps.install.outputs.manifest-file }}"
+        run: *run_script_step
+
+      - name: Check types
+        id: types
+        if: inputs.check-types
+        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        env:
+          PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
+          RUN_CMDS: "types:check check:types types"
+          MANIFEST_FILE: "${{ steps.install.outputs.manifest-file }}"
+        run: *run_script_step

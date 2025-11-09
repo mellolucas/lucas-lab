@@ -72,7 +72,8 @@ defaults:
 jobs:
   call-analysis:
     name: Call analysis
-    uses: lufomatics/reusables/.github/workflows/node-analysis.yaml@v1
+    uses: .github/workflows/node-analysis.yaml
+    # uses: lufomatics/reusables/.github/workflows/node-analysis.yaml@v1
     secrets:
       registry-token: ${{ secrets.NPM_TOKEN }}
 
