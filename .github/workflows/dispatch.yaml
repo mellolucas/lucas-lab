@@ -35,6 +35,10 @@ jobs:
   test-dispatch:
     runs-on: ubuntu-latest
 
+    outputs:
+      steps-context: ${{ toJSON(steps) }}
+      steps-bypassed-failed: ${{ contains(steps.*.outcome, 'failure') }}
+
     steps:
       - name: Print context
         env:
@@ -89,4 +93,24 @@ jobs:
           echo
           echo "Any bypassed step failed?"
           echo ${{ contains(steps.*.outcome, 'failure') }}
+          echo
+
+  inspect-job-context:
+    runs-on: ubuntu-latest
+    needs: test-dispatch
+    if: always()
+    env:
+      PREVIOUS_JOB_STEPS_OUTPUT: "${{ needs.test-dispatch.outputs.steps-context }}"
+      PREVIOUS_JOB_STEPS_CONTEXT: "${{ toJSON(needs) }}"
+    steps:
+      - name: Inspect job context
+        run: |
+          echo "Job conclusions:"
+          echo "${{ join(needs.*.result.conclusion, ', ') }}"
+          echo
+          echo "Job outcomes:"
+          echo "${{ join(needs.*.result.outcome, ', ') }}"
+          echo
+          echo "Any bypassed job failed?"
+          echo ${{ contains(needs.*.result.outcome, 'failure') }}
           echo
