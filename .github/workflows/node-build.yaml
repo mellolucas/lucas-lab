@@ -117,6 +117,7 @@ jobs:
       }}
 
     outputs:
+      outcome: ${{ }}
       dry-run: ${{ inputs.dry-run == 1 }}
       draft: ${{ github.event.pull_request.draft == 1 }}
       source-ref: ${{ steps.checkout.outputs.ref }}

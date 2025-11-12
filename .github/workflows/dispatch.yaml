@@ -35,12 +35,6 @@ jobs:
   test-dispatch:
     runs-on: ubuntu-latest
 
-    outputs:
-      steps-context: ${{ toJSON(steps) }}
-      steps-bypassed-failed: ${{ contains(steps.*.outcome, 'failure') }}
-      job-status: ${{ job.status }}
-      job-status-from-jobs: ${{ needs.test-dispatch.result || 'null' }}
-
     steps:
       - name: Print context
         id: context
@@ -104,6 +98,12 @@ jobs:
           echo "current job status:"
           echo "${{ job.status }}"
           echo
+    outputs:
+      steps-context: ${{ toJSON(steps) }}
+      steps-bypassed-failed: ${{ contains(steps.*.outcome, 'failure') }}
+      job-status: ${{ job.status }}
+      job-status-from-jobs: ${{ needs.test-dispatch.result || 'null' }}
+
 
   inspect-job-context:
     runs-on: ubuntu-latest
