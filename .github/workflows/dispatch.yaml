@@ -110,8 +110,7 @@ jobs:
 
       - name: Skippable
         id: test-skip
-        continue-on-error: ${{ inputs.continue-on-error }}
-        if: inputs.first-input != 'skip'
+        if: inputs.second-input != 'skip'
         run: echo "To check if outcome job.status is set to the last step status"
 
   inspect-job-context:
