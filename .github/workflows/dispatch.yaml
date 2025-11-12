@@ -39,6 +39,7 @@ jobs:
       steps-context: ${{ toJSON(steps) }}
       steps-bypassed-failed: ${{ contains(steps.*.outcome, 'failure') }}
       job-status: ${{ job.status }}
+      job-status-from-jobs: ${{ needs.test-dispatch.result }}
 
     steps:
       - name: Print context
@@ -124,3 +125,4 @@ jobs:
           echo "Any bypassed job failed?"
           echo ${{ contains(needs.*.result.outcome, 'failure') }}
           echo
+
