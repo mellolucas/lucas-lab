@@ -1,6 +1,8 @@
 name: Dispatch Test
 run-name: >-
   ${{ github.workflow }}
+  ${{ inputs.break == 1 && ' 💥' || ''}}
+  ${{ inputs.continue-on-error == 1 && ' ⚠️' || ''}}
   ${{ format('(1:{0}; 2:{1};)', inputs.first-input, inputs.second-input) }}
 
 on:
@@ -8,6 +10,11 @@ on:
     inputs:
       break:
         description: "Break the workflow"
+        required: false
+        type: boolean
+        default: false
+      continue-on-error:
+        description: "Continue on error"
         required: false
         type: boolean
         default: false
@@ -19,11 +26,6 @@ on:
         description: "My second input"
         required: false
         type: string
-      boolean-input:
-        description: "A boolean input"
-        required: false
-        type: boolean
-        default: false
 
 env:
   FIRST_INPUT: ${{ inputs.first-input }}
@@ -56,8 +58,15 @@ jobs:
           jq . <<< "${GH_RUNNER}"
           echo "::endgroup::"
           echo
+          echo "---"
+          echo
+          echo "::group::Steps context:"
+          echo "${{ toJSON(steps) }}"
+          echo "::endgroup::"
+          echo
 
       - name: Run test
+        continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
@@ -65,76 +74,19 @@ jobs:
           echo "First input from env: $FIRST_INPUT"
           echo "Second input: ${{ inputs.second-input }}"
           echo "Second input from env: $SECOND_INPUT"
-          echo "Boolean input: ${{ inputs.boolean-input }}"
-          echo "Boolean input from env: ${{ env.BOOLEAN_INPUT }}"
-          echo
-          echo "Boolean direct evaluation: "
-          echo "${{ inputs.boolean-input }}"
-          echo "Boolean direct evaluation negated: "
-          echo "${{ !inputs.boolean-input }}"
-          echo "Boolean within contains() evaluation compared to false: "
-          echo "${{ contains(inputs.boolean-input, 'false') }}"
-          echo "Boolean within contains() evaluation compared to true: "
-          echo "${{ contains(inputs.boolean-input, 'true') }}"
-          echo "Boolean within contains() evaluation compared to false  negated: "
-          echo "${{ !contains(inputs.boolean-input, 'false') }}"
-          echo "Boolean within contains() evaluation compared to true  negated: "
-          echo "${{ !contains(inputs.boolean-input, 'true') }}"
-          echo "Use boolean directly when ternary evaluates to true: "
-          echo "${{ true && inputs.boolean-input || 'default-value' }}"
-          echo "Use boolean compared to false within contains() when ternary evaluates to true: "
-          echo "${{ true && contains(inputs.boolean-input, 'false') || 'default-value' }}"
-          echo "Use boolean directly negated when ternary evaluates to true: "
-          echo "${{ true && !inputs.boolean-input || 'default-value' }}"
-          echo "Use boolean compared to false within contains() negated when ternary evaluates to true: "
-          echo "${{ true && !contains(inputs.boolean-input, 'false') || 'default-value' }}"
-          echo
-          echo
-          echo "Now, all equal, but with non existing input (that shouldnt be chosen and must fallback to default value):"
-          echo "Boolean direct evaluation: "
-          echo "${{ inputs.null-input }}"
-          echo "Boolean direct evaluation negated: "
-          echo "${{ !inputs.null-input }}"
-          echo "Boolean within contains() evaluation compared to false: "
-          echo "${{ contains(inputs.null-input, 'false') }}"
-          echo "Boolean within contains() evaluation compared to true: "
-          echo "${{ contains(inputs.null-input, 'true') }}"
-          echo "Boolean within contains() evaluation compared to false  negated: "
-          echo "${{ !contains(inputs.null-input, 'false') }}"
-          echo "Boolean within contains() evaluation compared to true  negated: "
-          echo "${{ !contains(inputs.null-input, 'true') }}"
-          echo "Use boolean directly when ternary evaluates to true: "
-          echo "${{ true && inputs.null-input || 'default-value' }}"
-          echo "Use boolean compared to false within contains() when ternary evaluates to true: "
-          echo "${{ true && contains(inputs.null-input, 'false') || 'default-value' }}"
-          echo "Use boolean directly negated when ternary evaluates to true: "
-          echo "${{ true && !inputs.null-input || 'default-value' }}"
-          echo "Use boolean compared to false within contains() negated when ternary evaluates to true: "
-          echo "${{ true && !contains(inputs.null-input, 'false') || 'default-value' }}"
-          echo
-          echo
-          echo
-          echo "Now, all above, but using events.inputs:"
-          echo "Boolean direct evaluation: "
-          echo "${{ github.event.inputs.null-input }}"
-          echo "Boolean direct evaluation negated: "
-          echo "${{ !github.event.inputs.null-input }}"
-          echo "Boolean within contains() evaluation compared to false: "
-          echo "${{ contains(github.event.inputs.null-input, 'false') }}"
-          echo "Boolean within contains() evaluation compared to true: "
-          echo "${{ contains(github.event.inputs.null-input, 'true') }}"
-          echo "Boolean within contains() evaluation compared to false  negated: "
-          echo "${{ !contains(github.event.inputs.null-input, 'false') }}"
-          echo "Boolean within contains() evaluation compared to true  negated: "
-          echo "${{ !contains(github.event.inputs.null-input, 'true') }}"
-          echo "Use boolean directly when ternary evaluates to true: "
-          echo "${{ true && github.event.inputs.null-input || 'default-value' }}"
-          echo "Use boolean compared to false within contains() when ternary evaluates to true: "
-          echo "${{ true && contains(github.event.inputs.null-input, 'false') || 'default-value' }}"
-          echo "Use boolean directly negated when ternary evaluates to true: "
-          echo "${{ true && !github.event.inputs.null-input || 'default-value' }}"
-          echo "Use boolean compared to false within contains() negated when ternary evaluates to true: "
-          echo "${{ true && !contains(github.event.inputs.null-input, 'false') || 'default-value' }}"
-          echo
           echo
 
+      - name: Inspect steps context
+        run: |
+          echo "Steps context:"
+          echo "${{ toJSON(steps) }}"
+          echo
+          echo "Steps conclusions:"
+          echo "${{ join(steps.*.conclusion, ', ') }}"
+          echo
+          echo "Steps outcomes:"
+          echo "${{ join(steps.*.outcome, ', ') }}"
+          echo
+          echo "Any bypassed step failed?"
+          echo ${{ contains(steps.*.outcome, 'failure') }}
+          echo

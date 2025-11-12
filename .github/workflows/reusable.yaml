@@ -23,6 +23,10 @@ on:
         required: false
         type: boolean
         default: false
+    outputs:
+      jobs-context:
+        description: "The jobs context serialized to JSON"
+        value: ${{ toJSON(jobs) }}
 
 env:
   INPUT: ${{ inputs.input }}
@@ -64,6 +68,12 @@ jobs:
           echo
           echo "::group::Runner context toJSON:"
           jq . <<< "${GH_RUNNER}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::Steps context:"
+          echo "${{ toJSON(steps) }}"
           echo "::endgroup::"
           echo
 
