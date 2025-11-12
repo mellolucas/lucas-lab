@@ -73,6 +73,7 @@ jobs:
       - name: Run test
         id: test-step
         continue-on-error: ${{ inputs.continue-on-error }}
+        if: inputs.first-input != 'skip'
         run: |
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
@@ -96,6 +97,9 @@ jobs:
           echo
           echo "Any bypassed step failed?"
           echo ${{ contains(steps.*.outcome, 'failure') }}
+          echo
+          echo "current job status:"
+          echo "${{ job.status }}"
           echo
 
   inspect-job-context:
