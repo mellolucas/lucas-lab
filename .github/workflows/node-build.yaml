@@ -86,6 +86,8 @@ on:
         required: false
 
     outputs:
+      outcome: 
+        description: The overall outcome 
       dry-run:
         description: Whether dry-run mode is enabled.
         value: ${{ jobs.analyze-code.outputs.dry-run }}
@@ -117,7 +119,10 @@ jobs:
       }}
 
     outputs:
-      outcome: ${{ }}
+      outcome: ${{ 
+        contains(steps.*.outcome, 'failure') && 'failure' ||
+        job.status || 'cancelled' 
+      }}
       dry-run: ${{ inputs.dry-run == 1 }}
       draft: ${{ github.event.pull_request.draft == 1 }}
       source-ref: ${{ steps.checkout.outputs.ref }}

@@ -35,6 +35,11 @@ jobs:
   test-dispatch:
     runs-on: ubuntu-latest
 
+    outputs:
+      steps-context: ${{ toJSON(steps) }}
+      steps-bypassed-failed: ${{ contains(steps.*.outcome, 'failure') }}
+      job-status: ${{ job.status }}
+
     steps:
       - name: Print context
         id: context
@@ -65,6 +70,10 @@ jobs:
           echo "${{ toJSON(steps) }}"
           echo "::endgroup::"
           echo
+
+      - name: Sleep
+        id: sleep
+        run: sleep 5
 
       - name: Run test
         id: test-step
@@ -98,12 +107,12 @@ jobs:
           echo "current job status:"
           echo "${{ job.status }}"
           echo
-    outputs:
-      steps-context: ${{ toJSON(steps) }}
-      steps-bypassed-failed: ${{ contains(steps.*.outcome, 'failure') }}
-      job-status: ${{ job.status }}
-      job-status-from-jobs: ${{ needs.test-dispatch.result || 'null' }}
 
+      - name: Skippable
+        id: test-skip
+        continue-on-error: ${{ inputs.continue-on-error }}
+        if: inputs.first-input != 'skip'
+        run: echo "To check if outcome job.status is set to the last step status"
 
   inspect-job-context:
     runs-on: ubuntu-latest
