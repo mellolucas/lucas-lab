@@ -42,6 +42,7 @@ jobs:
       }}
     steps:
       - name: Print context
+        id: context
         env:
           GH_CONTEXT: ${{ toJSON(github) }}
           GH_INPUTS: ${{ toJSON(inputs) }}
@@ -78,6 +79,7 @@ jobs:
           echo
 
       - name: Run test
+        id: test
         run: |
           echo test
           echo "---      ---      ---"

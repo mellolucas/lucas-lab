@@ -41,6 +41,7 @@ jobs:
 
     steps:
       - name: Print context
+        id: context
         env:
           GH_CONTEXT: ${{ toJSON(github) }}
           GH_INPUTS: ${{ toJSON(inputs) }}
@@ -70,6 +71,7 @@ jobs:
           echo
 
       - name: Run test
+        id: test-step
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
@@ -81,6 +83,7 @@ jobs:
           echo
 
       - name: Inspect steps context
+        id: inspect-steps
         run: |
           echo "Steps context:"
           echo "${{ toJSON(steps) }}"
@@ -104,6 +107,7 @@ jobs:
       PREVIOUS_JOB_STEPS_CONTEXT: "${{ toJSON(needs) }}"
     steps:
       - name: Inspect job context
+        id: inspect-job
         run: |
           echo "Job conclusions:"
           echo "${{ join(needs.*.result.conclusion, ', ') }}"

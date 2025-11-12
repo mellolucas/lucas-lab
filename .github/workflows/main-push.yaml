@@ -15,6 +15,7 @@ jobs:
       GH_INPUTS: ${{ toJSON(inputs) }}
     steps:
       - name: Print context
+        id: context
         env:
           GH_RUNNER: ${{ toJSON(runner) }}
         run: |
