@@ -1,4 +1,4 @@
-name: Node Analysis
+name: Node Build
 run-name: >-
   ${{ github.workflow }}
   ${{ inputs.dry-run == 1 && ' 🧪' || '' }}
@@ -29,34 +29,6 @@ on:
         description: |
           Fail if lockfile is missing or out-of-date. Disable to allow
           generating or updating an ephemeral lockfile on-the-fly.
-        required: false
-        type: boolean
-        default: true
-      check-spell:
-        description: |
-          Run `spell:check`, `check:spell`, `cspell` or `spell` package script
-          to check for spelling issues.
-        required: false
-        type: boolean
-        default: false
-      check-format:
-        description: |
-          Run `format:check`, `check:format` or `format` package script to
-          check code formatting.
-        required: false
-        type: boolean
-        default: true
-      check-lint:
-        description: |
-          Run `lint:check`, `check:lint` or `lint` package script to
-          check for linting issues.
-        required: false
-        type: boolean
-        default: true
-      check-types:
-        description: |
-          Run `types:check`, `check:types` or `types` package script to
-          check for type errors.
         required: false
         type: boolean
         default: true
@@ -311,9 +283,8 @@ jobs:
               ;;
           esac
 
-      - name: Check spell
-        id: spell
-        if: inputs.check-spell
+      - name: Build
+        id: build
         continue-on-error: ${{ github.event.pull_request.draft == 1 }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"

@@ -72,8 +72,7 @@ defaults:
 jobs:
   call-analysis:
     name: Call analysis
-    uses: .github/workflows/node-analysis.yaml
-    # uses: lufomatics/reusables/.github/workflows/node-analysis.yaml@v1
+    uses: lufomatics/reusables/.github/workflows/node-analysis.yaml@v1
     secrets:
       registry-token: ${{ secrets.NPM_TOKEN }}
 
@@ -89,3 +88,10 @@ jobs:
       check-lint: ${{ !contains(inputs.check-lint, 'false') }}
       check-types: ${{ !contains(inputs.check-types, 'false') }}
       node-version-file: "package.json"
+
+  call-build:
+    name: Call build
+    needs: call-analysis
+    uses: .github/workflows/node-build.yaml
+    secrets:
+      registry-token: ${{ secrets.NPM_TOKEN }}

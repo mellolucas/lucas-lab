@@ -84,6 +84,7 @@ jobs:
           echo
 
       - name: Inspect steps context
+        if: always()
         id: inspect-steps
         run: |
           echo "Steps context:"
