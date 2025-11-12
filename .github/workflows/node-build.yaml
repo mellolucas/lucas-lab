@@ -87,7 +87,21 @@ on:
 
     outputs:
       outcome: 
-        description: The overall outcome 
+        description: The overall outcome of the reuseable workflow.
+        value: >-
+          ${{
+            contains(jobs.*.outcome, 'failure') && 
+              'failure' ||
+              contains(jobs.*.result, 'failure') && 
+                'failure' ||
+              contains(jobs.*.result, 'cancelled') && 
+                'cancelled' ||
+              !contains(jobs.*.result, 'success') && 
+                'skipped' ||
+              contains(jobs.*.result, 'success') && 
+                'success' ||
+              'null'
+          }}
       dry-run:
         description: Whether dry-run mode is enabled.
         value: ${{ jobs.analyze-code.outputs.dry-run }}
@@ -119,10 +133,13 @@ jobs:
       }}
 
     outputs:
-      outcome: ${{ 
-        contains(steps.*.outcome, 'failure') && 'failure' ||
-        job.status || 'cancelled' 
-      }}
+      outcome: >-
+        ${{ 
+          contains(steps.*.outcome, 'failure') && 
+            'failure' ||
+            job.status || 
+            'null' 
+        }}
       dry-run: ${{ inputs.dry-run == 1 }}
       draft: ${{ github.event.pull_request.draft == 1 }}
       source-ref: ${{ steps.checkout.outputs.ref }}

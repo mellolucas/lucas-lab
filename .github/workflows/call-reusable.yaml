@@ -55,3 +55,21 @@ jobs:
     with:
       input: ${{ inputs.my-input }}
       runs-on: ${{ inputs.runs-on }}
+
+  inspect-reusable:
+    needs: call-reusable
+    runs-on: ubuntu-latest
+    env:
+      REUSABLE_CONTEXT: ${{ toJSON(needs) }}
+    steps:
+      - name: Print reusable workflow context
+        run: |
+          echo "::group::Reusable workflow full context toJSON:"
+          echo "${{ toJSON(needs) }}" | jq . || true
+          echo "::endgroup::"
+          echo 
+          echo "---"
+          echo
+          echo "::group::Reusable workflow job outputs toJSON:"
+          echo "${{ toJSON(needs.call-reusable.outputs) }}" 
+          echo

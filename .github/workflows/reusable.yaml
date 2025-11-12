@@ -27,6 +27,22 @@ on:
       jobs-context:
         description: "The jobs context serialized to JSON"
         value: ${{ toJSON(jobs) }}
+      outcome: 
+        description: The overall outcome of the reuseable workflow.
+        value: >-
+          ${{
+            contains(jobs.*.outcome, 'failure') && 
+              'failure' ||
+              contains(jobs.*.result, 'failure') && 
+                'failure' ||
+              contains(jobs.*.result, 'cancelled') && 
+                'cancelled' ||
+              !contains(jobs.*.result, 'success') && 
+                'skipped' ||
+              contains(jobs.*.result, 'success') && 
+                'success' ||
+              'null'
+          }}
 
 env:
   INPUT: ${{ inputs.input }}
@@ -39,6 +55,13 @@ jobs:
         ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
         fromJSON(inputs.runs-on) ||
         inputs.runs-on
+      }}
+    outcome: >-
+      ${{ 
+        contains(steps.*.outcome, 'failure') && 
+          'failure' ||
+          job.status || 
+          'null' 
       }}
     steps:
       - name: Print context
