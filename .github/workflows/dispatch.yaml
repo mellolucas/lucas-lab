@@ -17,11 +17,11 @@ on:
         required: false
         type: string
       string-input:
-        description: "Reusable input"
+        description: "My string input"
         required: false
         type: string
       boolean-input:
-        description: "Another reusable input"
+        description: "My boolean input"
         required: false
         type: boolean
       break:
