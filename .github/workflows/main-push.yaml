@@ -42,9 +42,10 @@ jobs:
           echo
 
   call-reusable:
+    if: ${{ !contains(github.event.pull_reuest.title, 'skipreusable') }}
     uses: ./.github/workflows/reusable.yaml
     with:
-    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
+      runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
       string-input: ${{ github.event.pull_reuest.title }}
       boolean-input: ${{ contains(github.event.pull_reuest.title, 'true') }}
       break: ${{ contains(github.event.pull_reuest.title, 'break') }}

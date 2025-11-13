@@ -69,6 +69,7 @@ jobs:
         fromJSON(inputs.runs-on) ||
         inputs.runs-on
       }}
+    if: ${{ inputs.string-input != 'skipjob' && !contains(github.event.pull_reuest.title, 'skipjob') }}
     outputs:
       outcome: >-
         ${{ 
@@ -150,7 +151,7 @@ jobs:
 
       - name: Skippable
         id: skippable
-        if: inputs.string-input != 'skip'
+        if: ${{ inputs.string-input != 'skip' && !contains(github.event.pull_reuest.title, 'skip') }}
         run: echo "This step was not skipped."
 
       - name: Sleep

@@ -82,6 +82,7 @@ jobs:
           echo
 
   call-reusable:
+    if: inputs.string-input != 'skipreusable'
     uses: ./.github/workflows/reusable.yaml
     with:
       runs-on: ${{ inputs.runs-on }}
