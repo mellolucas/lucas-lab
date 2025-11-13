@@ -1,28 +1,40 @@
 name: Reusable Test
 run-name: >-
   ${{ github.workflow }}
-  ${{ format('(runs-on:{0}; input:{1};)', inputs.runs-on, inputs.input) }}
+  ${{ inputs.break == 1 && ' 💥' || ''}}
+  ${{ inputs.continue-on-error == 1 && ' ⚠️' || ''}}
+  ${{ format('(string:{0}; boolean:{1}; runs-on:{{2}})', 
+    inputs.string-input, 
+    inputs.boolean-input, 
+    inputs.runs-on
+  ) }}
 
 on:
   workflow_call:
     inputs:
-      input:
-        description: "Reusable input"
-        required: false
-        type: string
-      another-input:
-        description: "Another reusable input"
-        required: false
-        type: string
       runs-on:
         description: "runs-on argument"
         required: false
         type: string
+      string-input:
+        description: "Reusable input"
+        required: false
+        type: string
+      boolean-input:
+        description: "Another reusable input"
+        required: false
+        type: boolean
       break:
         description: "Break the workflow"
         required: false
         type: boolean
         default: false
+      continue-on-error:
+        description: "Continue on error"
+        required: false
+        type: boolean
+        default: false
+
     outputs:
       jobs-context:
         description: "The jobs context serialized to JSON"
@@ -45,7 +57,8 @@ on:
           }}
 
 env:
-  INPUT: ${{ inputs.input }}
+  STRING_INPUT: ${{ inputs.string-input }}
+  BOOLEAN_INPUT: ${{ inputs.boolean-input }}
   RUNS_ON: ${{ inputs.runs-on }}
 
 jobs:
@@ -56,13 +69,14 @@ jobs:
         fromJSON(inputs.runs-on) ||
         inputs.runs-on
       }}
-    outcome: >-
-      ${{ 
-        contains(steps.*.outcome, 'failure') && 
-          'failure' ||
-          job.status || 
-          'null' 
-      }}
+    outputs:
+      outcome: >-
+        ${{ 
+          contains(steps.*.outcome, 'failure') && 
+            'failure' ||
+            job.status || 
+            'null' 
+        }}
     steps:
       - name: Print context
         id: context
@@ -72,6 +86,39 @@ jobs:
           GH_RUNNER: ${{ toJSON(runner) }}
           GH_EVENT: ${{ toJSON(github.event) }}
         run: |
+          echo "::group::Inputs with different access methods:"
+          echo "inputs.string-input: ${{ inputs.string-input }}"
+          echo "inputs['string-input']: ${{ inputs['string-input'] }}"
+          echo "github.event.inputs.string-input: ${{ github.event.inputs.string-input }}"
+          echo "toJSON(inputs.string-input): ${{ toJSON(inputs.string-input) }}"
+          echo "toJSON(inputs['string-input']): ${{ toJSON(inputs['string-input']) }}"
+          echo "toJSON(github.event.inputs.string-input): ${{ toJSON(github.event.inputs.string-input) }}"
+          echo "env.STRING_INPUT: ${{ env.STRING_INPUT }}"
+          echo "\${STRING_INPUT}: ${STRING_INPUT}"
+          echo
+          echo "inputs.boolean-input: ${{ inputs.boolean-input }}"
+          echo "inputs['boolean-input']: ${{ inputs['boolean-input'] }}"
+          echo "github.event.inputs.boolean-input: ${{ github.event.inputs.boolean-input }}"
+          echo "toJSON(inputs['boolean-input']): ${{ toJSON(inputs.boolean-input) }}"
+          echo "toJSON(inputs['boolean-input']): ${{ toJSON(inputs['boolean-input']) }}"
+          echo "toJSON(github.event.inputs.boolean-input): ${{ toJSON(github.event.inputs.boolean-input) }}"
+          echo "env.BOOLEAN_INPUT: ${{ env.BOOLEAN_INPUT }}"
+          echo "\${BOOLEAN_INPUT}: ${BOOLEAN_INPUT}"
+          echo "::endgroup::"
+          echo 
+          echo "::group::boolean-input comparisons:"
+          echo "inputs.boolean-input == true: ${{ inputs.boolean-input == true && 'true' || 'false' }}"
+          echo "inputs.boolean-input == false: ${{ inputs.boolean-input == false && 'true' || 'false' }}"
+          echo "inputs.boolean-input == 1: ${{ inputs.boolean-input == 1 && 'true' || 'false' }}"
+          echo "inputs.boolean-input == 0: ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
+          echo "contains(inputs.boolean-input, 'true'): ${{ contains(inputs.boolean-input, 'true') && 'true' || 'false' }}"
+          echo "contains(inputs.boolean-input, 'false'): ${{ contains(inputs.boolean-input, 'false') && 'true' || 'false' }}"
+          echo "!contains(inputs.boolean-input, 'true'): ${{ !contains(inputs.boolean-input, 'true') && 'true' || 'false' }}"
+          echo "!contains(inputs.boolean-input, 'false'): ${{ !contains(inputs.boolean-input, 'false') && 'true' || 'false' }}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
           echo "::group::Inputs toJSON (raw block deserialized):"
           jq . <<< "${GH_INPUTS}"
           echo "::endgroup::"
@@ -101,8 +148,18 @@ jobs:
           echo "::endgroup::"
           echo
 
+      - name: Skippable
+        id: skippable
+        if: inputs.string-input != 'skip'
+        run: echo "This step was not skipped."
+
+      - name: Sleep
+        id: sleep
+        run: sleep 5
+
       - name: Run test
         id: test
+        continue-on-error: ${{ inputs.continue-on-error == 1 }}
         run: |
           echo test
           echo "---      ---      ---"

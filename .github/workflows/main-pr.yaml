@@ -1,29 +1,29 @@
 name: Main PR Test
 run-name: >-
   ${{ github.workflow }}
+  ${{ contains(github.event.pull_reuest.title, 'break') && ' 💥' || ''}}
+  ${{ github.event.pull_request.draft == 1 && ' ⚠️' || ''}}
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited, ready_for_review]
   
+
+env:
+  STRING_INPUT: ${{ github.event.pull_request.title }}
+  BOOLEAN_INPUT: ${{ contains(github.event.pull_reuest.title, 'true') }}
+
 jobs:
   context:
     runs-on: ubuntu-latest
     env:
       GH_CONTEXT: ${{ toJSON(github) }}
-      GH_INPUTS: ${{ toJSON(inputs) }}
     steps:
       - name: Print context
         id: context
         env:
           GH_RUNNER: ${{ toJSON(runner) }}
         run: |
-          echo "::group::Inputs toJSON (raw block deserialized):"
-          jq . <<< "${GH_INPUTS}"
-          echo "::endgroup::"
-          echo
-          echo "---"
-          echo
           echo "::group::GitHub context toJSON:"
           jq . <<< "${GH_CONTEXT}"
           echo "::endgroup::"
@@ -34,9 +34,36 @@ jobs:
           jq . <<< "${GH_RUNNER}"
           echo "::endgroup::"
           echo
+          echo "---"
+          echo
+          echo "::group::Steps context:"
+          echo "${{ toJSON(steps) }}"
+          echo "::endgroup::"
+          echo
 
   call-reusable:
     uses: ./.github/workflows/reusable.yaml
     with:
-      input: '{"foo": ["bar", "baz"]}'
-      runs-on: '["ubuntu-latest"]'
+      runs-on: ubuntu-latest
+      string-input: ${{ github.event.pull_reuest.title }}
+      boolean-input: ${{ contains(github.event.pull_reuest.title, 'true') }}
+      break: ${{ contains(github.event.pull_reuest.title, 'break') }}
+      continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+
+  inspect-reusable:
+    needs: call-reusable
+    runs-on: ubuntu-latest
+    env:
+      REUSABLE_CONTEXT: ${{ toJSON(needs) }}
+    steps:
+      - name: Print reusable workflow context
+        run: |
+          echo "::group::Reusable workflow full context toJSON:"
+          echo "${{ toJSON(needs) }}" | jq . || true
+          echo "::endgroup::"
+          echo 
+          echo "---"
+          echo
+          echo "::group::Reusable workflow job outputs toJSON:"
+          echo "${{ toJSON(needs.call-reusable.outputs) }}" 
+          echo

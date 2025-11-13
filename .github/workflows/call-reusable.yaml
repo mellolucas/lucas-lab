@@ -1,24 +1,44 @@
 name: Call Reusable Test
 run-name: >-
   ${{ github.workflow }}
-  ${{ format('(input:{0}; runs-on:{1};)', inputs.my-input, inputs.runs-on) }}
+  ${{ inputs.break == 1 && ' 💥' || ''}}
+  ${{ inputs.continue-on-error == 1 && ' ⚠️' || ''}}
+  ${{ format('(string:{0}; boolean:{1}; runs-on:{{2}})', 
+    inputs.string-input, 
+    inputs.boolean-input, 
+    inputs.runs-on
+  ) }}
 
 on:
   workflow_dispatch:
     inputs:
-      my-input:
-        description: "My input"
-        required: false
-        type: string
-        # default: '{"foo": ["bar", "baz"]}'
       runs-on:
         description: "runs-on argument"
         required: false
         type: string
         default: '["ubuntu-latest"]'
+      string-input:
+        description: "My input"
+        required: false
+        type: string
+        # default: '{"foo": ["bar", "baz"]}'
+      boolean-input:
+        description: "My boolean input"
+        required: false
+        type: boolean
+      break:
+        description: "Break the workflow"
+        required: false
+        type: boolean
+        default: false
+      continue-on-error:
+        description: "Continue on error"
+        required: false
+        type: boolean
 
 env:
-  MY_INPUT: ${{ inputs.my-input }}
+  STRING_INPUT: ${{ inputs.string-input }}
+  BOOLEAN_INPUT: ${{ inputs.boolean-input }}
   RUNS_ON: ${{ inputs.runs-on }}
 
 jobs:
@@ -49,12 +69,21 @@ jobs:
           jq . <<< "${GH_RUNNER}"
           echo "::endgroup::"
           echo
+          echo "---"
+          echo
+          echo "::group::Steps context:"
+          echo "${{ toJSON(steps) }}"
+          echo "::endgroup::"
+          echo
 
   call-reusable:
     uses: ./.github/workflows/reusable.yaml
     with:
-      input: ${{ inputs.my-input }}
       runs-on: ${{ inputs.runs-on }}
+      string-input: ${{ inputs.string-input }}
+      boolean-input: ${{ inputs.boolean-input }}
+      break: ${{ inputs.break }}
+      continue-on-error: ${{ inputs.continue-on-error }}
 
   inspect-reusable:
     needs: call-reusable

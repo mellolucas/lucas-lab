@@ -3,11 +3,27 @@ run-name: >-
   ${{ github.workflow }}
   ${{ inputs.break == 1 && ' 💥' || ''}}
   ${{ inputs.continue-on-error == 1 && ' ⚠️' || ''}}
-  ${{ format('(1:{0}; 2:{1};)', inputs.first-input, inputs.second-input) }}
+  ${{ format('(string:{0}; boolean:{1}; runs-on:{{2}})', 
+    inputs.string-input, 
+    inputs.boolean-input, 
+    inputs.runs-on
+  ) }}
 
 on:
   workflow_dispatch:
     inputs:
+      runs-on:
+        description: "runs-on argument"
+        required: false
+        type: string
+      string-input:
+        description: "Reusable input"
+        required: false
+        type: string
+      boolean-input:
+        description: "Another reusable input"
+        required: false
+        type: boolean
       break:
         description: "Break the workflow"
         required: false
@@ -18,18 +34,11 @@ on:
         required: false
         type: boolean
         default: false
-      first-input:
-        description: "My first input"
-        required: false
-        type: string
-      second-input:
-        description: "My second input"
-        required: false
-        type: string
 
 env:
-  FIRST_INPUT: ${{ inputs.first-input }}
-  SECOND_INPUT: ${{ inputs.second-input }}
+  STRING_INPUT: ${{ inputs.string-input }}
+  BOOLEAN_INPUT: ${{ inputs.boolean-input }}
+  RUNS_ON: ${{ inputs.runs-on }}
 
 jobs:
   test-dispatch:
@@ -37,8 +46,14 @@ jobs:
 
     outputs:
       steps-context: ${{ toJSON(steps) }}
-      steps-bypassed-failed: ${{ contains(steps.*.outcome, 'failure') }}
-      job-status: ${{ job.status }}
+      job-context: ${{ toJSON(job) }}
+      outcome: >-
+        ${{ 
+          contains(steps.*.outcome, 'failure') && 
+            'failure' ||
+            job.status || 
+            'null' 
+        }}
 
     steps:
       - name: Print context
@@ -47,7 +62,41 @@ jobs:
           GH_CONTEXT: ${{ toJSON(github) }}
           GH_INPUTS: ${{ toJSON(inputs) }}
           GH_RUNNER: ${{ toJSON(runner) }}
+          GH_EVENT: ${{ toJSON(github.event) }}
         run: |
+          echo "::group::Inputs with different access methods:"
+          echo "inputs.string-input: ${{ inputs.string-input }}"
+          echo "inputs['string-input']: ${{ inputs['string-input'] }}"
+          echo "github.event.inputs.string-input: ${{ github.event.inputs.string-input }}"
+          echo "toJSON(inputs.string-input): ${{ toJSON(inputs.string-input) }}"
+          echo "toJSON(inputs['string-input']): ${{ toJSON(inputs['string-input']) }}"
+          echo "toJSON(github.event.inputs.string-input): ${{ toJSON(github.event.inputs.string-input) }}"
+          echo "env.STRING_INPUT: ${{ env.STRING_INPUT }}"
+          echo "\${STRING_INPUT}: ${STRING_INPUT}"
+          echo
+          echo "inputs.boolean-input: ${{ inputs.boolean-input }}"
+          echo "inputs['boolean-input']: ${{ inputs['boolean-input'] }}"
+          echo "github.event.inputs.boolean-input: ${{ github.event.inputs.boolean-input }}"
+          echo "toJSON(inputs['boolean-input']): ${{ toJSON(inputs.boolean-input) }}"
+          echo "toJSON(inputs['boolean-input']): ${{ toJSON(inputs['boolean-input']) }}"
+          echo "toJSON(github.event.inputs.boolean-input): ${{ toJSON(github.event.inputs.boolean-input) }}"
+          echo "env.BOOLEAN_INPUT: ${{ env.BOOLEAN_INPUT }}"
+          echo "\${BOOLEAN_INPUT}: ${BOOLEAN_INPUT}"
+          echo "::endgroup::"
+          echo 
+          echo "::group::boolean-input comparisons:"
+          echo "inputs.boolean-input == true: ${{ inputs.boolean-input == true && 'true' || 'false' }}"
+          echo "inputs.boolean-input == false: ${{ inputs.boolean-input == false && 'true' || 'false' }}"
+          echo "inputs.boolean-input == 1: ${{ inputs.boolean-input == 1 && 'true' || 'false' }}"
+          echo "inputs.boolean-input == 0: ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
+          echo "contains(inputs.boolean-input, 'true'): ${{ contains(inputs.boolean-input, 'true') && 'true' || 'false' }}"
+          echo "contains(inputs.boolean-input, 'false'): ${{ contains(inputs.boolean-input, 'false') && 'true' || 'false' }}"
+          echo "!contains(inputs.boolean-input, 'true'): ${{ !contains(inputs.boolean-input, 'true') && 'true' || 'false' }}"
+          echo "!contains(inputs.boolean-input, 'false'): ${{ !contains(inputs.boolean-input, 'false') && 'true' || 'false' }}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
           echo "::group::Inputs toJSON (raw block deserialized):"
           jq . <<< "${GH_INPUTS}"
           echo "::endgroup::"
@@ -56,6 +105,12 @@ jobs:
           echo
           echo "::group::GitHub context toJSON:"
           jq . <<< "${GH_CONTEXT}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::GitHub event toJSON:"
+          jq . <<< "${GH_EVENT}"
           echo "::endgroup::"
           echo
           echo "---"
@@ -71,46 +126,23 @@ jobs:
           echo "::endgroup::"
           echo
 
+      - name: Skippable
+        id: skippable
+        if: inputs.string-input != 'skip'
+        run: echo "This step was not skipped."
+
       - name: Sleep
         id: sleep
         run: sleep 5
 
       - name: Run test
-        id: test-step
-        continue-on-error: ${{ inputs.continue-on-error }}
-        if: inputs.first-input != 'skip'
+        id: test
+        continue-on-error: ${{ inputs.continue-on-error == 1 }}
         run: |
+          echo test
+          echo "---      ---      ---"
           ${{ inputs.break == 1 && true || false }} && exit 1 || true
           echo
-          echo "First input: ${{ inputs.first-input }}"
-          echo "First input from env: $FIRST_INPUT"
-          echo "Second input: ${{ inputs.second-input }}"
-          echo "Second input from env: $SECOND_INPUT"
-          echo
-
-      - name: Inspect steps context
-        id: inspect-steps
-        run: |
-          echo "Steps context:"
-          echo "${{ toJSON(steps) }}"
-          echo
-          echo "Steps conclusions:"
-          echo "${{ join(steps.*.conclusion, ', ') }}"
-          echo
-          echo "Steps outcomes:"
-          echo "${{ join(steps.*.outcome, ', ') }}"
-          echo
-          echo "Any bypassed step failed?"
-          echo ${{ contains(steps.*.outcome, 'failure') }}
-          echo
-          echo "current job status:"
-          echo "${{ job.status }}"
-          echo
-
-      - name: Skippable
-        id: test-skip
-        if: inputs.second-input != 'skip'
-        run: echo "To check if outcome job.status is set to the last step status"
 
   inspect-job-context:
     runs-on: ubuntu-latest
