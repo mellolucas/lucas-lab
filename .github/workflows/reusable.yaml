@@ -3,7 +3,7 @@ run-name: >-
   ${{ github.workflow }}
   ${{ inputs.break == 1 && ' 💥' || ''}}
   ${{ inputs.continue-on-error == 1 && ' ⚠️' || ''}}
-  ${{ format('(string:{0}; boolean:{1}; runs-on:{{2}})', 
+  ${{ format('(string:{0}; boolean:{1}; runs-on:{2})', 
     inputs.string-input, 
     inputs.boolean-input, 
     inputs.runs-on
