@@ -16,6 +16,7 @@ on:
         description: "runs-on argument"
         required: false
         type: string
+        default: 'ubuntu-latest'
       string-input:
         description: "My string input"
         required: false
@@ -42,7 +43,12 @@ env:
 
 jobs:
   test-dispatch:
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{
+        ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
+        fromJSON(inputs.runs-on) ||
+        inputs.runs-on
+      }}
 
     outputs:
       steps-context: ${{ toJSON(steps) }}
@@ -145,7 +151,12 @@ jobs:
           echo
 
   inspect-job-context:
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{
+        ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
+        fromJSON(inputs.runs-on) ||
+        inputs.runs-on
+      }}
     needs: test-dispatch
     if: always()
     env:

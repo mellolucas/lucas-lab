@@ -43,7 +43,12 @@ env:
 
 jobs:
   context:
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{
+        ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
+        fromJSON(inputs.runs-on) ||
+        inputs.runs-on
+      }}
     env:
       GH_CONTEXT: ${{ toJSON(github) }}
       GH_INPUTS: ${{ toJSON(inputs) }}
@@ -87,7 +92,12 @@ jobs:
 
   inspect-reusable:
     needs: call-reusable
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{
+        ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
+        fromJSON(inputs.runs-on) ||
+        inputs.runs-on
+      }}
     env:
       NEEDS_CONTEXT: ${{ toJSON(needs) }}
     steps:

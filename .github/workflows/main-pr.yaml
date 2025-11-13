@@ -15,7 +15,7 @@ env:
 
 jobs:
   context:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
     env:
       GH_CONTEXT: ${{ toJSON(github) }}
     steps:
@@ -44,7 +44,7 @@ jobs:
   call-reusable:
     uses: ./.github/workflows/reusable.yaml
     with:
-      runs-on: ubuntu-latest
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
       string-input: ${{ github.event.pull_reuest.title }}
       boolean-input: ${{ contains(github.event.pull_reuest.title, 'true') }}
       break: ${{ contains(github.event.pull_reuest.title, 'break') }}
@@ -52,7 +52,7 @@ jobs:
 
   inspect-reusable:
     needs: call-reusable
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
     env:
       NEEDS_CONTEXT: ${{ toJSON(needs) }}
     steps:
