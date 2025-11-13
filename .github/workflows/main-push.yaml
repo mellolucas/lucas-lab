@@ -52,6 +52,7 @@ jobs:
 
   inspect-reusable:
     needs: call-reusable
+    if: always()
     runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
     env:
       NEEDS_CONTEXT: ${{ toJSON(needs) }}

@@ -92,6 +92,7 @@ jobs:
 
   inspect-reusable:
     needs: call-reusable
+    if: always()
     runs-on: >-
       ${{
         ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
