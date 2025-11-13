@@ -71,6 +71,9 @@ jobs:
       }}
     if: ${{ inputs.string-input != 'skipjob' && !contains(github.event.pull_reuest.title, 'skipjob') }}
     outputs:
+      steps-context: ${{ toJSON(steps) }}
+      job-context: ${{ toJSON(job) || 'null' }}
+      job-status: ${{ job.status || 'null' }}
       outcome: >-
         ${{ 
           contains(steps.*.outcome, 'failure') && 

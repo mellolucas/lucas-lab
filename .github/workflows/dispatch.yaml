@@ -49,10 +49,11 @@ jobs:
         fromJSON(inputs.runs-on) ||
         inputs.runs-on
       }}
-
+    if: inputs.string-input != 'skipjob'
     outputs:
       steps-context: ${{ toJSON(steps) }}
-      job-context: ${{ toJSON(job) }}
+      job-context: ${{ toJSON(job) || 'null' }}
+      job-status: ${{ job.status || 'null' }}
       outcome: >-
         ${{ 
           contains(steps.*.outcome, 'failure') && 
