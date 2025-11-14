@@ -43,7 +43,7 @@ on:
         description: The overall outcome of the reuseable workflow.
         value: >-
           ${{
-            contains(jobs.*.outcome, 'failure') && 
+            contains(jobs.*.outputs.outcome, 'failure') && 
               'failure' ||
               contains(jobs.*.result, 'failure') && 
                 'failure' ||
