@@ -2,7 +2,7 @@ name: Reusable Test
 run-name: >-
   ${{ github.workflow }}
   ${{ inputs.break == 1 && ' 💥' || ''}}
-  ${{ inputs.continue-on-error == 1 && ' ⚠️' || ''}}
+  ${{ inputs.continue-on-error == 1 && ' 🚧' || ''}}
   ${{ format('(string:{0}; boolean:{1}; runs-on:{2})', 
     inputs.string-input, 
     inputs.boolean-input, 
@@ -113,12 +113,31 @@ jobs:
           echo "::group::boolean-input comparisons:"
           echo "inputs.boolean-input == true: ${{ inputs.boolean-input == true && 'true' || 'false' }}"
           echo "inputs.boolean-input == false: ${{ inputs.boolean-input == false && 'true' || 'false' }}"
+          echo "inputs.boolean-input == 'true': ${{ inputs.boolean-input == true && 'true' || 'false' }}"
+          echo "inputs.boolean-input == 'false': ${{ inputs.boolean-input == false && 'true' || 'false' }}"
           echo "inputs.boolean-input == 1: ${{ inputs.boolean-input == 1 && 'true' || 'false' }}"
           echo "inputs.boolean-input == 0: ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
-          echo "contains(inputs.boolean-input, 'true'): ${{ contains(inputs.boolean-input, 'true') && 'true' || 'false' }}"
+          echo "inputs.boolean-input == '1': ${{ inputs.boolean-input == 1 && 'true' || 'false' }}"
+          echo "inputs.boolean-input == '0': ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
+          echo "contains(inputs.boolean-input, 'true'): ${{ contains(inputs.boolean-input, 'true') && 'true' || 'false' }}" # Best so far when need to default to false
           echo "contains(inputs.boolean-input, 'false'): ${{ contains(inputs.boolean-input, 'false') && 'true' || 'false' }}"
           echo "!contains(inputs.boolean-input, 'true'): ${{ !contains(inputs.boolean-input, 'true') && 'true' || 'false' }}"
-          echo "!contains(inputs.boolean-input, 'false'): ${{ !contains(inputs.boolean-input, 'false') && 'true' || 'false' }}"
+          echo "!contains(inputs.boolean-input, 'false'): ${{ !contains(inputs.boolean-input, 'false') && 'true' || 'false' }}" # Best so far when need to default to true
+          echo "::endgroup::"
+          echo
+          echo "::group::null-input comparisons:"
+          echo "inputs.null-input == true: ${{ inputs.null-input == true && 'true' || 'false' }}"
+          echo "inputs.null-input == false: ${{ inputs.null-input == false && 'true' || 'false' }}"
+          echo "inputs.null-input == 'true': ${{ inputs.null-input == true && 'true' || 'false' }}"
+          echo "inputs.null-input == 'false': ${{ inputs.null-input == false && 'true' || 'false' }}"
+          echo "inputs.null-input == 1: ${{ inputs.null-input == 1 && 'true' || 'false' }}"
+          echo "inputs.null-input == 0: ${{ inputs.null-input == 0 && 'true' || 'false' }}"
+          echo "inputs.null-input == '1': ${{ inputs.null-input == 1 && 'true' || 'false' }}"
+          echo "inputs.null-input == '0': ${{ inputs.null-input == 0 && 'true' || 'false' }}"
+          echo "contains(inputs.null-input, 'true'): ${{ contains(inputs.null-input, 'true') && 'true' || 'false' }}" # Best so far when need to default to false
+          echo "contains(inputs.null-input, 'false'): ${{ contains(inputs.null-input, 'false') && 'true' || 'false' }}"
+          echo "!contains(inputs.null-input, 'true'): ${{ !contains(inputs.null-input, 'true') && 'true' || 'false' }}"
+          echo "!contains(inputs.null-input, 'false'): ${{ !contains(inputs.null-input, 'false') && 'true' || 'false' }}" # Best so far when need to default to true
           echo "::endgroup::"
           echo
           echo "---"

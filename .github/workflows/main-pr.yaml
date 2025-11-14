@@ -2,7 +2,7 @@ name: Main PR Test
 run-name: >-
   ${{ github.workflow }}
   ${{ contains(github.event.pull_reuest.title, 'break') && ' 💥' || ''}}
-  ${{ github.event.pull_request.draft == 1 && ' ⚠️' || ''}}
+  ${{ github.event.pull_request.draft == 1 && ' 🚧' || ''}}
 
 on:
   pull_request:
