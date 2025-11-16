@@ -2,7 +2,7 @@ name: Main Push Test
 run-name: >-
   ${{ github.workflow }}
   ${{ contains(github.event.pull_reuest.title, 'break') && ' 💥' || ''}}
-  ${{ github.event.pull_request.draft == 1 && ' 🚧' || ''}}
+  ${{ contains(github.event.pull_request.draft, 'true') && ' 🚧' || ''}}
 
 on:
   push:
@@ -49,7 +49,7 @@ jobs:
       string-input: ${{ github.event.pull_reuest.title }}
       boolean-input: ${{ contains(github.event.pull_reuest.title, 'true') }}
       break: ${{ contains(github.event.pull_reuest.title, 'break') }}
-      continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+      continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
 
   inspect-reusable:
     needs: call-reusable

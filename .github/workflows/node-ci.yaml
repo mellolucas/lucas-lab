@@ -2,7 +2,7 @@ name: Node CI
 run-name: >-
   ${{ github.workflow }}
   ${{ contains(inputs.dry-run, 'true') && ' 🧪' || '' }}
-  ${{ github.event.pull_request.draft == 1 && ' 📝' || '' }}
+  ${{ contains(github.event.pull_request.draft, 'true') && ' 📝' || '' }}
 
 on:
   pull_request:

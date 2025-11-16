@@ -2,7 +2,7 @@ name: Node Analysis
 run-name: >-
   ${{ github.workflow }}
   ${{ contains(inputs.dry-run, 'true') && ' 🧪' || '' }}
-  ${{ github.event.pull_request.draft == 1 && ' 🚧' || '' }}
+  ${{ contains(github.event.pull_request.draft, 'true') && ' 🚧' || '' }}
 
 on:
   workflow_call:
@@ -146,7 +146,7 @@ jobs:
 
     outputs:
       dry-run: ${{ contains(inputs.dry-run, 'true') }}
-      draft: ${{ github.event.pull_request.draft == 1 }}
+      draft: ${{ contains(github.event.pull_request.draft, 'true') }}
       source-ref: ${{ steps.checkout.outputs.ref }}
       source-commit: ${{ steps.checkout.outputs.commit }}
       node-version: ${{ steps.setup.outputs.node-version }}
@@ -220,7 +220,7 @@ jobs:
           node-version-file: ${{ inputs.node-version-file }}
           cache: >-
             ${{
-              inputs.cache-dependencies == 1 &&
+              contains(inputs.cache-dependencies, 'true') &&
               fromJSON(env.PACKAGE_MANAGER_JSON).name ||
               ''
             }}
@@ -314,7 +314,7 @@ jobs:
       - name: Check spell
         id: spell
         if: inputs.check-spell
-        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "spell:check check:spell cspell spell"
@@ -334,7 +334,7 @@ jobs:
       - name: Check format
         id: format
         if: inputs.check-format
-        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "format:check check:format format"
@@ -344,7 +344,7 @@ jobs:
       - name: Check lint
         id: lint
         if: inputs.check-lint
-        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "lint:check check:lint lint"
@@ -354,7 +354,7 @@ jobs:
       - name: Check types
         id: types
         if: inputs.check-types
-        continue-on-error: ${{ github.event.pull_request.draft == 1 }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "types:check check:types types"
