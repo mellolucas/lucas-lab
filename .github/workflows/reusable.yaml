@@ -141,19 +141,19 @@ jobs:
           echo "::endgroup::"
           echo
           echo "::group::github context comparisons:"
-          echo "Testing `github.event.repository.has_issues`, that is explicitly true" 
+          echo "Testing 'github.event.repository.has_issues', that is explicitly true" 
           echo "contains(github.event.repository.has_issues, 'true'): ${{ contains(github.event.repository.has_issues, 'true') && 'true' || 'false' }}"
           echo "!contains(github.event.repository.has_issues, 'true'): ${{ !contains(github.event.repository.has_issues, 'true') && 'true' || 'false' }}"
           echo "contains(github.event.repository.has_issues, 'false'): ${{ contains(github.event.repository.has_issues, 'false') && 'true' || 'false' }}"
           echo "!contains(github.event.repository.has_issues, 'false'): ${{ !contains(github.event.repository.has_issues, 'false') && 'true' || 'false' }}"
           echo
-          echo "Testing `github.event.repository.archived`, that is explicitly false" 
+          echo "Testing 'github.event.repository.archived', that is explicitly false" 
           echo "contains(github.event.repository.archived, 'true'): ${{ contains(github.event.repository.archived, 'true') && 'true' || 'false' }}"
           echo "!contains(github.event.repository.archived, 'true'): ${{ !contains(github.event.repository.archived, 'true') && 'true' || 'false' }}"
           echo "contains(github.event.repository.archived, 'false'): ${{ contains(github.event.repository.archived, 'false') && 'true' || 'false' }}"
           echo "!contains(github.event.repository.archived, 'false'): ${{ !contains(github.event.repository.archived, 'false') && 'true' || 'false' }}"
           echo
-          echo "Testing `github.event.release.draft`, that should not exist for this workflow" 
+          echo "Testing 'github.event.release.draft', that should not exist for this workflow" 
           echo "contains(github.event.release.draft, 'true'): ${{ contains(github.event.release.draft, 'true') && 'true' || 'false' }}"
           echo "!contains(github.event.release.draft, 'true'): ${{ !contains(github.event.release.draft, 'true') && 'true' || 'false' }}"
           echo "contains(github.event.release.draft, 'false'): ${{ contains(github.event.release.draft, 'false') && 'true' || 'false' }}"
