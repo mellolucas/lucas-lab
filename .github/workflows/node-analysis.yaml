@@ -1,7 +1,7 @@
 name: Node Analysis
 run-name: >-
   ${{ github.workflow }}
-  ${{ inputs.dry-run == 1 && ' 🧪' || '' }}
+  ${{ contains(inputs.dry-run, 'true') && ' 🧪' || '' }}
   ${{ github.event.pull_request.draft == 1 && ' 🚧' || '' }}
 
 on:
@@ -145,7 +145,7 @@ jobs:
       }}
 
     outputs:
-      dry-run: ${{ inputs.dry-run == 1 }}
+      dry-run: ${{ contains(inputs.dry-run, 'true') }}
       draft: ${{ github.event.pull_request.draft == 1 }}
       source-ref: ${{ steps.checkout.outputs.ref }}
       source-commit: ${{ steps.checkout.outputs.commit }}

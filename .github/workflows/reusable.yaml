@@ -1,8 +1,8 @@
 name: Reusable Test
 run-name: >-
   ${{ github.workflow }}
-  ${{ inputs.break == 1 && ' 💥' || ''}}
-  ${{ inputs.continue-on-error == 1 && ' 🚧' || ''}}
+  ${{ contains(inputs.break, 'true') && ' 💥' || ''}}
+  ${{ contains(inputs.continue-on-error, 'true') && ' 🚧' || ''}}
   ${{ format('(string:{0}; boolean:{1}; runs-on:{2})', 
     inputs.string-input, 
     inputs.boolean-input, 
@@ -119,10 +119,10 @@ jobs:
           echo "inputs.boolean-input == 0: ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
           echo "inputs.boolean-input == '1': ${{ inputs.boolean-input == 1 && 'true' || 'false' }}"
           echo "inputs.boolean-input == '0': ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
-          echo "contains(inputs.boolean-input, 'true'): ${{ contains(inputs.boolean-input, 'true') && 'true' || 'false' }}" # Best so far when need to default to false
+          echo "contains(inputs.boolean-input, 'true'): ${{ contains(inputs.boolean-input, 'true') && 'true' || 'false' }}" # Best so far when need to default to false (wants true only when explicit)
           echo "!contains(inputs.boolean-input, 'true'): ${{ !contains(inputs.boolean-input, 'true') && 'true' || 'false' }}" # Only returns false when the arg is explicitly true. Just like "contains(inputs.boolean-input, 'true')", but inverts the result (returns true when that would return false).
           echo "contains(inputs.boolean-input, 'false'): ${{ contains(inputs.boolean-input, 'false') && 'true' || 'false' }}" # Only returns true when the arg is explicitly false. Just like "!contains(inputs.boolean-input, 'false')", but inverts the result (returns true when that would return false).
-          echo "!contains(inputs.boolean-input, 'false'): ${{ !contains(inputs.boolean-input, 'false') && 'true' || 'false' }}" # Best so far when need to default to true
+          echo "!contains(inputs.boolean-input, 'false'): ${{ !contains(inputs.boolean-input, 'false') && 'true' || 'false' }}" # Best so far when need to default to true (wants false only when explicit)
           echo "::endgroup::"
           echo
           echo "::group::null-input comparisons:"
@@ -134,10 +134,20 @@ jobs:
           echo "inputs.null-input == 0: ${{ inputs.null-input == 0 && 'true' || 'false' }}"
           echo "inputs.null-input == '1': ${{ inputs.null-input == 1 && 'true' || 'false' }}"
           echo "inputs.null-input == '0': ${{ inputs.null-input == 0 && 'true' || 'false' }}"
-          echo "contains(inputs.null-input, 'true'): ${{ contains(inputs.null-input, 'true') && 'true' || 'false' }}" # Best so far when need to default to false
-          echo "!contains(inputs.null-input, 'true'): ${{ !contains(inputs.null-input, 'true') && 'true' || 'false' }}" # Only returns false when the arg is explicitly true. Just like "contains(inputs.null-input, 'true')", but inverts the result (returns true when that would return false).
-          echo "contains(inputs.null-input, 'false'): ${{ contains(inputs.null-input, 'false') && 'true' || 'false' }}" # Only returns true when the arg is explicitly false. Just like "!contains(inputs.null-input, 'false')", but inverts the result (returns true when that would return false).
-          echo "!contains(inputs.null-input, 'false'): ${{ !contains(inputs.null-input, 'false') && 'true' || 'false' }}" # Best so far when need to default to true
+          echo "contains(inputs.null-input, 'true'): ${{ contains(inputs.null-input, 'true') && 'true' || 'false' }}"
+          echo "!contains(inputs.null-input, 'true'): ${{ !contains(inputs.null-input, 'true') && 'true' || 'false' }}"
+          echo "contains(inputs.null-input, 'false'): ${{ contains(inputs.null-input, 'false') && 'true' || 'false' }}"
+          echo "!contains(inputs.null-input, 'false'): ${{ !contains(inputs.null-input, 'false') && 'true' || 'false' }}"
+          echo "::endgroup::"
+          echo
+          echo "::group::github context comparisons:"
+          echo "Testing `github.event.`, that is explicitly true" 
+          echo "Testing `github.event.repository.archived`, that is explicitly false" 
+          echo "contains(github.event.repository.archived, 'true'): ${{ contains(inputs.null-input, 'true') && 'true' || 'false' }}"
+          echo "!contains(inputs.null-input, 'true'): ${{ !contains(inputs.null-input, 'true') && 'true' || 'false' }}"
+          echo "contains(inputs.null-input, 'false'): ${{ contains(inputs.null-input, 'false') && 'true' || 'false' }}"
+          echo "!contains(inputs.null-input, 'false'): ${{ !contains(inputs.null-input, 'false') && 'true' || 'false' }}"
+          echo "Testing `github.event.release.draft`, that should not exist for this workflow" 
           echo "::endgroup::"
           echo
           echo "---"
@@ -182,10 +192,10 @@ jobs:
 
       - name: Run test
         id: test
-        continue-on-error: ${{ inputs.continue-on-error == 1 }}
+        continue-on-error: ${{ contains(inputs.continue-on-error, 'true') }}
         run: |
           echo test
           echo "---      ---      ---"
-          ${{ inputs.break == 1 && true || false }} && exit 1 || true
+          ${{ contains(inputs.break, 'true') && true || false }} && exit 1 || true
           echo
 

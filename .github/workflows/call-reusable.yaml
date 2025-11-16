@@ -1,8 +1,8 @@
 name: Call Reusable Test
 run-name: >-
   ${{ github.workflow }}
-  ${{ inputs.break == 1 && ' 💥' || ''}}
-  ${{ inputs.continue-on-error == 1 && ' 🚧' || ''}}
+  ${{ contains(inputs.break, 'true') && ' 💥' || ''}}
+  ${{ contains(inputs.continue-on-error, 'true') && ' 🚧' || ''}}
   ${{ format('(string:{0}; boolean:{1}; runs-on:{2})', 
     inputs.string-input, 
     inputs.boolean-input, 
