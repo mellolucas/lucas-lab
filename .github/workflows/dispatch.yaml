@@ -221,6 +221,146 @@ jobs:
           echo "${{ toJSON(steps) }}"
           echo "::endgroup::"
           echo
+          
+      - name: Test GitHub expressions
+        id: expressions
+        run: |
+          ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
+          bold()          { ansi 1 "$@"; }
+          italic()        { ansi 3 "$@"; }
+          underline()     { ansi 4 "$@"; }
+          strikethrough() { ansi 9 "$@"; }
+          red()           { ansi 31 "$@"; }
+          reverse()       { ansi 7 "$@"; }
+          echo "$(bold red 'Expression literal data types are:')"
+          echo "- $(reverse boolean)"
+          echo "- $(reverse null)"
+          echo "- $(reverse number)"
+          echo "- $(reverse string)"
+          echo
+          echo "In conditionals, $(italic falsy) values are coerced to $(reverse false)."
+          echo "Falsy values are: '$(reverse false), $(reverse 0), $(reverse -0), $(reverse \"\"), $(reverse \'\'), and $(reverse null)'."
+          echo "All $(italic non-falsy) values are coerced to $(reverse true)."
+          echo
+          echo "::group::Examples of literals:"
+          echo "myNull ( \${{ null }} ): ${{ null }}
+          echo "myBoolean ( \${{ false }} ): ${{ false }}
+          echo "myIntegerNumber ( \${{ 711 }} ): ${{ 711 }}
+          echo "myFloatNumber ( \${{ -9.2 }} ): ${{ -9.2 }}
+          echo "myHexNumber ( \${{ 0xff }} ): ${{ 0xff }}
+          echo "myExponentialNumber ( \${{ -2.99e-2 }} ): ${{ -2.99e-2 }}
+          echo "myString ( Mona the Octocat ): Mona the Octocat
+          echo "myStringInBraces ( \${{ 'It''s open source!' }} ): ${{ 'It''s open source!' }}
+          echo "::endgroup::"
+          echo
+          echo "::group::Operators:"
+          echo "- $(reverse \( \)): Logical grouping;"
+          echo "- $(reverse [ ]): Index;"
+          echo "- $(reverse .): Property de-reference;"
+          echo "- $(reverse \!): Not;"
+          echo "- $(reverse \<): Less than;"
+          echo "- $(reverse \<=): Less than or equal;"
+          echo "- $(reverse \>): Greater than;"
+          echo "- $(reverse \>=): Greater than or equal;"
+          echo "- $(reverse ==): Equal;"
+          echo "- $(reverse !=): Not equal;"
+          echo "- $(reverse \&\&): And;"
+          echo "- $(reverse \|\|): Or;"
+          echo "::endgroup::"
+          echo
+          echo "$(bold red 'Comparisons & Coercion:')"
+          echo "- $(reverse string) comparisons are case insensitive;"
+          echo "- fromJSON() can be used to convert strings to numbers (see $(bold red Functions));"
+          echo "- GitHub performs loose equality comparisons, $(underline coercing types to $(reverse numbers)) $(underline when types do not match). Data types are casted to numbers using the conventions below:"
+          echo "  - $(reverse null) is coerced to $(reverse 0);"
+          echo "  - $(reverse boolean) $(reverse true) is coerced to $(reverse 1);"
+          echo "  - $(reverse boolean) $(reverse false) is coerced to $(reverse 0);"
+          echo "  - Non empty $(reverse string) is coerced to the corresponding $(reverse number) when parsed from any legal JSON number format, otherwise returns $(reverse NaN);"
+          echo "  - Empty $(reverse string) returns $(reverse 0);"
+          echo "  - $(reverse array) returns $(reverse NaN);"
+          echo "  - $(reverse Object) returns $(reverse NaN);"
+          echo "- When $(underline $(reverse \NaN)) is one of the operands of any relational comparison $(reverse \>), $(reverse \<), $(reverse \>=), $(reverse \<=)), $(underline the result is always $(reverse 'false'));"
+          echo "- $(reverse Objects) and $(reverse arrays) are only considered $(italic equal when they are the $(underline same instance))."
+          echo
+          echo "::group::Loose equality comparisons ($(reverse null)):"
+          echo "$(reverse null == null) should be $(reverse true): ${{ null == null && 'true' || 'false'}};"
+          echo "$(reverse null == 0) should be $(reverse true): ${{ null == 0 && 'true' || 'false'}};"
+          echo "$(reverse null == '0') should be $(reverse true): ${{ null == '0' && 'true' || 'false'}};"
+          echo "$(reverse null == false) should be $(reverse true): ${{ null == false && 'true' || 'false'}} (as right-side $(reverse boolean) is casted to $(reverse number));"
+          echo "$(reverse null == '') should be $(reverse true): ${{ null == '' && 'true' || 'false'}} (as right-side $(reverse \'\') is casted to $(reverse number));"
+          echo
+          echo "Given that $(reverse github.event.release.draft) doesnt exist for this event:"
+          echo "$(reverse github.event.release.draft == null) should be $(reverse true): ${{ github.event.release.draft == null && 'true' || 'false'}};"
+          echo "$(reverse github.event.release.draft == 0) should be $(reverse true): ${{ github.event.release.draft == 0 && 'true' || 'false'}}; (as lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "$(reverse github.event.release.draft == '0') should be $(reverse true): ${{ github.event.release.draft == '0' && 'true' || 'false'}}; (as lefthand-side $(reverse boolean) is casted to $(reverse number) then $(reverse string));"
+          echo "$(reverse github.event.release.draft == false) should be $(reverse true): ${{ github.event.release.draft == false && 'true' || 'false'}} (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo "$(reverse github.event.release.draft == '') should be $(reverse true): ${{ github.event.release.draft == '' && 'true' || 'false'}} (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo "::endgroup::"
+          echo "::group::Loose equality comparisons ($(reverse boolean true)):"
+          echo "$(reverse true == 1) should be $(reverse true): ${{ true == 1 && 'true' || 'false'}}; (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "$(reverse true == '1') should be $(reverse true): ${{ true == '1' && 'true' || 'false'}}; (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo "$(reverse true == 'true') should be $(reverse false): ${{ true == 'true' && 'true' || 'false'}} (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo
+          echo "Given that $(reverse github.event.repository.has_issues) exist and is $(reverse true):"
+          echo "$(reverse github.event.repository.has_issues == 1) should be $(reverse true): ${{ github.event.repository.has_issues == 1 && 'true' || 'false'}}; (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "$(reverse github.event.repository.has_issues == '1') should be $(reverse true): ${{ github.event.repository.has_issues == '1' && 'true' || 'false'}}; (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo "$(reverse github.event.repository.has_issues == true) should be $(reverse true): ${{ github.event.repository.has_issues == true && 'true' || 'false'}};"
+          echo "$(reverse github.event.repository.has_issues == 'true') should be $(reverse false): ${{ github.event.repository.has_issues == 'true' && 'true' || 'false'}} (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "::endgroup::"
+          echo "::group::Loose equality comparisons ($(reverse boolean false)):"
+          echo "$(reverse false == 0) should be $(reverse true): ${{ false == 0 && 'true' || 'false'}}; (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "$(reverse false == '0') should be $(reverse true): ${{ false == '0' && 'true' || 'false'}}; (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo "$(reverse false == 'false') should be $(reverse false): ${{ false == 'false' && 'true' || 'false'}} (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "$(reverse false == '') should be $(reverse true): ${{ false == 'false' && 'true' || 'false'}} (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo
+          echo "Given that $(reverse github.event.repository.archived) exist and is $(reverse false):"
+          echo "$(reverse github.event.repository.archived == 0) should be $(reverse true): ${{ github.event.repository.archived == 0 && 'true' || 'false'}}; (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "$(reverse github.event.repository.archived == '0') should be $(reverse true): ${{ github.event.repository.archived == '0' && 'true' || 'false'}}; (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo "$(reverse github.event.repository.archived == false) should be $(reverse true): ${{ github.event.repository.archived == false && 'true' || 'false'}};"
+          echo "$(reverse github.event.repository.archived == 'false') should be $(reverse false): ${{ github.event.repository.archived == 'false' && 'true' || 'false'}}  (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
+          echo "::endgroup::"
+          echo
+          echo "$(bold red 'Functions & Coercion:')"
+          echo "The functions below cast values to $(reverse string) when performing $(underline comparisons):"
+          echo "  - $(reverse contains\(search, item\))"
+          echo "  - $(reverse startsWith\(searchString, searchValue\))"
+          echo "  - $(reverse endsWith\(searchString, searchValue\))"
+          echo "  - $(reverse join\(array, optionalSeparator\))"
+          echo "Coercion here happens as the following rules:"
+          echo "  - $(reverse null) is coerced to $(reverse \'\');"
+          echo "  - $(reverse boolean) $(reverse true) is coerced to $(reverse \'true\');"
+          echo "  - $(reverse boolean) $(reverse false) is coerced to $(reverse \'false\');"
+          echo "  - $(reverse number) is coerced to its decimal format, exponential for large numbers;"
+          echo "  - $(reverse array) is $(bold NOT) coerced to $(reverse string);"
+          echo "  - $(reverse object) is $(bold NOT) coerced to $(reverse string);"
+          echo "The $(reverse fromJSON\(value\)) function can be used to provide a JSON object as an evaluated expression; and also to $(underline convert any data tupe that can be represented in JSON or JavaScript), such as $(reverse strings), $(reverse booeans), $(reverse numbers), $(reverse null) values, and $(reverse objects)."
+          echo
+          echo "::group::Functions data casting:"
+          echo "$(reverse join\(null\)): ${{ join(null) }}"
+          echo "$(reverse join\(null\) == \'\') should be $(reverse true): ${{ join(null) == '' && 'true' || 'false' }}"
+          echo "$(reverse join\(true\)): ${{ join(true) }}"
+          echo "$(reverse contains\(true, \'true\'\)) should be $(reverse true): ${{ contains(true, 'true') && 'true' || 'false' }}"
+          echo "$(reverse contains\(true, 1)) should be $(reverse false): ${{ contains(true, 1) && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'true\') while righthand is coerced to $(reverse \'1\')"
+          echo "$(reverse contains\(true, '1')) should be $(reverse false): ${{ contains(true, '1') && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'true\') while righthand is coerced to $(reverse \'1\')"
+          echo "$(reverse join\(false\)): ${{ join(false) }}"
+          echo "$(reverse contains\(false, \'false\'\)) should be $(reverse true): ${{ contains(false, 'false') && 'true' || 'false' }}"
+          echo "$(reverse contains\(false, 0)) should be $(reverse false): ${{ contains(false, 0) && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'false\') while righthand is coerced to $(reverse \'0\')"
+          echo "$(reverse contains\(false, '0')) should be $(reverse false): ${{ contains(false, '0') && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'false\') while righthand is coerced to $(reverse \'0\')"
+          echo "$(reverse join\(9\)): ${{ join(9) }}"
+          echo "$(reverse contains\(9, '9'\)) should be $(reverse true): ${{ contains(9, '9') && 'true' || 'false' }}"
+          echo "$(reverse join\(1\)): ${{ join(1) }}"
+          echo "$(reverse contains\(1, \'true\'\)) should be $(reverse false): ${{ contains(1, 'true') && 'true' || 'false' }}"
+          echo "whereas $(reverse join\(1\) == true) should be $(reverse true): ${{ join(1) == true }}, as lefthand is converted to $(reverse \'1\' and then, when comparison operator is used, it is casted to its $(reverse number) at the same time the righthand $(reverse true) is coerced to $(reverse number 1))"
+          echo "endgroup"
+          echo "::group::Casting with $(reverse fromJSON\(\)):"
+          echo "$(reverse fromJSON\(\'string\'\)): ${{ fromJSON('string') }}"
+          echo "$(reverse fromJSON\(\'1\'\)): ${{ fromJSON('1') }}"
+          echo "$(reverse fromJSON\(\'true\'\)): ${{ fromJSON('true') }}"
+          echo "  $(reverse fromJSON\(\'true\'\) == true) should be $(reverse true): ${{ fromJSON('true') == true }}"
+          echo "  $(reverse fromJSON\(\'true\'\) == 1) should be $(reverse true): ${{ fromJSON('true') == 1 }} as lefthand-side bool is converted to number"
+          echo "  whereas $(reverse \'true\' == 1) should be false: ${{ 'true' == 1 && 'true' || 'false' }} as string is not parseable as number;"
+          echo "fromJSON(null): ${{ fromJSON(null) }};
+          echo "endgroup"
 
       - name: Skippable
         id: skippable
