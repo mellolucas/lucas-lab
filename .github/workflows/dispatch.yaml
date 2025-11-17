@@ -243,14 +243,14 @@ jobs:
           echo "All $(italic non-falsy) values are coerced to $(reverse true)."
           echo
           echo "::group::Examples of literals:"
-          echo "myNull ( \${{ null }} ): ${{ null }}
-          echo "myBoolean ( \${{ false }} ): ${{ false }}
-          echo "myIntegerNumber ( \${{ 711 }} ): ${{ 711 }}
-          echo "myFloatNumber ( \${{ -9.2 }} ): ${{ -9.2 }}
-          echo "myHexNumber ( \${{ 0xff }} ): ${{ 0xff }}
-          echo "myExponentialNumber ( \${{ -2.99e-2 }} ): ${{ -2.99e-2 }}
-          echo "myString ( Mona the Octocat ): Mona the Octocat
-          echo "myStringInBraces ( \${{ 'It''s open source!' }} ): ${{ 'It''s open source!' }}
+          echo "myNull ( \${{ null }} ): ${{ null }}"
+          echo "myBoolean ( \${{ false }} ): ${{ false }}"
+          echo "myIntegerNumber ( \${{ 711 }} ): ${{ 711 }}"
+          echo "myFloatNumber ( \${{ -9.2 }} ): ${{ -9.2 }}"
+          echo "myHexNumber ( \${{ 0xff }} ): ${{ 0xff }}"
+          echo "myExponentialNumber ( \${{ -2.99e-2 }} ): ${{ -2.99e-2 }}"
+          echo "myString ( Mona the Octocat ): Mona the Octocat"
+          echo "myStringInBraces ( \${{ 'It''s open source!' }} ): ${{ 'It''s open source!' }}"
           echo "::endgroup::"
           echo
           echo "::group::Operators:"
