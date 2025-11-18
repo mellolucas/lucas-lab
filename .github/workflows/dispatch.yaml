@@ -354,8 +354,8 @@ jobs:
           echo "endgroup"
           echo "::group::Casting with $(reverse fromJSON\(\)):"
           echo "$(reverse fromJSON\(\'string\'\)): ${{ fromJSON('string') }}"
-
-          echo "fromJSON(null): ${{ fromJSON(null) }};"
+          echo "$(reverse fromJSON\(\'1\'\)): ${{ fromJSON('1') }}"
+          echo "$(reverse fromJSON\(\'true\'\)): ${{ fromJSON('true') }}"
           echo "endgroup"
 
       - name: Skippable
