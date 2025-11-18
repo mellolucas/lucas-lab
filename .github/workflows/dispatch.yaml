@@ -224,6 +224,8 @@ jobs:
           
       - name: Test GitHub expressions
         id: expressions
+        env:
+          TESTFROMJSON: "${{ fromJSON('string') }}"
         run: |
           ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
           bold()          { ansi 1 "$@"; }
@@ -353,7 +355,9 @@ jobs:
           echo "whereas $(reverse join\(1\) == true) should be $(reverse true): ${{ join(1) == true }}, as lefthand is converted to $(reverse \'1\' and then, when comparison operator is used, it is casted to its $(reverse number) at the same time the righthand $(reverse true) is coerced to $(reverse number 1))"
           echo "endgroup"
           echo "::group::Casting with $(reverse fromJSON\(\)):"
-          echo "${{ join(fromJSON('string')) }}"
+          echo "  $(reverse fromJSON\(\'true\'\) == true) should be $(reverse true): ${{ fromJSON('true') == true }}"
+          echo "  $(reverse fromJSON\(\'true\'\) == 1) should be $(reverse true): ${{ fromJSON('true') == 1 }} as lefthand-side bool is converted to number"
+          echo "  whereas $(reverse \'true\' == 1) should be false: ${{ 'true' == 1 && 'true' || 'false' }} as string is not parseable as number;"
           echo "endgroup"
 
       - name: Skippable
