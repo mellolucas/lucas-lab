@@ -359,7 +359,7 @@ jobs:
           echo "  $(reverse fromJSON\(\'true\'\) == true) should be $(reverse true): ${{ fromJSON('true') == true }}"
           echo "  $(reverse fromJSON\(\'true\'\) == 1) should be $(reverse true): ${{ fromJSON('true') == 1 }} as lefthand-side bool is converted to number"
           echo "  whereas $(reverse \'true\' == 1) should be false: ${{ 'true' == 1 && 'true' || 'false' }} as string is not parseable as number;"
-          echo "fromJSON(null): ${{ fromJSON(null) }};
+          echo "fromJSON(null): ${{ fromJSON(null) }};"
           echo "endgroup"
 
       - name: Skippable
