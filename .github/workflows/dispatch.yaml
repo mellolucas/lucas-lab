@@ -311,7 +311,7 @@ jobs:
           echo "$(reverse false == 0) should be $(reverse true): ${{ false == 0 && 'true' || 'false'}}; (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
           echo "$(reverse false == '0') should be $(reverse true): ${{ false == '0' && 'true' || 'false'}}; (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
           echo "$(reverse false == 'false') should be $(reverse false): ${{ false == 'false' && 'true' || 'false'}} (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
-          echo "$(reverse false == '') should be $(reverse true): ${{ false == 'false' && 'true' || 'false'}} (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
+          echo "$(reverse false == '') should be $(reverse true): ${{ false == '' && 'true' || 'false'}} (as both left and righthand-side $(reverse boolean) are casted to $(reverse number));"
           echo
           echo "Given that $(reverse github.event.repository.archived) exist and is $(reverse false):"
           echo "$(reverse github.event.repository.archived == 0) should be $(reverse true): ${{ github.event.repository.archived == 0 && 'true' || 'false'}}; (as only lefthand-side $(reverse boolean) is casted to $(reverse number));"
