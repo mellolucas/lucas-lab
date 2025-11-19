@@ -359,10 +359,16 @@ jobs:
           echo "$(reverse fromJSON\(toJSON\(1\)\)): ${{ fromJSON(toJSON(1)) }} (toJSON casts to $(reverse string) and $(reverse 1) becomes $(reverse \'1\'), then, since the single quotes belongs to the yaml and whats inside to the evaluated JSON, the $(reverse fromJSON\(\)) parses that yaml $(reverse string) content as $(reverse number))"
           echo
           echo "$(reverse true == fromJSON\('true'\))) should be $(reverse true): ${{ true == fromJSON('true') && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse \'true\') to $(reverse boolean);"
-          echo "$(reverse true == fromJSON\(toJSON\(true\)\))) should be $(reverse true): ${{ true == fromJSON(toJSON(true)) && 'true' || 'false'}} ;"
+          echo "  same thing can be achieved by wrapping true yaml $(reverse boolean) in $(reverse toJSON\(\)) function: $(reverse true == fromJSON\(toJSON\(true\)\))) should be $(reverse true): ${{ true == fromJSON(toJSON(true)) && 'true' || 'false'}} ;"
           echo "$(reverse 1 == fromJSON\('true'\))) should be $(reverse true): ${{ 1 == fromJSON('true') && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse \'true\') to $(reverse boolean), then to $(reverse number) when evaluating the comparison;"
-          echo "$(reverse 1 == fromJSON\(toJSON\(true\)\))) should be $(reverse true): ${{ 1 == fromJSON(toJSON(true)) && 'true' || 'false'}} ;"
-          echo
+          echo "  same thing can be achieved by wrapping true yaml $(reverse boolean) in $(reverse toJSON\(\)) function: $(reverse 1 == fromJSON\(toJSON\(true\)\))) should be $(reverse true): ${{ 1 == fromJSON(toJSON(true)) && 'true' || 'false'}} ;"
+          echo "Since functions casts to string, a $(reverse join) could be used to wrap everything so that comparison always evaluates strings:"
+          echo "  $(reverse join\(true\) == join\(fromJSON\('true'\)))\) should be $(reverse true): ${{ join(true) == join(fromJSON('true')) && 'true' || 'false'}} as at the end all left is parsed as string, right is parsed as bool, then string, and only then goes to comparison operator evaluation"
+          echo "  though $(reverse join\(true\) == fromJSON\('true'\))) should be $(reverse false): ${{ join(true) == fromJSON('true') && 'true' || 'false'}} as lefthand is casted to string, righthand is casted to bool, then comparison evaluates them as string 'true' vs number 1"
+          echo "  $(reverse fromJSON\(\'true\'\) == true) should be $(reverse true): ${{ fromJSON('true') == true }}"
+          echo "  $(reverse fromJSON\(\'true\'\) == 1) should be $(reverse true): ${{ fromJSON('true') == 1 }} as lefthand-side bool is converted to number"
+          echo "  whereas $(reverse \'true\' == 1) should be false: ${{ 'true' == 1 && 'true' || 'false' }} as string is not parseable as number;"
+          echo "fromJSON(null): ${{ fromJSON(null) }};
           echo "endgroup"
 
       - name: Skippable
