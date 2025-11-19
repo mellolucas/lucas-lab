@@ -355,7 +355,7 @@ jobs:
           echo "whereas $(reverse join\(1\) == true) should be $(reverse true): ${{ join(1) == true }}, as lefthand is converted to $(reverse \'1\' and then, when comparison operator is used, it is casted to its $(reverse number) at the same time the righthand $(reverse true) is coerced to $(reverse number 1))"
           echo "endgroup"
           echo "::group::Casting with $(reverse fromJSON\(\)):"
-          echo "$(reverse fromJSON\(\'"string"\'\)): ${{ fromJSON('"string"') }}"
+          echo "$(reverse fromJSON\(\'"string"\'\)): ${{ fromJSON(toJSON('"string"')) }}"
           echo "$(reverse fromJSON\(toJSON\(env.STRING\)\)): ${{ fromJSON(env.STRING) }}"
           echo "endgroup"
 
