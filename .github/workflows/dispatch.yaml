@@ -355,11 +355,13 @@ jobs:
           echo "::group::Casting with $(reverse fromJSON\(\)):"
           echo "$(reverse fromJSON\(\'"string"\'\)): ${{ fromJSON('"string"') }}"
           echo "$(reverse fromJSON\(toJSON\(\'string\'\)\)): ${{ fromJSON(toJSON('string')) }}"
-          echo "$(reverse fromJSON\(\'"1"\'\)): ${{ fromJSON('"1"') }}"
-          echo "$(reverse fromJSON\(toJSON\(1\)\)): ${{ fromJSON(toJSON(1)) }} (toJSON casts to $(reverse string), then fromJSON parses as $(reverse number))"
+          echo "$(reverse fromJSON\(\'1\'\)): ${{ fromJSON('1') }}"
+          echo "$(reverse fromJSON\(toJSON\(1\)\)): ${{ fromJSON(toJSON(1)) }} (toJSON casts to $(reverse string) and $(reverse 1) becomes $(reverse \'1\'), then, since the single quotes belongs to the yaml and whats inside to the evaluated JSON, the $(reverse fromJSON\(\)) parses that yaml $(reverse string) content as $(reverse number))"
           echo
-          echo "$(reverse true == fromJSON\(toJSON\(\'true\'\)\))) should be $(reverse true): ${{ true == fromJSON(toJSON('true')) && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse 'true') to $(reverse boolean);"
-          echo "$(reverse true == fromJSON\(toJSON\(\'true\'\)\))) should be $(reverse true): ${{ 1 == fromJSON(toJSON('true')) && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse 'true') to $(reverse boolean), then to $(reverse number) when evaluating the comparison;"
+          echo "$(reverse true == fromJSON\('true'\))) should be $(reverse true): ${{ true == fromJSON('true') && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse \'true\') to $(reverse boolean);"
+          echo "$(reverse true == fromJSON\(toJSON\(true\)\))) should be $(reverse true): ${{ true == fromJSON(toJSON(true)) && 'true' || 'false'}} ;"
+          echo "$(reverse 1 == fromJSON\('true'\))) should be $(reverse true): ${{ 1 == fromJSON('true') && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse \'true\') to $(reverse boolean), then to $(reverse number) when evaluating the comparison;"
+          echo "$(reverse 1 == fromJSON\(toJSON\(true\)\))) should be $(reverse true): ${{ 1 == fromJSON(toJSON(true)) && 'true' || 'false'}} ;"
           echo
           echo "endgroup"
 
