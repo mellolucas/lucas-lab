@@ -109,58 +109,6 @@ jobs:
           echo "env.BOOLEAN_INPUT: ${{ env.BOOLEAN_INPUT }}"
           echo "\${BOOLEAN_INPUT}: ${BOOLEAN_INPUT}"
           echo "::endgroup::"
-          echo 
-          echo "::group::boolean-input comparisons:"
-          echo "inputs.boolean-input == true: ${{ inputs.boolean-input == true && 'true' || 'false' }}"
-          echo "inputs.boolean-input == false: ${{ inputs.boolean-input == false && 'true' || 'false' }}"
-          echo "inputs.boolean-input == 'true': ${{ inputs.boolean-input == true && 'true' || 'false' }}"
-          echo "inputs.boolean-input == 'false': ${{ inputs.boolean-input == false && 'true' || 'false' }}"
-          echo "inputs.boolean-input == 1: ${{ inputs.boolean-input == 1 && 'true' || 'false' }}"
-          echo "inputs.boolean-input == 0: ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
-          echo "inputs.boolean-input == '1': ${{ inputs.boolean-input == 1 && 'true' || 'false' }}"
-          echo "inputs.boolean-input == '0': ${{ inputs.boolean-input == 0 && 'true' || 'false' }}"
-          echo "contains(inputs.boolean-input, 'true'): ${{ contains(inputs.boolean-input, 'true') && 'true' || 'false' }}" # Best so far when need to default to false (wants true only when explicit)
-          echo "!contains(inputs.boolean-input, 'true'): ${{ !contains(inputs.boolean-input, 'true') && 'true' || 'false' }}" # Only returns false when the arg is explicitly true. Just like "contains(inputs.boolean-input, 'true')", but inverts the result (returns true when that would return false).
-          echo "contains(inputs.boolean-input, 'false'): ${{ contains(inputs.boolean-input, 'false') && 'true' || 'false' }}" # Only returns true when the arg is explicitly false. Just like "!contains(inputs.boolean-input, 'false')", but inverts the result (returns true when that would return false).
-          echo "!contains(inputs.boolean-input, 'false'): ${{ !contains(inputs.boolean-input, 'false') && 'true' || 'false' }}" # Best so far when need to default to true (wants false only when explicit)
-          echo "::endgroup::"
-          echo
-          echo "::group::null-input comparisons:"
-          echo "inputs.null-input == true: ${{ inputs.null-input == true && 'true' || 'false' }}"
-          echo "inputs.null-input == false: ${{ inputs.null-input == false && 'true' || 'false' }}"
-          echo "inputs.null-input == 'true': ${{ inputs.null-input == true && 'true' || 'false' }}"
-          echo "inputs.null-input == 'false': ${{ inputs.null-input == false && 'true' || 'false' }}"
-          echo "inputs.null-input == 1: ${{ inputs.null-input == 1 && 'true' || 'false' }}"
-          echo "inputs.null-input == 0: ${{ inputs.null-input == 0 && 'true' || 'false' }}"
-          echo "inputs.null-input == '1': ${{ inputs.null-input == 1 && 'true' || 'false' }}"
-          echo "inputs.null-input == '0': ${{ inputs.null-input == 0 && 'true' || 'false' }}"
-          echo "contains(inputs.null-input, 'true'): ${{ contains(inputs.null-input, 'true') && 'true' || 'false' }}"
-          echo "!contains(inputs.null-input, 'true'): ${{ !contains(inputs.null-input, 'true') && 'true' || 'false' }}"
-          echo "contains(inputs.null-input, 'false'): ${{ contains(inputs.null-input, 'false') && 'true' || 'false' }}"
-          echo "!contains(inputs.null-input, 'false'): ${{ !contains(inputs.null-input, 'false') && 'true' || 'false' }}"
-          echo "::endgroup::"
-          echo
-          echo "::group::github context comparisons:"
-          echo "Testing 'github.event.repository.has_issues', that is explicitly true" 
-          echo "contains(github.event.repository.has_issues, 'true'): ${{ contains(github.event.repository.has_issues, 'true') && 'true' || 'false' }}"
-          echo "!contains(github.event.repository.has_issues, 'true'): ${{ !contains(github.event.repository.has_issues, 'true') && 'true' || 'false' }}"
-          echo "contains(github.event.repository.has_issues, 'false'): ${{ contains(github.event.repository.has_issues, 'false') && 'true' || 'false' }}"
-          echo "!contains(github.event.repository.has_issues, 'false'): ${{ !contains(github.event.repository.has_issues, 'false') && 'true' || 'false' }}"
-          echo
-          echo "Testing 'github.event.repository.archived', that is explicitly false" 
-          echo "contains(github.event.repository.archived, 'true'): ${{ contains(github.event.repository.archived, 'true') && 'true' || 'false' }}"
-          echo "!contains(github.event.repository.archived, 'true'): ${{ !contains(github.event.repository.archived, 'true') && 'true' || 'false' }}"
-          echo "contains(github.event.repository.archived, 'false'): ${{ contains(github.event.repository.archived, 'false') && 'true' || 'false' }}"
-          echo "!contains(github.event.repository.archived, 'false'): ${{ !contains(github.event.repository.archived, 'false') && 'true' || 'false' }}"
-          echo
-          echo "Testing 'github.event.release.draft', that should not exist for this workflow" 
-          echo "contains(github.event.release.draft, 'true'): ${{ contains(github.event.release.draft, 'true') && 'true' || 'false' }}"
-          echo "!contains(github.event.release.draft, 'true'): ${{ !contains(github.event.release.draft, 'true') && 'true' || 'false' }}"
-          echo "contains(github.event.release.draft, 'false'): ${{ contains(github.event.release.draft, 'false') && 'true' || 'false' }}"
-          echo "!contains(github.event.release.draft, 'false'): ${{ !contains(github.event.release.draft, 'false') && 'true' || 'false' }}"
-          echo "::endgroup::"
-          echo
-          echo "---"
           echo
           echo "::group::Inputs toJSON (raw block deserialized):"
           jq . <<< "${GH_INPUTS}"
