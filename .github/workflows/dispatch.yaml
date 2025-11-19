@@ -224,8 +224,6 @@ jobs:
           
       - name: Test GitHub expressions
         id: expressions
-        env:
-          STRING: 'string'
         run: |
           ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
           bold()          { ansi 1 "$@"; }
@@ -355,8 +353,14 @@ jobs:
           echo "whereas $(reverse join\(1\) == true) should be $(reverse true): ${{ join(1) == true }}, as lefthand is converted to $(reverse \'1\' and then, when comparison operator is used, it is casted to its $(reverse number) at the same time the righthand $(reverse true) is coerced to $(reverse number 1))"
           echo "endgroup"
           echo "::group::Casting with $(reverse fromJSON\(\)):"
-          echo "$(reverse fromJSON\(\'"string"\'\)): ${{ fromJSON(toJSON('"string"')) }}"
-          echo "$(reverse fromJSON\(toJSON\(env.STRING\)\)): ${{ fromJSON(env.STRING) }}"
+          echo "$(reverse fromJSON\(\'"string"\'\)): ${{ fromJSON('"string"') }}"
+          echo "$(reverse fromJSON\(toJSON\(\'string\'\)\)): ${{ fromJSON(toJSON('string')) }}"
+          echo "$(reverse fromJSON\(\'"1"\'\)): ${{ fromJSON('"1"') }}"
+          echo "$(reverse fromJSON\(toJSON\(1\)\)): ${{ fromJSON(toJSON(1)) }} (toJSON casts to $(reverse string), then fromJSON parses as $(reverse number))"
+          echo
+          echo "$(reverse true == fromJSON\(toJSON\(\'true\'\)\))) should be $(reverse true): ${{ true == fromJSON(toJSON('true')) && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse 'true') to $(reverse boolean);"
+          echo "$(reverse true == fromJSON\(toJSON\(\'true\'\)\))) should be $(reverse true): ${{ 1 == fromJSON(toJSON('true')) && 'true' || 'false'}} (as $(reverse fromJSON\(\)) casts $(reverse 'true') to $(reverse boolean), then to $(reverse number) when evaluating the comparison;"
+          echo
           echo "endgroup"
 
       - name: Skippable
