@@ -40,6 +40,7 @@ env:
   STRING_INPUT: ${{ inputs.string-input }}
   BOOLEAN_INPUT: ${{ inputs.boolean-input }}
   RUNS_ON: ${{ inputs.runs-on }}
+  ACTIONS_RUNNER_DEBUG: true
 
 jobs:
   explore:
@@ -340,9 +341,6 @@ jobs:
           echo "$(reverse join\(null\) == \'\') should be $(reverse true): ${{ join(null) == '' && 'true' || 'false' }}"
           echo "$(reverse join\(true\)): ${{ join(true) }}"
           echo "$(reverse contains\(true, \'true\'\)) should be $(reverse true): ${{ contains(true, 'true') && 'true' || 'false' }}"
-          echo "  whereas comparing anything directly to the boolean true would not necessarily be reliable, as non-empty strings and non-zero numbers would be non-falsy and result true:"
-          echo "  \`'somestring' == true\` should be \`true\`: ${{ 'somestring' == true && 'true' || 'false' }} ;"
-          echo "  \`'somestring' && 'true'\` should be \`true\`: ${{ 'somestring' && true && 'true' || 'false' }} ;"
           echo "$(reverse contains\(true, 1)) should be $(reverse false): ${{ contains(true, 1) && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'true\') while righthand is coerced to $(reverse \'1\')"
           echo "$(reverse contains\(true, '1')) should be $(reverse false): ${{ contains(true, '1') && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'true\') while righthand is coerced to $(reverse \'1\')"
           echo "$(reverse join\(false\)): ${{ join(false) }}"
@@ -378,18 +376,24 @@ jobs:
         id: best
         run: |
           echo "Check if a \`boolean\` is explicitly set to \`true\`, otherwise return false: \`contains(inputs.<input-name>, 'true')\`"
-          echo "\`contains(true, 'true')\`: ${{ contains(true, 'true') && 'true' || 'false' }}"
-          echo "\`contains(true, true)\`: ${{ contains(true, 'true') && 'true' || 'false' }}"
-          echo "\`contains(false, 'true')\`: ${{ contains(false, 'true') && 'true' || 'false' }}"
-          echo "\`contains(false, true)\`: ${{ contains(false, 'true') && 'true' || 'false' }}"
+          echo "\`contains(true, true)\`: ${{ contains(true, true) && 'true' || 'false' }}"
+          echo "\`contains(false, true)\`: ${{ contains(false, true) && 'true' || 'false' }}"
+          echo "\`contains(true, 1)\`: ${{ contains(true, 1) && 'true' || 'false' }}"
+          echo "\`contains(false, 1)\`: ${{ contains(false, 1) && 'true' || 'false' }}"
+          echo "\`contains('true', true)\`: ${{ contains('true', true) && 'true' || 'false' }}"
+          echo "\`contains('false', true)\`: ${{ contains('false', true) && 'true' || 'false' }}"
+          echo "\`contains('true', 1)\`: ${{ contains('true', 1) && 'true' || 'false' }}"
+          echo "\`contains('false', 1)\`: ${{ contains('false', 1) && 'true' || 'false' }}"
           echo "\`contains('something', true)\`: ${{ contains('something', true) && 'true' || 'false' }}"
           echo "\`contains(true, 'something')\`: ${{ contains(true, 'something') && 'true' || 'false' }}"
           echo "\`contains('', true)\`: ${{ contains('', true) && 'true' || 'false' }}"
           echo "\`contains(true, '')\`: ${{ contains(true, '') && 'true' || 'false' }}"
-          echo "\`contains('[true, false]', true)\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
-          echo "\`contains('[true, false]', false)\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', '')\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
-          echo "\`contains('[true, false]', 'something')\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
+          echo "\`contains('[true, false]', true)\`: ${{ contains('[true, false]', true) && 'true' || 'false' }}"
+          echo "\`contains('[true, false]', false)\`: ${{ contains('[true, false]', false) && 'true' || 'false' }}"
+          echo "\`contains('["true", "false"]', true)\`: ${{ contains('["true", "false"]', true) && 'true' || 'false' }}"
+          echo "\`contains('["true", "false"]', false)\`: ${{ contains('["true", "false"]', false) && 'true' || 'false' }}"
+          echo "\`contains('["true", "false"]', '')\`: ${{ contains('["true", "false"]', '') && 'true' || 'false' }}"
+          echo "\`contains('["true", "false"]', 'something')\`: ${{ contains('[true, false]', 'something') && 'true' || 'false' }}"
 
       - name: Skippable
         id: skippable
