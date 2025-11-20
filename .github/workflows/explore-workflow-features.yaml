@@ -376,39 +376,7 @@ jobs:
         run: |
           echo "::Data types: yaml literals that exist in GitHub Actions Workflows:"
           echo "- boolean - `\${{ true }}`: ${{ true }}; `\${{ false }}`: ${{ false }};"
-          echo "- null - `\${{ null }}`: ${{ null }};"
-          echo "- number - integer `\${{ 711 }}`: ${{ 711 }}; float `\${{ -9.2 }}`: ${{ -9.2 }}; hex `\${{ 0xff }}`: ${{ 0xff }}; exponential `\${{ -2.99e-2 }}`: ${{ -2.99e-2 }};"
-          echo "- string - `unbraced `Mona the Octocat`: Mona the Octocat; `braced `\${{ 'It''s open source!' }}`: ${{ 'It's open source!' }};" 
-          echo
-          echo "::group::Check if a value is of type \`boolean\` and is explicitly set to \`true\`, otherwise return false: \`contains(inputs.<input-name>, true)\`"
-          echo "::endgroup::"
-          echo "::group::Check if a value is of type \`boolean\` and is explicitly set to \`false\`, otherwise return true: \`!contains(inputs.<input-name>, false)\`"
-          echo "::endgroup::"
-          echo "::group::Check if a value of any type is \`truthy\`: \`inputs.<input-name>\`"
-          echo "::endgroup::"
-          echo "::group::Check if a value of any type is \`truthy\` and not empty: \`inputs.<input-name>\`"
-          echo "::endgroup::"
-          echo
-          echo "\`contains(true, true)\`: ${{ contains(true, true) && 'true' || 'false' }}"
-          echo "\`contains(false, true)\`: ${{ contains(false, true) && 'true' || 'false' }}"
-          echo "\`contains(true, 1)\`: ${{ contains(true, 1) && 'true' || 'false' }}"
-          echo "\`contains(false, 1)\`: ${{ contains(false, 1) && 'true' || 'false' }}"
-          echo "\`contains('true', true)\`: ${{ contains('true', true) && 'true' || 'false' }}"
-          echo "\`contains('false', true)\`: ${{ contains('false', true) && 'true' || 'false' }}"
-          echo "\`contains('true', 1)\`: ${{ contains('true', 1) && 'true' || 'false' }}"
-          echo "\`contains('false', 1)\`: ${{ contains('false', 1) && 'true' || 'false' }}"
-          echo "\`contains('something', true)\`: ${{ contains('something', true) && 'true' || 'false' }}"
-          echo "\`contains(true, 'something')\`: ${{ contains(true, 'something') && 'true' || 'false' }}"
-          echo "\`contains('', true)\`: ${{ contains('', true) && 'true' || 'false' }}"
-          echo "\`contains(true, '')\`: ${{ contains(true, '') && 'true' || 'false' }}"
-          echo "\`contains('[true, false]', true)\`: ${{ contains('[true, false]', true) && 'true' || 'false' }}"
-          echo "\`contains('[true, false]', false)\`: ${{ contains('[true, false]', false) && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', true)\`: ${{ contains('["true", "false"]', true) && 'true' || 'false' }}"
-          echo "\`contains('["something", "false"]', true)\`: ${{ contains('["true", "false"]', true) && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', false)\`: ${{ contains('["true", "false"]', false) && 'true' || 'false' }}"
-          echo "\`contains('["true", ""]', false)\`: ${{ contains('["true", "false"]', false) && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', '')\`: ${{ contains('["true", "false"]', '') && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', 'something')\`: ${{ contains('[true, false]', 'something') && 'true' || 'false' }}"
+
 
       - name: Skippable
         id: skippable
