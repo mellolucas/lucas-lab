@@ -374,11 +374,30 @@ jobs:
       - name: Summary & Conclusions
         id: summary
         run: |
-          echo 'Data types: yaml literals that exist in GitHub Actions Workflows:' >> "$GITHUB_STEP_SUMMARY"
-          echo '- boolean - `＄{{ true }}`: ${{ true }}; `＄{{ false }}`: ${{ false }};' >> "$GITHUB_STEP_SUMMARY"
-          echo '- null - `＄{{ null }}`: ${{ null }};' >> "$GITHUB_STEP_SUMMARY"
-          echo '- number - integer `＄{{ 711 }}`: ${{ 711 }}; float `＄{{ -9.2 }}`: ${{ -9.2 }}; hex `＄{{ 0xff }}`: ${{ 0xff }}; exponential `＄{{ -2.99e-2 }}`: ${{ -2.99e-2 }};' >> "$GITHUB_STEP_SUMMARY"
-          echo '- string - unbraced `Mona the Octocat`: Mona the Octocat; braced `＄{{ \'It\'\'s open source!\' }}`: ${{ 'It''s open source!' }};' >> "$GITHUB_STEP_SUMMARY"
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+            ## Data Types
+            > 
+            > GitHub Workflow handling of string literals in YAML scalar nodes
+
+            - **Literals**:
+              | Data Type  |             |       Workflow Expression      |       Evaluated Value       |
+              | :--------- | :---------: | :----------------------------: | :-------------------------: |
+              | boolean    |             |                                |                             |
+              |            | true        | `＄{{ true }}`                 | ${{ true }}                 |
+              |            | false       | `＄{{ false }}`                | ${{ false }}                |
+              | null       |             |                                |                             |
+              |            | null        | `＄{{ null }}`                 | ${{ null }}                 |
+              | number     |             |                                |                             |
+              |            | integer     | `＄{{ 711 }}`                  | ${{ 711 }}                  |
+              |            | float       | `＄{{ -9.2 }}`                 | ${{ -9.2 }}                 |
+              |            | hex         | `＄{{ 0xff }}`                 | ${{ 0xff }}                 |
+              |            | exponential | `＄{{ -2.99e-2 }}`             | ${{ -2.99e-2 }}             |
+              | string     |             |                                |                             |
+              |            | unbraced    | `Mona the Octocat`             | Mona the Octocat            |
+              |            | braced      | `＄{{ 'It''s open source!' }}` | ${{ 'It''s open source!' }} |
+
+          EOM
+          
           echo
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
