@@ -40,7 +40,6 @@ env:
   STRING_INPUT: ${{ inputs.string-input }}
   BOOLEAN_INPUT: ${{ inputs.boolean-input }}
   RUNS_ON: ${{ inputs.runs-on }}
-  ACTIONS_RUNNER_DEBUG: true
 
 jobs:
   explore:
@@ -376,12 +375,9 @@ jobs:
         id: summary
         run: |
           echo "::Data types: yaml literals that exist in GitHub Actions Workflows:"
-          echo "- boolean: \`true\`, \`false\`"
-          echo "- null: ${{ format('`null`:{0}', null) }}"
-          echo "- number: e.g. ${{ format('`0`:{0}, `-1`:{1}, `3.14`:{2}, `-2.99e-2`:{3}, `0xff`:{4}}', 0, -1, 3.14, -2.99e-2, 0xff) }}"
-          
-
-
+          echo "- boolean: ${{ format('(`true`:{0}; `false`:{1};)', true, false) }}"
+          echo "- number ${{ format('(integer `711`:{0}; float `-9.2`:{1}; hex `0xff`:{2}; exponential `-2.99e-2`:{3};)', 711, -9.2, 0xff, -2.99e-2) }}"
+          echo "- string: ${{ format('(`Mona the Octocat`:{0}; `It''s open source!`:{1};)', 'Mona the Octocat', "It's open source!") }}"
           echo
           echo "::group::Check if a value is of type \`boolean\` and is explicitly set to \`true\`, otherwise return false: \`contains(inputs.<input-name>, true)\`"
           echo "::endgroup::"
@@ -391,9 +387,7 @@ jobs:
           echo "::endgroup::"
           echo "::group::Check if a value of any type is \`truthy\` and not empty: \`inputs.<input-name>\`"
           echo "::endgroup::"
-
-
-
+          echo
           echo "\`contains(true, true)\`: ${{ contains(true, true) && 'true' || 'false' }}"
           echo "\`contains(false, true)\`: ${{ contains(false, true) && 'true' || 'false' }}"
           echo "\`contains(true, 1)\`: ${{ contains(true, 1) && 'true' || 'false' }}"
