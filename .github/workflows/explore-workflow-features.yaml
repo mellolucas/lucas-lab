@@ -372,10 +372,28 @@ jobs:
           echo "endgroup"
           echo "What we can get from all of this is that all possible $(reverse true booleans) ($(reverse 1), $(reverse \'1\'), $(reverse true), $(reverse \'true\')) can be safely compared to either $(reverse number 1) or $(reverse boolean true) if first casted to $(reverse string) with $(reverse join\(\)) then converted to $(reverse boolean) or $(reverse number) with $(reverse fromJSON\(\)), given that they will be normalized to $(reverse number 1) if the either operand is at the end a $(reverse number 1 or 0) and both wont be coerced to $(reverse number 1) if both are $(reverse boolean). Only trick here is that empty string is falsy and comparison coerces it to $(reverse 0)"
 
-      - name: Best comparisons
-        id: best
+      - name: Summary & Conclusions
+        id: summary
         run: |
-          echo "Check if a \`boolean\` is explicitly set to \`true\`, otherwise return false: \`contains(inputs.<input-name>, 'true')\`"
+          echo "::Data types: yaml literals that exist in GitHub Actions Workflows:"
+          echo "- boolean: \`true\`, \`false\`"
+          echo "- null: ${{ format('`null`:{0}', null) }}"
+          echo "- number: e.g. ${{ format('`0`:{0}, `-1`:{1}, `3.14`:{2}, `-2.99e-2`:{3}, `0xff`:{4}}', 0, -1, 3.14, -2.99e-2, 0xff) }}"
+          
+
+
+          echo
+          echo "::group::Check if a value is of type \`boolean\` and is explicitly set to \`true\`, otherwise return false: \`contains(inputs.<input-name>, true)\`"
+          echo "::endgroup::"
+          echo "::group::Check if a value is of type \`boolean\` and is explicitly set to \`false\`, otherwise return true: \`!contains(inputs.<input-name>, false)\`"
+          echo "::endgroup::"
+          echo "::group::Check if a value of any type is \`truthy\`: \`inputs.<input-name>\`"
+          echo "::endgroup::"
+          echo "::group::Check if a value of any type is \`truthy\` and not empty: \`inputs.<input-name>\`"
+          echo "::endgroup::"
+
+
+
           echo "\`contains(true, true)\`: ${{ contains(true, true) && 'true' || 'false' }}"
           echo "\`contains(false, true)\`: ${{ contains(false, true) && 'true' || 'false' }}"
           echo "\`contains(true, 1)\`: ${{ contains(true, 1) && 'true' || 'false' }}"
@@ -391,7 +409,9 @@ jobs:
           echo "\`contains('[true, false]', true)\`: ${{ contains('[true, false]', true) && 'true' || 'false' }}"
           echo "\`contains('[true, false]', false)\`: ${{ contains('[true, false]', false) && 'true' || 'false' }}"
           echo "\`contains('["true", "false"]', true)\`: ${{ contains('["true", "false"]', true) && 'true' || 'false' }}"
+          echo "\`contains('["something", "false"]', true)\`: ${{ contains('["true", "false"]', true) && 'true' || 'false' }}"
           echo "\`contains('["true", "false"]', false)\`: ${{ contains('["true", "false"]', false) && 'true' || 'false' }}"
+          echo "\`contains('["true", ""]', false)\`: ${{ contains('["true", "false"]', false) && 'true' || 'false' }}"
           echo "\`contains('["true", "false"]', '')\`: ${{ contains('["true", "false"]', '') && 'true' || 'false' }}"
           echo "\`contains('["true", "false"]', 'something')\`: ${{ contains('[true, false]', 'something') && 'true' || 'false' }}"
 
