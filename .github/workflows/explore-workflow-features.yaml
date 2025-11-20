@@ -380,21 +380,21 @@ jobs:
             > GitHub Workflow handling of string literals in YAML scalar nodes
 
             - **Literals**:
-              | Data Type  |             |       Workflow Expression      |       Evaluated Value       |
-              | :--------- | :---------: | :----------------------------: | :-------------------------: |
-              | boolean    |             |                                |                             |
-              |            | true        | `＄{{ true }}`                 | ${{ true }}                 |
-              |            | false       | `＄{{ false }}`                | ${{ false }}                |
-              | null       |             |                                |                             |
-              |            | null        | `＄{{ null }}`                 | ${{ null }}                 |
-              | number     |             |                                |                             |
-              |            | integer     | `＄{{ 711 }}`                  | ${{ 711 }}                  |
-              |            | float       | `＄{{ -9.2 }}`                 | ${{ -9.2 }}                 |
-              |            | hex         | `＄{{ 0xff }}`                 | ${{ 0xff }}                 |
-              |            | exponential | `＄{{ -2.99e-2 }}`             | ${{ -2.99e-2 }}             |
-              | string     |             |                                |                             |
-              |            | unbraced    | `Mona the Octocat`             | Mona the Octocat            |
-              |            | braced      | `＄{{ 'It''s open source!' }}` | ${{ 'It''s open source!' }} |
+              | Data Type  | Value Type  | Workflow Value/Expression      | Evaluated Value               |
+              | :--------- | :---------- | :----------------------------: | :---------------------------: |
+              | boolean    |             |                                |                               |
+              |            | true        | `＄{{ true }}`                 | `${{ true }}`                 |
+              |            | false       | `＄{{ false }}`                | `${{ false }}`                |
+              | null       |             |                                |                               |
+              |            | null        | `＄{{ null }}`                 | `${{ null }}`                 |
+              | number     |             |                                |                               |
+              |            | integer     | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
+              |            | float       | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
+              |            | hex         | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
+              |            | exponential | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
+              | string     |             |                                |                               |
+              |            |             | `Mona the Octocat`             | `Mona the Octocat`            |
+              |            |             | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
 
           EOM
           
