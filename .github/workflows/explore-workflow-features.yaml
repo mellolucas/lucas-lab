@@ -376,11 +376,6 @@ jobs:
         run: |
           echo "::Data types: yaml literals that exist in GitHub Actions Workflows:"
           echo "- boolean - \`\${{ true }}\`: ${{ true }}; \`\${{ false }}\`: ${{ false }};"
-          echo "- null - \`\${{ null }}\`: ${{ null }};"
-          echo "- number - integer \`\${{ 711 }}\`: ${{ 711 }}; float \`\${{ -9.2 }}\`: ${{ -9.2 }}; hex \`\${{ 0xff }}\`: ${{ 0xff }}; exponential \`\${{ -2.99e-2 }}\`: ${{ -2.99e-2 }};"
-          echo "- string - unbraced \`Mona the Octocat\`: Mona the Octocat; braced \`\${{ 'It''s open source!' }}\`: ${{ 'It's open source!' }};" 
-          echo
-
 
       - name: Skippable
         id: skippable
