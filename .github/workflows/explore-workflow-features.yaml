@@ -378,7 +378,7 @@ jobs:
           echo '- boolean - `＄{{ true }}`: ${{ true }}; `＄{{ false }}`: ${{ false }};'
           echo '- null - `＄{{ null }}`: ${{ null }};'
           echo '- number - integer `＄{{ 711 }}`: ${{ 711 }}; float `＄{{ -9.2 }}`: ${{ -9.2 }}; hex `＄{{ 0xff }}`: ${{ 0xff }}; exponential `＄{{ -2.99e-2 }}`: ${{ -2.99e-2 }};'
-          echo '- string - unbraced `Mona the Octocat`: Mona the Octocat; braced `＄{{ 'It''s open source!' }}`: ${{ 'It's open source!' }};' 
+          echo '- string - unbraced `Mona the Octocat`: Mona the Octocat; braced `＄{{ \'It\'\'s open source!\' }}`: ${{ 'It's open source!' }};' 
           echo
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
