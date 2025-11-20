@@ -340,6 +340,9 @@ jobs:
           echo "$(reverse join\(null\) == \'\') should be $(reverse true): ${{ join(null) == '' && 'true' || 'false' }}"
           echo "$(reverse join\(true\)): ${{ join(true) }}"
           echo "$(reverse contains\(true, \'true\'\)) should be $(reverse true): ${{ contains(true, 'true') && 'true' || 'false' }}"
+          echo "  whereas comparing anything directly to the boolean true would not necessarily be reliable, as non-empty strings and non-zero numbers would be non-falsy and result true:"
+          echo "  \`'somestring' == true\` should be \`true\`: ${{ 'somestring' == true && 'true' || 'false' }} ;"
+          echo "  \`'somestring' && 'true'\` should be \`true\`: ${{ 'somestring' && true && 'true' || 'false' }} ;"
           echo "$(reverse contains\(true, 1)) should be $(reverse false): ${{ contains(true, 1) && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'true\') while righthand is coerced to $(reverse \'1\')"
           echo "$(reverse contains\(true, '1')) should be $(reverse false): ${{ contains(true, '1') && 'true' || 'false' }}, as lefthand is corced to $(reverse string \'true\') while righthand is coerced to $(reverse \'1\')"
           echo "$(reverse join\(false\)): ${{ join(false) }}"
@@ -371,6 +374,23 @@ jobs:
           echo "endgroup"
           echo "What we can get from all of this is that all possible $(reverse true booleans) ($(reverse 1), $(reverse \'1\'), $(reverse true), $(reverse \'true\')) can be safely compared to either $(reverse number 1) or $(reverse boolean true) if first casted to $(reverse string) with $(reverse join\(\)) then converted to $(reverse boolean) or $(reverse number) with $(reverse fromJSON\(\)), given that they will be normalized to $(reverse number 1) if the either operand is at the end a $(reverse number 1 or 0) and both wont be coerced to $(reverse number 1) if both are $(reverse boolean). Only trick here is that empty string is falsy and comparison coerces it to $(reverse 0)"
 
+      - name: Best comparisons
+        id: best
+        run: |
+          echo "Check if a \`boolean\` is explicitly set to \`true\`, otherwise return false: \`contains(inputs.<input-name>, 'true')\`"
+          echo "\`contains(true, 'true')\`: ${{ contains(true, 'true') && 'true' || 'false' }}"
+          echo "\`contains(true, true)\`: ${{ contains(true, 'true') && 'true' || 'false' }}"
+          echo "\`contains(false, 'true')\`: ${{ contains(false, 'true') && 'true' || 'false' }}"
+          echo "\`contains(false, true)\`: ${{ contains(false, 'true') && 'true' || 'false' }}"
+          echo "\`contains('something', true)\`: ${{ contains('something', true) && 'true' || 'false' }}"
+          echo "\`contains(true, 'something')\`: ${{ contains(true, 'something') && 'true' || 'false' }}"
+          echo "\`contains('', true)\`: ${{ contains('', true) && 'true' || 'false' }}"
+          echo "\`contains(true, '')\`: ${{ contains(true, '') && 'true' || 'false' }}"
+          echo "\`contains('[true, false]', true)\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
+          echo "\`contains('[true, false]', false)\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
+          echo "\`contains('["true", "false"]', '')\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
+          echo "\`contains('[true, false]', 'something')\`: ${{ contains('[true, false]', 'true') && 'true' || 'false' }}"
+
       - name: Skippable
         id: skippable
         if: inputs.string-input != 'skip'
@@ -388,4 +408,3 @@ jobs:
           echo "---      ---      ---"
           ${{ contains(inputs.break, 'true') && true || false }} && exit 1 || true
           echo
-
