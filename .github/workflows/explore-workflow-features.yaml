@@ -377,6 +377,7 @@ jobs:
           echo '::Data types: yaml literals that exist in GitHub Actions Workflows:'
           echo '- boolean - `＄{{ true }}`: ${{ true }}; `＄{{ false }}`: ${{ false }};'
           echo '- null - `＄{{ null }}`: ${{ null }};'
+          echo '- number - integer `＄{{ 711 }}`: ${{ 711 }}; float `＄{{ -9.2 }}`: ${{ -9.2 }}; hex `＄{{ 0xff }}`: ${{ 0xff }}; exponential `＄{{ -2.99e-2 }}`: ${{ -2.99e-2 }};'
 
       - name: Skippable
         id: skippable
