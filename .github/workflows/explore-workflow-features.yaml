@@ -377,11 +377,12 @@ jobs:
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
             ## Data Types 
             > GitHub Actions Workflows supported data structures and types
-              | YAML Primitives (node kind) | Equivalent Types/Structures | GitHub Equivalent | 
-              | :-------------------------- | :-------------------------- | :---------------: |
-              | mappings                    | hashes/dictionaries         | objects           |
-              | sequences                   | arrays/lists                | arrays            |
-              | scalars                     | any atomic data types       | literals          |
+
+            | YAML Primitives (node kind) | Equivalent Types/Structures | GitHub Equivalent | 
+            | :-------------------------- | :-------------------------- | :---------------: |
+            | mappings                    | hashes/dictionaries         | objects           |
+            | sequences                   | arrays/lists                | arrays            |
+            | scalars                     | any atomic data types       | literals          |
 
             ### Objects/Mappings
             > How GitHub Actions Workflows handle objects (yaml mappings)
@@ -395,7 +396,8 @@ jobs:
 
             ### Literals/Scalar Types
             > How GitHub Actions Workflows handle string literals (yaml scalars)
-            In GitHub Actions Workflows, as part of an expression, one can use the following data types:
+
+            When writting workflows, as part of an expression, one can use the following data types:
 
               | Data Type  | Value Variation   | Value Representation           | Evaluated Result              |
               | :--------- | :---------------- | :----------------------------: | :---------------------------: |
@@ -412,7 +414,6 @@ jobs:
               | string     |                   |                                |                               |
               |            | unquoted unbraced | `Mona the Octocat`             | `Mona the Octocat`            |
               |            | quoted braced     | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
-          EOM
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
@@ -433,7 +434,7 @@ jobs:
           |           | integer    | `711`          | `711` (=> `${{ fromJSON('711') }}`)       | `'711'`                                         |
           |           | float      | `-9.2`         | `-9.2` (=> `${{ fromJSON('-9.2') }}`)     | `'-9.2'`                                        |
           
-
+          EOM
 
           
 
