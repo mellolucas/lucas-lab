@@ -375,29 +375,68 @@ jobs:
         id: summary
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
-            ## Data Types
-            > 
-            > GitHub Workflow handling of string literals in YAML scalar nodes
+            ## Data Types 
+            > GitHub Actions Workflows supported data structures and types
+              | YAML Primitives (node kind) | Equivalent Types/Structures | GitHub Equivalent | 
+              | :-------------------------- | :-------------------------- | :---------------: |
+              | mappings                    | hashes/dictionaries         | objects           |
+              | sequences                   | arrays/lists                | arrays            |
+              | scalars                     | any atomic data types       | literals          |
 
-            - **Literals**:
-              | Data Type  | Value Type  | Workflow Value/Expression      | Evaluated Value               |
-              | :--------- | :---------- | :----------------------------: | :---------------------------: |
-              | boolean    |             |                                |                               |
-              |            | true        | `＄{{ true }}`                 | `${{ true }}`                 |
-              |            | false       | `＄{{ false }}`                | `${{ false }}`                |
-              | null       |             |                                |                               |
-              |            | null        | `＄{{ null }}`                 | `${{ null }}`                 |
-              | number     |             |                                |                               |
-              |            | integer     | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
-              |            | float       | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
-              |            | hex         | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
-              |            | exponential | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
-              | string     |             |                                |                               |
-              |            |             | `Mona the Octocat`             | `Mona the Octocat`            |
-              |            |             | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
+            ### Objects/Mappings
+            > How GitHub Actions Workflows handle objects (yaml mappings)
+            Representing mappings (hashes/dictionaries) in GitHub Actions Workflows:
+            - TODO: demonstrate how to define objects directly or from strings using workflow functions
 
+            ### Arrays/Sequences
+            > How GitHub Actions Workflows handle arrays (yaml sequences)
+            Representing sequences (arrays/lists) in GitHub Actions Workflows:
+            - TODO: demonstrate how to define arrays directly or from strings using workflow functions
+
+            ### Literals/Scalar Types
+            > How GitHub Actions Workflows handle string literals (yaml scalars)
+            In GitHub Actions Workflows, as part of an expression, one can use the following data types:
+
+              | Data Type  | Value Variation   | Value Representation           | Evaluated Result              |
+              | :--------- | :---------------- | :----------------------------: | :---------------------------: |
+              | boolean    |                   |                                |                               |
+              |            | true              | `＄{{ true }}`                 | `${{ true }}`                 |
+              |            | false             | `＄{{ false }}`                | `${{ false }}`                |
+              | null       |                   |                                |                               |
+              |            | null              | `＄{{ null }}`                 | `${{ null }}`                 |
+              | number     |                   |                                |                               |
+              |            | integer           | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
+              |            | float             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
+              |            | hex               | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
+              |            | exponential       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
+              | string     |                   |                                |                               |
+              |            | unquoted unbraced | `Mona the Octocat`             | `Mona the Octocat`            |
+              |            | quoted braced     | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
           EOM
+
+          ## Type Casting & Coercion
+          > How GitHub Actions Workflows normalize data when performing comparisons
+          GitHub performs _loose equality_ comparisons:
+          - When comparing with **operators**, _if types do **not** match_, operands are _coerced to **numbers**_ using the conversions described below;
+          - When comparisons are part of a function internal behavior, those functions _cast argument values to **strings**_ to perform comparisons, using the conversions described below;
+          In addition to that, the `fromJSON()` function can be used to convert any data type that can be represented in JSON or JavaScript, as it takes in a string and returns the value inside it to its corresponding deserialized type.
           
+          Conversion rules:
+          | Data Type |  Variation | Original Value | Operators converts to (number)            | Functions converts to (string)                  | 
+          | :-------- | :--------- | :------------: | :---------------------------------------: | :---------------------------------------------: |
+          | null      |            |                |                                           |                                                 |
+          |           | null       | `null`         | `0` (=> `${{ fromJSON('0') }}`)           | `''` (=> `${{ join(null) }}​`)                   |
+          | boolean   |            |                |                                           |                                                 |
+          |           | true       | `true`         | `1` (=> `${{ fromJSON('1') }}`)           | `'true'`                                        |
+          |           | false      | `false`        | `0` (=> `${{ fromJSON('0') }}`)           | `'false'`                                       |
+          | number    |            |                | _already number_                          | _decimal format, exponential for large numbers_ |
+          |           | integer    | `711`          | `711` (=> `${{ fromJSON('711') }}`)       | `'711'`                                         |
+          |           | float      | `-9.2`         | `-9.2` (=> `${{ fromJSON('-9.2') }}`)     | `'-9.2'`                                        |
+          
+
+
+          
+
           echo
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
