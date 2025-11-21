@@ -405,7 +405,7 @@ jobs:
             |            | true              | `＄{{ true }}`                 | `${{ true }}`                 |
             |            | false             | `＄{{ false }}`                | `${{ false }}`                |
             | null       |                   |                                |                               |
-            |            | null              | `＄{{ null }}`                 | `${{ null }}`                 |
+            |            | null              | `＄{{ null }}`                 | `${{ null }}​`                 |
             | number     |                   |                                |                               |
             |            | integer           | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
             |            | float             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
@@ -423,16 +423,18 @@ jobs:
           In addition to that, the `fromJSON()` function can be used to convert any data type that can be represented in JSON or JavaScript, as it takes in a string and returns the value inside it to its corresponding deserialized type.
           
           Conversion rules:
-          | Data Type |  Variation | Original Value | Operators converts to (number)            | Functions converts to (string)                  | 
-          | :-------- | :--------- | :------------: | :---------------------------------------: | :---------------------------------------------: |
-          | null      |            |                |                                           |                                                 |
-          |           | null       | `null`         | `0` (=> `${{ fromJSON('0') }}`)           | `''` (=> `${{ join(null) }}​`)                   |
-          | boolean   |            |                |                                           |                                                 |
-          |           | true       | `true`         | `1` (=> `${{ fromJSON('1') }}`)           | `'true'`                                        |
-          |           | false      | `false`        | `0` (=> `${{ fromJSON('0') }}`)           | `'false'`                                       |
-          | number    |            |                | _already number_                          | _decimal format, exponential for large numbers_ |
-          |           | integer    | `711`          | `711` (=> `${{ fromJSON('711') }}`)       | `'711'`                                         |
-          |           | float      | `-9.2`         | `-9.2` (=> `${{ fromJSON('-9.2') }}`)     | `'-9.2'`                                        |
+          | Type    |  Variation  | Value (`x`) | Operators converts to (number)                | Functions converts to (string)                  | `fromJSON('x')` parses `x` as                 |
+          | :------ | :---------- | :---------: | :-------------------------------------------: | :---------------------------------------------: | :-------------------------------------------: |
+          | null    |             |             |                                               |                                                 |                                               |
+          |         | null        | `null`      | `0` (=> `${{ fromJSON('0') }}`)               | `''` (=> `${{ join(null) }}​`)                   | `null` (=> `${{ fromJSON('null') }}​`)         |
+          | boolean |             |             |                                               |                                                 |                                               |
+          |         | true        | `true`      | `1` (=> `${{ fromJSON('1') }}`)               | `'true'` (=> `${{ join(true) }}`)               | `true` (=> `${{ fromJSON('true') }}`)         |
+          |         | false       | `false`     | `0` (=> `${{ fromJSON('0') }}`)               | `'false'` (=> `${{ join(false) }}`)             | `false` (=> `${{ fromJSON('false') }}`)       |
+          | number  |             |             | _already number_                              | _decimal format, exponential for large numbers_ |                                               |
+          |         | integer     | `711`       | `711` (=> `${{ fromJSON('711') }}`)           | `'711' (=> `${{ join(711) }}`)                  | `711` (=> `${{ fromJSON('711') }}`)           |
+          |         | float       | `-9.2`      | `-9.2` (=> `${{ fromJSON('-9.2') }}`)         | `'-9.2' (=> `${{ join(-9.2) }}`)                | `-9.2` (=> `${{ fromJSON('-9.2') }}`)         |
+          |         | hex         | `0xff`      | `0xff` (=> `${{ fromJSON('0xff') }}`)         | `'255' (=> `${{ join(0xff) }}`)                 | `0xff` (=> `${{ fromJSON('0xff') }}`)         |
+          |         | exponential | `-2.99e-2`  | `-2.99e-2` (=> `${{ fromJSON('-2.99e-2') }}`) | `'-0.0299' (=> `${{ join(-2.99e-2) }}`)         | `-2.99e-2` (=> `${{ fromJSON('-2.99e-2') }}`) |
           
           EOM
 
@@ -460,14 +462,14 @@ jobs:
           echo "\`contains(true, 'something')\`: ${{ contains(true, 'something') && 'true' || 'false' }}"
           echo "\`contains('', true)\`: ${{ contains('', true) && 'true' || 'false' }}"
           echo "\`contains(true, '')\`: ${{ contains(true, '') && 'true' || 'false' }}"
-          echo "\`contains('[true, false]', true)\`: ${{ contains('[true, false]', true) && 'true' || 'false' }}"
-          echo "\`contains('[true, false]', false)\`: ${{ contains('[true, false]', false) && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', true)\`: ${{ contains('["true", "false"]', true) && 'true' || 'false' }}"
-          echo "\`contains('["something", "false"]', true)\`: ${{ contains('["true", "false"]', true) && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', false)\`: ${{ contains('["true", "false"]', false) && 'true' || 'false' }}"
-          echo "\`contains('["true", ""]', false)\`: ${{ contains('["true", "false"]', false) && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', '')\`: ${{ contains('["true", "false"]', '') && 'true' || 'false' }}"
-          echo "\`contains('["true", "false"]', 'something')\`: ${{ contains('[true, false]', 'something') && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('[true, false]'), true)\`: ${{ contains(fromJSON('[true, false]'), true) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('[true, false]'), false)\`: ${{ contains(fromJSON('[true, false]'), false) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", "false"]'), true)\`: ${{ contains(fomrJSON('["true", "false"]'), true) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["something", "false"]'), true)\`: ${{ contains(fomrJSON('["true", "false"]'), true) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", "false"]'), false)\`: ${{ contains(fomrJSON('["true", "false"]'), false) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", ""]'), false)\`: ${{ contains(fomrJSON('["true", "false"]'), false) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", "false"]'), '')\`: ${{ contains(fromJSON('["true", "false"]'), '') && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", "false"]'), 'something')\`: ${{ contains(fomrJSON('[true, false]'), 'something') && 'true' || 'false' }}"
 
       - name: Skippable
         id: skippable
