@@ -464,12 +464,12 @@ jobs:
           echo "\`contains(true, '')\`: ${{ contains(true, '') && 'true' || 'false' }}"
           echo "\`contains(fromJSON('[true, false]'), true)\`: ${{ contains(fromJSON('[true, false]'), true) && 'true' || 'false' }}"
           echo "\`contains(fromJSON('[true, false]'), false)\`: ${{ contains(fromJSON('[true, false]'), false) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", "false"]'), true)\`: ${{ contains(fomrJSON('["true", "false"]'), true) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["something", "false"]'), true)\`: ${{ contains(fomrJSON('["true", "false"]'), true) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", "false"]'), false)\`: ${{ contains(fomrJSON('["true", "false"]'), false) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", ""]'), false)\`: ${{ contains(fomrJSON('["true", "false"]'), false) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", "false"]'), true)\`: ${{ contains(fromJSON('["true", "false"]'), true) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["something", "false"]'), true)\`: ${{ contains(fromJSON('["true", "false"]'), true) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", "false"]'), false)\`: ${{ contains(fromJSON('["true", "false"]'), false) && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", ""]'), false)\`: ${{ contains(fromJSON('["true", "false"]'), false) && 'true' || 'false' }}"
           echo "\`contains(fromJSON('["true", "false"]'), '')\`: ${{ contains(fromJSON('["true", "false"]'), '') && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", "false"]'), 'something')\`: ${{ contains(fomrJSON('[true, false]'), 'something') && 'true' || 'false' }}"
+          echo "\`contains(fromJSON('["true", "false"]'), 'something')\`: ${{ contains(fromJSON('[true, false]'), 'something') && 'true' || 'false' }}"
 
       - name: Skippable
         id: skippable
