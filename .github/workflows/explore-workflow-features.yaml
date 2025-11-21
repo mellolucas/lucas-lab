@@ -411,6 +411,7 @@ jobs:
             |            | float             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
             |            | hex               | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
             |            | exponential       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
+            |            | large exponential | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`              |
             | string     |                   |                                |                               |
             |            | unquoted unbraced | `Mona the Octocat`             | `Mona the Octocat`            |
             |            | quoted braced     | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
@@ -430,12 +431,14 @@ jobs:
           | boolean |             |             |                                               |                                                 |                                               |
           |         | true        | `true`      | `1` (=> `${{ fromJSON('1') }}`)               | `'true'` (=> `${{ join(true) }}`)               | `true` (=> `${{ fromJSON('true') }}`)         |
           |         | false       | `false`     | `0` (=> `${{ fromJSON('0') }}`)               | `'false'` (=> `${{ join(false) }}`)             | `false` (=> `${{ fromJSON('false') }}`)       |
-          | number  |             |             | _already number_                              | _decimal format, exponential for large numbers_ |                                               |
-          |         | integer     | `711`       | `711` (=> `${{ fromJSON('711') }}`)           | `'711'` (=> `${{ join(711) }}`)                  | `711` (=> `${{ fromJSON('711') }}`)           |
-          |         | float       | `-9.2`      | `-9.2` (=> `${{ fromJSON('-9.2') }}`)         | `'-9.2'` (=> `${{ join(-9.2) }}`)                | `-9.2` (=> `${{ fromJSON('-9.2') }}`)         |
-          |         | hex         | `0xff`      | `0xff` (=> `${{ fromJSON('0xff') }}`)         | `'255'` (=> `${{ join(0xff) }}`)                 | `0xff` (=> `${{ fromJSON('0xff') }}`)         |
-          |         | exponential | `-2.99e-2`  | `2.99e200` (=> `${{ fromJSON('0.1123458132134e99') }}`) | `'-0.0299'` (=> `${{ join(0.1123458132134e99) }}`)         | `-2.99e-2` (=> `${{ fromJSON('-2.99e-2') }}`) |
-          
+          | number  |             |             | _already number, no coercion needed_          | _decimal format, exponential for large numbers_ |                                               |
+          |         | integer     | `711`       | `711` (=> `${{ fromJSON('711') }}`)           | `'711'` (=> `${{ join(711) }}`)                 | `711` (=> `${{ fromJSON('711') }}`)           |
+          |         | float       | `-9.2`      | `-9.2` (=> `${{ fromJSON('-9.2') }}`)         | `'-9.2'` (=> `${{ join(-9.2) }}`)               | `-9.2` (=> `${{ fromJSON('-9.2') }}`)         |
+          |         | hex         | `0xff`      | `0xff` (=> `${{ fromJSON('0xff') }}`)         | `'255'` (=> `${{ join(0xff) }}`)                 | `0xff` (=> `${{ fromJSON('0xff') }}`)        |
+          |         | exponential | `-2.99e-2`  | `-2.99e-2` (=> `${{ fromJSON('-2.99e-2') }}`) | `'-0.0299'` (=> `${{ join(-2.99e-2) }}`)       | `-2.99e-2` (=> `${{ fromJSON('-2.99e-2') }}`)  |
+          |         | large num   | `6.02e23`   | `6.02e23` (=> `${{ fromJSON('6.02e23') }}`)   | `'6.02e+23'` (=> `${{ join(6.02e23) }}`)         | `6.02e23` (=> `${{ fromJSON('6.02e23') }}`)  |
+          | string  |             |             |                                               |                                                 |                                               |
+
           
           EOM
 
