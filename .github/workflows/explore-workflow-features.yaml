@@ -399,21 +399,21 @@ jobs:
 
             When writting workflows, as part of an expression, one can use the following data types:
 
-              | Data Type  | Value Variation   | Value Representation           | Evaluated Result              |
-              | :--------- | :---------------- | :----------------------------: | :---------------------------: |
-              | boolean    |                   |                                |                               |
-              |            | true              | `＄{{ true }}`                 | `${{ true }}`                 |
-              |            | false             | `＄{{ false }}`                | `${{ false }}`                |
-              | null       |                   |                                |                               |
-              |            | null              | `＄{{ null }}`                 | `${{ null }}`                 |
-              | number     |                   |                                |                               |
-              |            | integer           | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
-              |            | float             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
-              |            | hex               | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
-              |            | exponential       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
-              | string     |                   |                                |                               |
-              |            | unquoted unbraced | `Mona the Octocat`             | `Mona the Octocat`            |
-              |            | quoted braced     | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
+            | Data Type  | Value Variation   | Value Representation           | Evaluated Result              |
+            | :--------- | :---------------- | :----------------------------: | :---------------------------: |
+            | boolean    |                   |                                |                               |
+            |            | true              | `＄{{ true }}`                 | `${{ true }}`                 |
+            |            | false             | `＄{{ false }}`                | `${{ false }}`                |
+            | null       |                   |                                |                               |
+            |            | null              | `＄{{ null }}`                 | `${{ null }}`                 |
+            | number     |                   |                                |                               |
+            |            | integer           | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
+            |            | float             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
+            |            | hex               | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
+            |            | exponential       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
+            | string     |                   |                                |                               |
+            |            | unquoted unbraced | `Mona the Octocat`             | `Mona the Octocat`            |
+            |            | quoted braced     | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
