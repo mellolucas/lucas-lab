@@ -374,7 +374,7 @@ jobs:
       - name: Summary & Conclusions
         id: summary
         env:
-          TEST_UNQUOTED: It's Mona "the" Octocat
+          TEST_UNQUOTED: It's Mona \"the\" Octocat
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
             ## Data Types 
@@ -416,7 +416,11 @@ jobs:
             |            | large exponential      | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`              |
             | string     |                        |                                |                               |
             |            | unquoted unbraced      | `Mona the Octocat`             | `Mona the Octocat`            |
-
+            |            | unquoted unbraced      | `It''s Mona, "the" Octocat`    | `It''s Mona, "the" Octocat`   |
+            |            | single quoted unbraced | `'Mona the Octocat'`           | `${{ 'Mona the Octocat' }}`   |
+            |            | single quoted unbraced | `"It's Mona, \"the\" Octocat"` | `${{ "Mona the Octocat" }}`   |
+            |            | double quoted unbraced | `'It''s Mona the Octocat'`     | `${{ 'Mona the Octocat' }}`   |
+            |            | quoted braced     | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
