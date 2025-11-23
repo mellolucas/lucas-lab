@@ -374,8 +374,8 @@ jobs:
       - name: Summary & Conclusions
         id: summary
         env:
-          TEST_UNQUOTED: It's Mona \"the\" Octocat
-          TEST_UNQUOTED_TWODOUBLES: It's Mona ""the"" Octocat
+          TEST_UNQUOTED: It''s Mona \"the\" Octocat
+          TEST_UNQUOTED_TWODOUBLES: It''s Mona ""the"" Octocat
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
             ## Data Types 
@@ -445,7 +445,9 @@ jobs:
           | string  |               |                  | _`0` if empty, number if legal JSON,else `NaN`_ | _already string, no conversion needed_          | _input as: `toJSON('x')` or `'"x"'`_ |
 
           EOM
-        
+
+          echo '${{ env.TEST_UNQUOTED }}' >> "${GITHUB_STEP_SUMMARY}"
+          echo '${{ env.TEST_UNQUOTED_TWODOUBLES }}' >> "${GITHUB_STEP_SUMMARY}"
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `false`, otherwise return true: `!contains(inputs.<input-name>, false)`'
