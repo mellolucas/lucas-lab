@@ -373,6 +373,8 @@ jobs:
 
       - name: Summary & Conclusions
         id: summary
+        env:
+          TEST_UNQUOTED: It's Mona "the" Octocat
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
             ## Data Types 
@@ -399,39 +401,41 @@ jobs:
 
             When writting workflows, as part of an expression, one can use the following data types:
 
-            | Data Type  | Value Variation   | Value Representation           | Evaluated Result              |
-            | :--------- | :---------------- | :----------------------------: | :---------------------------: |
-            | boolean    |                   |                                |                               |
-            |            | true              | `＄{{ true }}`                 | `${{ true }}`                 |
-            |            | false             | `＄{{ false }}`                | `${{ false }}`                |
-            | null       |                   |                                |                               |
-            |            | null              | `＄{{ null }}`                 | `${{ null }}​`                 |
-            | number     |                   |                                |                               |
-            |            | integer           | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
-            |            | float             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
-            |            | hex               | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
-            |            | exponential       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
-            |            | large exponential | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`              |
-            | string     |                   |                                |                               |
-            |            | unquoted unbraced | `Mona the Octocat`             | `Mona the Octocat`            |
-            |            | quoted braced     | `＄{{ 'It''s open source!' }}` | `${{ 'It''s open source!' }}` |
+            | Data Type  | Value Variation        | Value Representation           | Evaluated Result              |
+            | :--------- | :--------------------- | :----------------------------: | :---------------------------: |
+            | boolean    |                        |                                |                               |
+            |            | true                   | `＄{{ true }}`                 | `${{ true }}`                 |
+            |            | false                  | `＄{{ false }}`                | `${{ false }}`                |
+            | null       |                        |                                |                               |
+            |            | null                   | `＄{{ null }}`                 | `${{ null }}​`                 |
+            | number     |                        |                                |                               |
+            |            | integer                | `＄{{ 711 }}`                  | `${{ 711 }}`                  |
+            |            | float                  | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                 |
+            |            | hex                    | `＄{{ 0xff }}`                 | `${{ 0xff }}`                 |
+            |            | exponential            | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`             |
+            |            | large exponential      | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`              |
+            | string     |                        |                                |                               |
+            |            | unquoted unbraced      | `Mona the Octocat`             | `Mona the Octocat`            |
+
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
           GitHub performs _loose equality_ comparisons:
           - When comparing with **operators**, _if types do **not** match_, operands are _coerced to **numbers**_ using the conversions described below;
           - When comparisons are part of a function internal behavior, those functions _cast argument values to **strings**_ to perform comparisons, using the conversions described below;
-          In addition to that, the `fromJSON()` function can be used to convert any data type that can be represented in JSON or JavaScript, as it takes in a string and returns the value inside it to its corresponding deserialized type.
-          
+          In addition to that, the `fromJSON()` function can be used to convert any data type that can be represented in JSON or JavaScript.
+            Since `fromJSON()` takes in a string and returns the value inside it parsed as its corresponding deserialized type, its argument must be a string containing a legal/parseable JSON value.
+            Because of that, the value (`x`) to be parsed must be either wrapped in quotes (`'x'`) or previously converted to a JSON string using the `toJSON(x)` function.
+
           Conversion rules:
           | Type    |  Variation    | Value (`x`)      | Operators converts to (number)                  | Functions converts to (string)                  | `fromJSON('x')` parses `x` as        |
           | :------ | :------------ | :--------------: | :---------------------------------------------: | :---------------------------------------------: | :----------------------------------: |
-          | null    |               |                  |                                                 |                                                 | input as: `toJSON(x)` or `'x'`_      |
+          | null    |               |                  |                                                 |                                                 |                                      |
           |         | null          | `null`           | `${{ fromJSON('0') }}`                          | `'${{ join(null) }}'`                           | `${{ fromJSON('null') }}​` (= `null`) |
-          | boolean |               |                  |                                                 |                                                 | _input: `toJSON(x)` or `'x'`_        |
+          | boolean |               |                  |                                                 |                                                 |                                      |
           |         | true          | `true`           | `${{ fromJSON('1') }}`                          | `'${{ join(true) }}'`                           | `${{ fromJSON('true') }}`            |
           |         | false         | `false`          | `${{ fromJSON('0') }}`                          | `'${{ join(false) }}'`                          | `${{ fromJSON('false') }}`           |
-          | number  |               |                  | _already number, no coercion needed_            | _decimal format, exponential for large numbers_ | _input as: `toJSON(x) or 'x'_        |
+          | number  |               |                  | _already number, no coercion needed_            | _decimal format, exponential for large numbers_ |                                      |
           |         | integer       | `711`            | `${{ fromJSON('711') }}`                        | `'${{ join(711) }}'`                            | `${{ fromJSON('711') }}`             |
           |         | float         | `-9.2`           | `${{ fromJSON('-9.2') }}`                       | `'${{ join(-9.2) }}'`                           | `${{ fromJSON('-9.2') }}`            |
           |         | hex           | `0xff`           | `${{ fromJSON('0xff') }}`                       | `'${{ join(0xff) }}'`                           | `${{ fromJSON('0xff') }}`            |
@@ -439,22 +443,22 @@ jobs:
           |         | large num     | `6.02e23`        | `${{ fromJSON('6.02e23') }}`                    | `'${{ join(6.02e23) }}'`                        | `${{ fromJSON('6.02e23') }}`         |
           | string  |               |                  | _`0` if empty, number if legal JSON,else `NaN`_ | _already string, no conversion needed_          | _input as: `toJSON('x')` or `'"x"'`_ |
           |         | unquoted      | `The Octocat`    | `${{ fromJSON('NaN') }}`                        | `${{ join("The Octocat") }}`                    | `${{ fromJSON('"The Octocat"') }}`   |
-          |         | quoted        | `'It''s me!'`    | `${{ fromJSON('NaN') }}`                        | `'${{ join("It's me!") }}'`                     | `${{ fromJSON('"It''s me!"') }}`     |
-          |         | empty str     | `''`             | `${{ fromJSON('0') }}`                          | `'${{ join("") }}'`                             | `${{ fromJSON('""') }}`              |
-          |         | numeric str   | `'711'`          | `${{ fromJSON('711') }}`                        | `'${{ join("711") }}'`                          | `${{ fromJSON('"711"') }}`           |
-          |         | float num str | `'-9.2'`         | `${{ fromJSON('-9.2') }}`                       | `'${{ join("-9.2") }}'`                         | `${{ fromJSON('"-9.2"') }}`          |
-          |         | hex num str   | `'0xff'`         | `${{ fromJSON('0xff') }}`                       | `'${{ join("0xff") }}'`                         | `${{ fromJSON('"0xff"') }}`          |
-          |         | exp num str   | `'-2.99e-2'`     | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join("-2.99e-2") }}'`                     | `${{ fromJSON('"-2.99e-2"') }}`      |
-          |         | large num str | `'6.02e23'`      | `${{ fromJSON('6.02e23') }}`                    | `'${{ join("6.02e23") }}'`                      | `${{ fromJSON('"6.02e23"') }}`       |
-          |         | bool num str  | `'true'`         | `${{ fromJSON('NaN') }}`                        | `'${{ join("true") }}'`                         | `${{ fromJSON('"true"') }}`          |
-          |         |               | `'false'`        | `${{ fromJSON('NaN') }}`                        | `'${{ join("false") }}'`                        | `${{ fromJSON('"false"') }}`         |
+          |         | quoted        | `"It's me!"`    | `${{ fromJSON('NaN') }}`                        | `'${{ join("It's me!") }}'`                     | `${{ fromJSON('"It''s me!"') }}`     |
+          |         | empty str     | `""`             | `${{ fromJSON('0') }}`                          | `'${{ join("") }}'`                             | `${{ fromJSON('""') }}`              |
+          |         | numeric str   | `"711"`          | `${{ fromJSON('711') }}`                        | `'${{ join("711") }}'`                          | `${{ fromJSON('"711"') }}`           |
+          |         | float num str | `"-9.2"`         | `${{ fromJSON('-9.2') }}`                       | `'${{ join("-9.2") }}'`                         | `${{ fromJSON('"-9.2"') }}`          |
+          |         | hex num str   | `"0xff"`         | `${{ fromJSON('0xff') }}`                       | `'${{ join("0xff") }}'`                         | `${{ fromJSON('"0xff"') }}`          |
+          |         | exp num str   | `"-2.99e-2"`     | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join("-2.99e-2") }}'`                     | `${{ fromJSON('"-2.99e-2"') }}`      |
+          |         | large num str | `"6.02e23"`      | `${{ fromJSON('6.02e23') }}`                    | `'${{ join("6.02e23") }}'`                      | `${{ fromJSON('"6.02e23"') }}`       |
+          |         | bool num str  | `"true"`         | `${{ fromJSON('NaN') }}`                        | `'${{ join("true") }}'`                         | `${{ fromJSON('"true"') }}`          |
+          |         |               | `"false"`        | `${{ fromJSON('NaN') }}`                        | `'${{ join("false") }}'`                        | `${{ fromJSON('"false"') }}`         |
           | array   |               |                  |                                                 | _Arrays are not converted to strings_           | _input: `toJSON(x)` or `'x'`_        |
           |         |               | `["a", 9, true]` | `${{ fromJSON('NaN') }}`                        | `["a", 9, true]`                                | `${{ fromJSON('["a", 9, true]') }}`  |
 
           
           EOM
 
-          echo 'test ${{ toJSON(["a", 1, true]) }}"' >> "${GITHUB_STEP_SUMMARY}"
+          echo 'test ${{ toJSON(["a", 1, true]) }}"'
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `false`, otherwise return true: `!contains(inputs.<input-name>, false)`'
