@@ -419,7 +419,7 @@ jobs:
             |            | single quoted (raw) escaping      | `'It''s Mona, "the" Octocat'`  | `${{ 'It''s Mona, "the" Octocat' }}`                                        |
             |            | single quoted (raw) in expression | `＄{{ 'Mona the Octocat' }}`   | `${{ 'Mona the Octocat' }}` (_${{ 'Mona the' && 'truthy' || 'falsy' }}_)    |
             |            | double quoted                     | `"Mona the Octocat"`           | `"Mona the Octocat"` _(all inside is evaluated; result is implicit string)_ |
-            |            | double quoted in expression       | `＄{{ "Mona the Octocat" }}`   | `error`: _double quote not allowed inside expression (handles as symbol)_   |
+            |            | double quoted in expression       | `＄{{ "Mona the Octocat" }}`   | `error`: _double quotes not allowed inside expression (handles as symbol)_  |
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
