@@ -413,11 +413,11 @@ jobs:
             |            | exponential            | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`                     |
             |            | large exponential      | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`                      |
             | string     |                        |                                |                                       |
-            |            | unquoted unbraced      | `Mona the Octocat`             | `Mona the Octocat`                    |
-            |            | single quoted unbraced | `'Mona the Octocat'`           | `${{ 'Mona the Octocat' }}`           |
-            |            | single quoted braced   | `＄{{ 'Mona the Octocat' }}`   | `${{ 'Mona the Octocat' }}`           |
-            |            | single quoted escaping | `'It''s Mona, "the" Octocat'`  | `${{ 'It''s Mona, "the" Octocat' }}`  |
-
+            |            | unquoted (string literal) | `Mona the Octocat`             | `Mona the Octocat`                    |
+            
+            ${{ "711" }}
+            items must be recognized symbols or parsable literals
+            ${{ fromJSON("711") }} 
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
@@ -447,10 +447,9 @@ jobs:
 
 
 
-
           EOM
 
-          echo '${{ true && "true" || "false" }}' >> "${GITHUB_STEP_SUMMARY}"
+
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `false`, otherwise return true: `!contains(inputs.<input-name>, false)`'
