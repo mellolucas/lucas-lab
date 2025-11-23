@@ -419,7 +419,6 @@ jobs:
             |            | single quoted escaping | `'It''s Mona, "the" Octocat'`  | `${{ 'It''s Mona, "the" Octocat' }}`  |
             |            | double quoted unbraced | `"Mona the Octocat"`           | `${{ "Mona the Octocat" }}`           |
             |            | double quoted braced   | `＄{{ "Mona the Octocat" }}`   | `${{ "Mona the Octocat" }}`           |
-            |            | double quoted escaping | `"It's Mona, \"the\" Octocat"` | `${{ "It's Mona, \"the\" Octocat" }}` |
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
