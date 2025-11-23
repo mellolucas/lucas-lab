@@ -417,7 +417,7 @@ jobs:
             |            | single quoted unbraced | `'Mona the Octocat'`          | `${{ 'Mona the Octocat' }}`          |
             |            | single quoted unbraced | `'It''s Mona, "the" Octocat'` | `${{ 'It''s Mona, "the" Octocat' }}` |
             |            | double quoted unbraced | `"Mona the Octocat"`          | `${{ 'Mona the Octocat' }}`   |
-            |            | double quoted unbraced | `"It's Mona, ""the"" Octocat"` | `${{ 'It''s Mona, "the" Octocat' }}` |
+            |            | double quoted unbraced | `"It's Mona, ""the"" Octocat"` | `${{ "It's Mona, ""the"" Octocat" }}` |
 
 
           ## Type Casting & Coercion
@@ -444,6 +444,7 @@ jobs:
           |         | exponential   | `-2.99e-2`       | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join(-2.99e-2) }}'`                       | `${{ fromJSON('-2.99e-2') }}`        |
           |         | large num     | `6.02e23`        | `${{ fromJSON('6.02e23') }}`                    | `'${{ join(6.02e23) }}'`                        | `${{ fromJSON('6.02e23') }}`         |
           | string  |               |                  | _`0` if empty, number if legal JSON,else `NaN`_ | _already string, no conversion needed_          | _input as: `toJSON('x')` or `'"x"'`_ |
+
 
 
           EOM
