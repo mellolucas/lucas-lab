@@ -402,22 +402,22 @@ jobs:
             | Data Type  | Value Variation                   | Value Representation           | Evaluated Result                                                            |
             | :--------- | :-------------------------------- | :----------------------------: | :-------------------------------------------------------------------------: |
             | boolean    |                                   |                                |                                                                             |
-            |            | true                              | `＄{{ true }}`                 | `${{ true }}`                                                               |
-            |            | false                             | `＄{{ false }}`                | `${{ false }}`                                                              |
+            |            | true                              | `＄{{ true }}`                 | `${{ true }}` (_${{ true && 'truthy' || 'falsy' }}_)                        |
+            |            | false                             | `＄{{ false }}`                | `${{ false }}` (_${{ false && 'truthy' || 'falsy' }}_)                      |
             | null       |                                   |                                |                                                                             |
-            |            | null                              | `＄{{ null }}`                 | `${{ null }}​`                                                               |
+            |            | null                              | `＄{{ null }}`                 | `${{ null }}​` (_${{ null && 'truthy' || 'falsy' }}_)                        |
             | number     |                                   |                                |                                                                             |
-            |            | integer                           | `＄{{ 711 }}`                  | `${{ 711 }}`                                                                |
-            |            | float                             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                                                               |
-            |            | hex                               | `＄{{ 0xff }}`                 | `${{ 0xff }}`                                                               |
-            |            | exponential                       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`                                                           |
-            |            | large exponential                 | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`                                                            |
+            |            | integer                           | `＄{{ 711 }}`                  | `${{ 711 }}` (_${{ 711 && 'truthy' || 'falsy' }}_)                          |
+            |            | float                             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}` (_${{ -9.2 && 'truthy' || 'falsy' }}_)                        |
+            |            | hex                               | `＄{{ 0xff }}`                 | `${{ 0xff }}` (_${{ 0xff && 'truthy' || 'falsy' }}_)                        |
+            |            | exponential                       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}` (_${{ -2.99e-2 && 'truthy' || 'falsy' }}_)                |
+            |            | large exponential                 | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}` (_${{ 6.02e23 && 'truthy' || 'falsy' }}_)                  |
             | string     |                                   |                                |                                                                             |
             |            | unquoted (implicit string)        | `Mona the Octocat`             | `Mona the Octocat`                                                          |
             |            | unquoted (implicit) in expression | `＄{{ Mona the Octocat }}`     | `error`: _items unparsable and unavailable as named context_                |
             |            | single quoted (raw string)        | `'Mona the Octocat'`           | `${{ 'Mona the Octocat' }}`                                                 |
             |            | single quoted (raw) escaping      | `'It''s Mona, "the" Octocat'`  | `${{ 'It''s Mona, "the" Octocat' }}`                                        |
-            |            | single quoted (raw) in expression | `＄{{ 'Mona the Octocat' }}`   | `${{ 'Mona the Octocat' }}`                                                 |
+            |            | single quoted (raw) in expression | `＄{{ 'Mona the Octocat' }}`   | `${{ 'Mona the Octocat' }}` (_${{ 'Mona the' && 'truthy' || 'falsy' }}_)    |
             |            | double quoted                     | `"Mona the Octocat"`           | `"Mona the Octocat"` _(all inside is evaluated; result is implicit string)_ |
             |            | double quoted in expression       | `＄{{ "Mona the Octocat" }}`   | `error`: _double quote not allowed inside expression (handles as symbol)_   |
 
@@ -445,8 +445,8 @@ jobs:
           |         | exponential   | `-2.99e-2`        | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join(-2.99e-2) }}'`                       | `${{ fromJSON('-2.99e-2') }}`                 |
           |         | large num     | `6.02e23`         | `${{ fromJSON('6.02e23') }}`                    | `'${{ join(6.02e23) }}'`                        | `${{ fromJSON('6.02e23') }}`                  |
           | string  |               |                   | _`0` if empty, number if legal JSON,else `NaN`_ | _already string, no conversion needed_          | _double quote value to parse as str: `'"x"'`_ | 
-          |         | string        | `'The Octocat'`   | `${{ fromJSON('NaN') }}`                       | `'${{ join('The Octocat') }}'`                  | `${{ fromJSON('"The Octocat"') }}`            |
-          |         | empty str     | `""`              | `${{ fromJSON('0') }}`                          | `'${{ join('') }}'`                             | `${{ fromJSON('""') }}`                       |
+          |         | string        | `'The Octocat'`   | `${{ fromJSON('NaN') }}`                       | `'${{ join('The Octocat') }}'`                  | `${{ fromJSON('"The Octocat"') }}`             |
+          |         | empty str     | `""`              | `${{ fromJSON('0') }}`                          | `'${{ join('') }}'`                             | `${{ fromJSON('""') }}​` (empty string)        |
           |         | numeric str   | `'711'`           | `${{ fromJSON('711') }}`                        | `'${{ join('711') }}'`                          | `${{ fromJSON('"711"') }}`                    |
           |         | float num str | `'-9.2'`          | `${{ fromJSON('-9.2') }}`                       | `'${{ join('-9.2') }}'`                         | `${{ fromJSON('"-9.2"') }}`                   |
           |         | hex num str   | `'0xff'`          | `${{ fromJSON('0xff') }}`                       | `'${{ join('0xff') }}'`                         | `${{ fromJSON('"0xff"') }}`                   |
@@ -455,9 +455,9 @@ jobs:
           |         | bool num str  | `'true'`          | `${{ fromJSON('NaN') }}`                        | `'${{ join('true') }}'`                         | `${{ fromJSON('"true"') }}`                   |
           |         |               | `'false'`         | `${{ fromJSON('NaN') }}`                        | `'${{ join('false') }}'`                        | `${{ fromJSON('"false"') }}`                  |
           | array   |               |                   | _only equal to themselves (same instance)_      | _Arrays cannot be converted to strings_         |                                               |
-          |         |               | `["a", 9, true]`  | `${{ fromJSON('NaN') }}`                        | _`error` if fun param does not expect an array  | `${{ fromJSON('["a", 9, true]') }}`           |
+          |         |               | `["a", 9, true]`  | `${{ fromJSON('NaN') }}`                        | _`error` if fun param does not expect an array_ | `${{ fromJSON('["a", 9, true]') }}`           |
           | object  |               |                   | _only equal to themselves (same instance)_      | _Objects cannot be converted to strings_        |                                               |
-          |         |               | `{"key": "value"}`| `${{ fromJSON('NaN') }}`                       | _`error` if fun param does not expect an object | `${{ fromJSON('{"key": "value"}') }}`         |
+          |         |               | `{"key": "value"}`| `${{ fromJSON('NaN') }}`                        | _`error` if param does not expect an object_    | `${{ fromJSON('{"key": "value"}') }}`         |
 
           TODO: Add arrays and objects indexing and filtering
 
