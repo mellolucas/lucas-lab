@@ -417,8 +417,7 @@ jobs:
             |            | single quoted unbraced | `'Mona the Octocat'`           | `${{ 'Mona the Octocat' }}`           |
             |            | single quoted braced   | `＄{{ 'Mona the Octocat' }}`   | `${{ 'Mona the Octocat' }}`           |
             |            | single quoted escaping | `'It''s Mona, "the" Octocat'`  | `${{ 'It''s Mona, "the" Octocat' }}`  |
-            |            | double quoted unbraced | `"Mona the Octocat"`           | `${{ "Mona the Octocat" }}`           |
-            |            | double quoted braced   | `＄{{ "Mona the Octocat" }}`   | `${{ "Mona the Octocat" }}`           |
+
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
@@ -444,8 +443,10 @@ jobs:
           |         | exponential   | `-2.99e-2`       | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join(-2.99e-2) }}'`                       | `${{ fromJSON('-2.99e-2') }}`        |
           |         | large num     | `6.02e23`        | `${{ fromJSON('6.02e23') }}`                    | `'${{ join(6.02e23) }}'`                        | `${{ fromJSON('6.02e23') }}`         |
           | string  |               |                  | _`0` if empty, number if legal JSON,else `NaN`_ | _already string, no conversion needed_          |                                      |
-          |         | string        | `"The Octocat"`  | `${{ fromJSON('NaN')` }}`                       | `'${{ join("The Octocat") }}'`                  | `${{ fromJSON('"The Octocat"') }}`   |
-          |         | empty str     | `""`             | `${{ fromJSON('0') }}`                          | `'${{ join("") }}'`                             | `${{ fromJSON('""') }}`              |
+
+
+
+
 
           EOM
 
