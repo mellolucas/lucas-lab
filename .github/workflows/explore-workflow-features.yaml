@@ -424,28 +424,28 @@ jobs:
           In addition to that, the `fromJSON()` function can be used to convert any data type that can be represented in JSON or JavaScript, as it takes in a string and returns the value inside it to its corresponding deserialized type.
           
           Conversion rules:
-          | Type    |  Variation  | Value (`x`) | Operators converts to (number)                | Functions converts to (string)                  | `fromJSON('x')` parses `x` as                |
-          | :------ | :---------- | :---------: | :-------------------------------------------: | :---------------------------------------------: | :------------------------------------------: |
-          | null    |             |             |                                               |                                                 |                                              |
-          |         | null        | `null`      | `0` (=> `${{ fromJSON('0') }}`)               | `''` (=> `${{ join(null) }}​`)                   | `null` (=> `${{ fromJSON('null') }}​`)        |
-          | boolean |             |             |                                               |                                                 |                                              |
-          |         | true        | `true`      | `1` (=> `${{ fromJSON('1') }}`)               | `'true'` (=> `${{ join(true) }}`)               | `true` (=> `${{ fromJSON('true') }}`)        |
-          |         | false       | `false`     | `0` (=> `${{ fromJSON('0') }}`)               | `'false'` (=> `${{ join(false) }}`)             | `false` (=> `${{ fromJSON('false') }}`)      |
-          | number  |             |             | _already number, no coercion needed_          | _decimal format, exponential for large numbers_ |                                              |
-          |         | integer     | `711`       | `711` (=> `${{ fromJSON('711') }}`)           | `'711'` (=> `${{ join(711) }}`)                 | `711` (=> `${{ fromJSON('711') }}`)          |
-          |         | float       | `-9.2`      | `-9.2` (=> `${{ fromJSON('-9.2') }}`)         | `'-9.2'` (=> `${{ join(-9.2) }}`)               | `-9.2` (=> `${{ fromJSON('-9.2') }}`)        |
-          |         | hex         | `0xff`      | `255` (=> `${{ fromJSON('0xff') }}`)          | `'255'` (=> `${{ join(0xff) }}`)                | `255` (=> `${{ fromJSON('0xff') }}`)         |
-          |         | exponential | `-2.99e-2`  | `-0.0299` (=> `${{ fromJSON('-2.99e-2') }}`)  | `'-0.0299'` (=> `${{ join(-2.99e-2) }}`)        | `-0.0299` (=> `${{ fromJSON('-2.99e-2') }}`) |
-          |         | large num   | `6.02e23`   | `6.02E+23` (=> `${{ fromJSON('6.02e23') }}`)  | `'6.02E+23'` (=> `${{ join(6.02e23) }}`)        | `6.02E+23` (=> `${{ fromJSON('6.02e23') }}`) |
-          | string  |             |             |                                               |                                                 |                                              |
-
+          | Type    |  Variation  | Value (`x`) | Operators converts to (number)       | Functions converts to (string)                  | `fromJSON('x')` parses `x` as                |
+          | :------ | :---------- | :---------: | :----------------------------------: | :---------------------------------------------: | :------------------------------------------: |
+          | null    |             |             |                                      |                                                 |                                              |
+          |         | null        | `null`      | `${{ fromJSON('0') }}`               | `'${{ join(null) }}'`                           | `null` (=> `${{ fromJSON('null') }}​`)        |
+          | boolean |             |             |                                      |                                                 |                                              |
+          |         | true        | `true`      | `${{ fromJSON('1') }}`               | `'${{ join(true) }}'`                           | `true` (=> `${{ fromJSON('true') }}`)        |
+          |         | false       | `false`     | `${{ fromJSON('0') }}`               | `'${{ join(false) }}'`                          | `false` (=> `${{ fromJSON('false') }}`)      |
+          | number  |             |             | _already number, no coercion needed_ | _decimal format, exponential for large numbers_ |                                              |
+          |         | integer     | `711`       | `${{ fromJSON('711') }}`             | `'${{ join(711) }}'`                            | `711` (=> `${{ fromJSON('711') }}`)          |
+          |         | float       | `-9.2`      | `${{ fromJSON('-9.2') }}`            | `'${{ join(-9.2) }}'`                           | `-9.2` (=> `${{ fromJSON('-9.2') }}`)        |
+          |         | hex         | `0xff`      | `${{ fromJSON('0xff') }}`            | `'${{ join(0xff) }}'`                           | `255` (=> `${{ fromJSON('0xff') }}`)         |
+          |         | exponential | `-2.99e-2`  | `${{ fromJSON('-2.99e-2') }}`        | `'${{ join(-2.99e-2) }}'`                       | `-0.0299` (=> `${{ fromJSON('-2.99e-2') }}`) |
+          |         | large num   | `6.02e23`   | `${{ fromJSON('6.02e23') }}`         | `'${{ join(6.02e23) }}'`                        | `6.02E+23` (=> `${{ fromJSON('6.02e23') }}`) |
+          | string  |             |             |                                      |                                                 |                                              |
+          |         | unquoted    | `Mona the Octocat` | `${{ fromJSON('NaN') }}`               | `'Mona the Octocat'`                            | `'Mona the Octocat'`                         |
+          |         | quoted      | `'It''s open source!'` | `${{ fromJSON('NaN') }}`               | `'It's open source!'`                           | `'It's open source!'`                        |
+          
 
           
           EOM
 
           
-
-          echo "test ${{ fromJSON('1+1') }}"
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `false`, otherwise return true: `!contains(inputs.<input-name>, false)`'
