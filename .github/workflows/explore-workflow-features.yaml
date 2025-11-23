@@ -416,7 +416,7 @@ jobs:
             |            | unquoted (string literal) | `Mona the Octocat`          | `Mona the Octocat`                                              |
             |            | unquoted in expression             | `＄{{ Mona the Octocat }}`  | `error`: unquoted items must be legal JSON or recognized symbol |
 
-          ${{ "github.repository" }}
+          ${{ Mona }}
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
