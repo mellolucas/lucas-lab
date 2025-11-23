@@ -401,23 +401,22 @@ jobs:
 
             | Data Type  | Value Variation        | Value Representation           | Evaluated Result                      |
             | :--------- | :--------------------- | :----------------------------: | :-----------------------------------: |
-            | boolean    |                        |                                |                                       |
-            |            | true                   | `＄{{ true }}`                 | `${{ true }}`                         |
-            |            | false                  | `＄{{ false }}`                | `${{ false }}`                        |
-            | null       |                        |                                |                                       |
-            |            | null                   | `＄{{ null }}`                 | `${{ null }}​`                         |
-            | number     |                        |                                |                                       |
-            |            | integer                | `＄{{ 711 }}`                  | `${{ 711 }}`                          |
-            |            | float                  | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                         |
-            |            | hex                    | `＄{{ 0xff }}`                 | `${{ 0xff }}`                         |
-            |            | exponential            | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`                     |
-            |            | large exponential      | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`                      |
-            | string     |                        |                                |                                       |
-            |            | unquoted (string literal) | `Mona the Octocat`             | `Mona the Octocat`                    |
-            
-            ${{ "711" }}
-            items must be recognized symbols or parsable literals
-            ${{ fromJSON("711") }} 
+            | boolean    |                        |                                |                                                                 |
+            |            | true                   | `＄{{ true }}`                 | `${{ true }}`                                                   |
+            |            | false                  | `＄{{ false }}`                | `${{ false }}`                                                  |
+            | null       |                        |                                |                                                                 |
+            |            | null                   | `＄{{ null }}`                 | `${{ null }}​`                                                   |
+            | number     |                        |                                |                                                                 |
+            |            | integer                | `＄{{ 711 }}`                  | `${{ 711 }}`                                                    |
+            |            | float                  | `＄{{ -9.2 }}`                 | `${{ -9.2 }}`                                                   |
+            |            | hex                    | `＄{{ 0xff }}`                 | `${{ 0xff }}`                                                   |
+            |            | exponential            | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}`                                               |
+            |            | large exponential      | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}`                                                |
+            | string     |                        |                                |                                                                 |
+            |            | unquoted (string literal) | `Mona the Octocat`          | `Mona the Octocat`                                              |
+            |            | unquoted in expression             | `＄{{ Mona the Octocat }}`  | `error`: unquoted items must be legal JSON or recognized symbol |
+
+          ${{ "github.repository" }}
 
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
@@ -443,7 +442,6 @@ jobs:
           |         | exponential   | `-2.99e-2`       | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join(-2.99e-2) }}'`                       | `${{ fromJSON('-2.99e-2') }}`        |
           |         | large num     | `6.02e23`        | `${{ fromJSON('6.02e23') }}`                    | `'${{ join(6.02e23) }}'`                        | `${{ fromJSON('6.02e23') }}`         |
           | string  |               |                  | _`0` if empty, number if legal JSON,else `NaN`_ | _already string, no conversion needed_          |                                      |
-
 
 
 
