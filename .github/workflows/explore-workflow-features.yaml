@@ -445,7 +445,6 @@ jobs:
 
           EOM
 
-          echo 'test ${{ toJSON(["a", 1, true]) }}"'
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
           echo '::endgroup::'
           echo '::group::Check if a value is of type `boolean` and is explicitly set to `false`, otherwise return true: `!contains(inputs.<input-name>, false)`'
