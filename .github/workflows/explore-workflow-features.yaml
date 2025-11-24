@@ -465,17 +465,22 @@ jobs:
           ### Exploring how different types behave when compared
           First off, lets see how different values compare to one another when compared using operators.
           Operator Comparison Matrix:
-          | `x` \ `y`     | `null`              | `NaN`            | `true`            | `false`            | `0`              | `1`              | `''`             | `'str'`            | `'true'`            | `'false'`            | `'0'`             | `'1'`             |
-          | :------------ | :-----------------: | :--------------: | :---------------: | :----------------: | :--------------: | :--------------: | :--------------: | :----------------: | :-----------------: | :------------------: | :---------------: | :---------------: |
-          | **`null`**    | `${{null==null}}`   | `${{null==NaN}}` | `${{null==true}}` | `${{null==false}}` | `${{null==0}}`   | `${{null==1}}`   | `${{null==''}}`  | `${{null=='str'}}` | `${{null=='true'}}` | `${{null=='false'}}` | `${{null=='0'}}`  | `${{null=='1'}}`  |
-          | **`NaN`**     | `${{NaN==null}}`    | `${{NaN==NaN}}`  | `${{NaN==true}}`  | `${{NaN==false}}`  | `${{NaN==0}}`    | `${{NaN==1}}`    | `${{NaN==''}}`   | `${{NaN=='str'}}`  | `${{NaN=='true'}}`  | `${{NaN=='false'}}`  | `${{NaN=='0'}}`   | `${{NaN=='1'}}`   |
-          | **`true`**    | `${{true==null}}`   | `${{true==NaN}}` | `${{true==true}}` | `${{true==false}}` | `${{true==0}}`   | `${{true==1}}`   | `${{true==''}}`  | `${{true=='str'}}` | `${{true=='true'}}` | `${{true=='false'}}` | `${{true=='0'}}`  | `${{true=='1'}}`  |
-          | **`false`**   | `${{false==null}}`  | `${{false==NaN}}`| `${{false==true}}`| `${{false==false}}`| `${{false==0}}`  | `${{false==1}}`  | `${{false==''}}` | `${{false=='str'}}`| `${{false=='true'}}`| `${{false=='false'}}`| `${{false=='0'}}` | `${{false=='1'}}` |
-          | **`0`**       | `${{0==null}}`      | `${{0==NaN}}`    | `${{0==true}}`    | `${{0==false}}`    | `${{0==0}}`      | `${{0==1}}`      | `${{0==''}}`     | `${{0=='str'}}`    | `${{0=='true'}}`    | `${{0=='false'}}`    | `${{0=='0'}}`     | `${{0=='1'}}`     |
-          | **`1`**       | `${{1==null}}`      | `${{1==NaN}}`    | `${{1==true}}`    | `${{1==false}}`    | `${{1==0}}`      | `${{1==1}}`      | `${{1==''}}`     | `${{1=='str'}}`    | `${{1=='true'}}`    | `${{1=='false'}}`    | `${{1=='0'}}`     | `${{1=='1'}}`     |
           
+          | `x` \ `y`   | **null**            | **NaN**           | **true**           | **false**           | **0**            | **1**            | **''**           | **'str'**            | **'true'**            | **'false'**          | **'0'**            | **'1'**           |
+          | :---------- | :-----------------: | :---------------: | :----------------: | :-----------------: | :--------------: | :--------------: | :--------------: | :------------------: | :-------------------: | :------------------: | :----------------: | :---------------: |
+          | **null**    | `${{null==null}}`   | `${{null==NaN}}`  | `${{null==true}}`  | `${{null==false}}`  | `${{null==0}}`   | `${{null==1}}`   | `${{null==''}}`  | `${{null=='str'}}`   | `${{null=='true'}}`   | `${{null=='false'}}` | `${{null=='0'}}`   | `${{null=='1'}}`  |
+          | **NaN**     | `${{NaN==null}}`    | `${{NaN==NaN}}`   | `${{NaN==true}}`   | `${{NaN==false}}`   | `${{NaN==0}}`    | `${{NaN==1}}`    | `${{NaN==''}}`   | `${{NaN=='str'}}`    | `${{NaN=='true'}}`    | `${{NaN=='false'}}`  | `${{NaN=='0'}}`    | `${{NaN=='1'}}`   |
+          | **true**    | `${{true==null}}`   | `${{true==NaN}}`  | `${{true==true}}`  | `${{true==false}}`  | `${{true==0}}`   | `${{true==1}}`   | `${{true==''}}`  | `${{true=='str'}}`   | `${{true=='true'}}`   | `${{true=='false'}}` | `${{true=='0'}}`   | `${{true=='1'}}`  |
+          | **false**   | `${{false==null}}`  | `${{false==NaN}}` | `${{false==true}}` | `${{false==false}}` | `${{false==0}}`  | `${{false==1}}`  | `${{false==''}}` | `${{false=='str'}}`  | `${{false=='true'}}`  | `${{false=='false'}}`| `${{false=='0'}}`  | `${{false=='1'}}` |
+          | **0**       | `${{0==null}}`      | `${{0==NaN}}`     | `${{0==true}}`     | `${{0==false}}`     | `${{0==0}}`      | `${{0==1}}`      | `${{0==''}}`     | `${{0=='str'}}`      | `${{0=='true'}}`      | `${{0=='false'}}`    | `${{0=='0'}}`      | `${{0=='1'}}`     |
+          | **1**       | `${{1==null}}`      | `${{1==NaN}}`     | `${{1==true}}`     | `${{1==false}}`     | `${{1==0}}`      | `${{1==1}}`      | `${{1==''}}`     | `${{1=='str'}}`      | `${{1=='true'}}`      | `${{1=='false'}}`    | `${{1=='0'}}`      | `${{1=='1'}}`     |
+          | **''**      | `${{''==null}}`     | `${{''==NaN}}`    | `${{''==true}}`    | `${{''==false}}`    | `${{''==0}}`     | `${{''==1}}`     | `${{''==''}}`    | `${{''=='str'}}`     | `${{''=='true'}}`     | `${{''=='false'}}`   | `${{''=='0'}}`     | `${{''=='1'}}`    |
+          | **'str'**   | `${{'str'==null}}`  | `${{'str'==NaN}}` | `${{'str'==true}}` | `${{'str'==false}}` | `${{'str'==0}}`  | `${{'str'==1}}`  | `${{'str'==''}}` | `${{'str'=='str'}}`  | `${{'str'=='true'}}`  | `${{'str'=='false'}}`| `${{'str'=='0'}}`  | `${{'str'=='1'}}` |
+          | **'true'**  | `${{'true'==null}}` | `${{'true'==NaN}}`| `${{'true'==true}}`| `${{'true'==false}}`| `${{'true'==0}}` | `${{'true'==1}}` | `${{'true'==''}}`| `${{'true'=='str'}}` | `${{'true'=='true'}}` | `${{'true'=='false'}}`| `${{'true'=='0'}}`| `${{'true'=='1'}}`|
+          | **'false'** | `${{'false'==null}}`| `${{'false'==NaN}}`| `${{'false'==true}}`| `${{'false'==false}}`| `${{'false'==0}}`| `${{'false'==1}}`| `${{'false'==''}}`| `${{'false'=='str'}}`| `${{'false'=='true'}}`| `${{'false'=='false'}}`| `${{'false'=='0'}}`| `${{'false'=='1'}}`|
+          | **'0'**     | `${{'0'==null}}`    | `${{'0'==NaN}}`    | `${{'0'==true}}`    | `${{'0'==false}}`    | `${{'0'==0}}`     | `${{'0'==1}}`     | `${{'0'==''}}`    | `${{'0'=='str'}}`     | `${{'0'=='true'}}`     | `${{'0'=='false'}}`   | `${{'0'=='0'}}`     | `${{'0'=='1'}}`    |
 
-
+          echo "Test actual NaN comapred to NaN ${{ fromJSON('NaN') == fromJSON('NaN') && 'true' || 'false' }}"
           TODO: Add arrays and objects indexing and filtering
 
           TODO: Add best patterns for comparisons and general var/input handling in control flow
