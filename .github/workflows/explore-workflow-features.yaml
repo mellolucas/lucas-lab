@@ -459,6 +459,18 @@ jobs:
           | object  |               |                   | _only equal to themselves (same instance)_      | _Objects cannot be converted to strings_        |                                               |
           |         |               | `{"key": "value"}`| `${{ fromJSON('NaN') }}`                        | _`error` if param does not expect an object_    | `${{ fromJSON('{"key": "value"}') }}`         |
 
+          ## Comparing Values
+          > Best patterns for comparing values of different types in GitHub Actions Workflows
+
+          ### Exploring how different types behave when compared
+          First off, lets see how different values compare to one another under different approaches:
+
+          | Left Value (`x`)          | Right Value (`y`)         | Using Operator (`x == y`)                      | Using Function (`contains(x, y)`)                      | Inverting Function Arguments (`contains(y, x)`) |
+          | :------------------------ | :------------------------ | :--------------------------------------------: | :----------------------------------------------------: | :----------------------------------------------: |
+          | boolean true (`true`)     | boolean true (`true`)     | `${{ true == true && 'true' || 'false' }}`     | `${{ contains(true, true) && 'true' || 'false' }}`     | `${{ contains(true, true) && 'true' || 'false' }}`     |
+          | boolean true (`true`)     | number int one (`1`)      | `${{ true == 1 && 'true' || 'false' }}`        | `${{ contains(true, 1) && 'true' || 'false' }}`        | `${{ contains(1, true) && 'true' || 'false' }}`        |
+          | boolean true (`true`)     | string 'true' (`'true'`)  | `${{ true == 'true' && 'true' || 'false' }}`   | `${{ contains(true, 'true') && 'true' || 'false' }}`   | `${{ contains('true', true) && 'true' || 'false' }}`   |
+          
           TODO: Add arrays and objects indexing and filtering
 
           TODO: Add best patterns for comparisons and general var/input handling in control flow
