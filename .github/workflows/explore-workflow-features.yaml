@@ -262,8 +262,8 @@ jobs:
           echo "endgroup"
           echo "What we can get from all of this is that all possible $(reverse true booleans) ($(reverse 1), $(reverse \'1\'), $(reverse true), $(reverse \'true\')) can be safely compared to either $(reverse number 1) or $(reverse boolean true) if first casted to $(reverse string) with $(reverse join\(\)) then converted to $(reverse boolean) or $(reverse number) with $(reverse fromJSON\(\)), given that they will be normalized to $(reverse number 1) if the either operand is at the end a $(reverse number 1 or 0) and both wont be coerced to $(reverse number 1) if both are $(reverse boolean). Only trick here is that empty string is falsy and comparison coerces it to $(reverse 0)"
 
-      - name: Summary & Conclusions
-        id: summary
+      - name: Data Types
+        id: types
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
             ## Data Types 
@@ -312,6 +312,15 @@ jobs:
             |            | double quoted                     | `"Mona the Octocat"`           | `"Mona the Octocat"` _(all inside is evaluated; result is implicit string)_ |
             |            | double quoted in expression       | `＄{{ "Mona the Octocat" }}`   | `error`: _double quotes not allowed inside expression (handles as symbol)_  |
 
+          EOM
+
+
+      - name: Type casting and Coercion
+        id: casting
+        run: |
+
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+
           ## Type Casting & Coercion
           > How GitHub Actions Workflows normalize data when performing comparisons
           GitHub performs _loose equality_ comparisons:
@@ -350,6 +359,11 @@ jobs:
           | object  |               |                   | _only equal to themselves (same instance)_      | _Objects cannot be converted to strings_        |                                               |
           |         |               | `{"key": "value"}`| `${{ fromJSON('NaN') }}`                        | _`error` if param does not expect an object_    | `${{ fromJSON('{"key": "value"}') }}`         |
 
+      - name: Comparing Values
+        id: comparisons
+        run: |
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+          
           ## Comparing Values
           > Best patterns for comparing values of different types in GitHub Actions Workflows
 
