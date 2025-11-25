@@ -362,10 +362,7 @@ jobs:
       - name: Comparing Values
         id: comparisons
         run: |
-          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
-
-          > Exploring  how different types behave when compared through different approaches
-          
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOM'
           | `y` \ `x`   | _approaches to check `x` for `y`_   | **`true`**                                                   | **`false`**                                                   | **`1`**                                                   | **`0`**                                                   | **`'foo'`**                                                 | **`null`**                                               | **`NaN`**                                                 |
           | :---------: | :---------------------------------- | :----------------------------------------------------------: | :-----------------------------------------------------------: | :-------------------------------------------------------: | :-------------------------------------------------------: | :---------------------------------------------------------: | :------------------------------------------------------: | :-------------------------------------------------------: |
           |             |`x && 'truthy' \|\| 'falsy'`         |_${{ true && '**truthy**' || 'falsy'}}_                       |_${{ false && '**truthy**' || 'falsy'}}_                       |_${{ 1 && '**truthy**' || 'falsy'}}_                       |_${{ 0 && '**truthy**' || 'falsy'}}_                       |_${{ 'foo' && '**truthy**' || 'falsy'}}_                     |_${{ null && 'truthy' || 'falsy' }}_                       |_${{ NaN && 'truthy' || 'falsy' }}_                       |
@@ -408,7 +405,7 @@ jobs:
           |**`'foo'`**  |`x == 'foo'`                         |`${{true=='foo' && '✅' || '❌'}}`                           |`${{false=='foo' && '✅' || '❌'}}`                           |`${{1=='foo' && '✅' || '❌'}}`                           |`${{0=='foo' && '✅' || '❌'}}`                           | `✅`                                                       |`${{null=='foo' && '✅' || '❌'}}`                          |`${{NaN=='foo' && '✅' || '❌'}}`                          |
           |             |`contains(x,'foo')`                  |`${{contains(true,'foo') && '✅' || '❌'}}`                  |`${{contains(false,'foo') && '✅' || '❌'}}`                  |`${{contains(1,'foo') && '✅' || '❌'}}`                  |`${{contains(0,'foo') && '✅' || '❌'}}`                  | `✅`                                                       |`${{contains(null,'foo') && '✅' || '❌'}}`                 |`{${contains(NaN,'foo') && '✅' || '❌'}}`                 |
           |             |`contains(fromJSON('[x]'),'foo')`    |`${{contains(fromJSON('[true]'),'foo') && '✅' || '❌'}}`    |`${{contains(fromJSON('[false]'),'foo') && '✅' || '❌'}}`    |`${{contains(fromJSON('[1]'),'foo') && '✅' || '❌'}}`    |`${{contains(fromJSON('[0]'),'foo') && '✅' || '❌'}}`    |`${{contains(fromJSON('["foo"]'),'foo') && '✅' || '❌'}}`  |`${{contains(fromJSON('[null]'),'foo') && '✅' || '❌'}}`  |`{${contains(fromJSON('[NaN]'),'foo') && '✅' || '❌'}}`  |
-
+          |             |`contains(fromJSON('["x"]'),'foo')`  |`${{contains(fromJSON('["true"]'),'foo') && '✅' || '❌'}}`  |`${{contains(fromJSON('["false"]'),'foo') && '✅' || '❌'}}`  |`${{contains(fromJSON('["1"]'),'foo') && '✅' || '❌'}}`  |`${{contains(fromJSON('["0"]'),'foo') && '✅' || '❌'}}`  | ⏸                                                          |`${{contains(fromJSON('["null"]'),'foo') && '✅' || '❌'}}` |`${{contains(fromJSON('["NaN"]'),'foo') && '✅' || '❌'}}`|
           EOM
 
       - name: Recommended patterns
