@@ -363,8 +363,6 @@ jobs:
         id: comparisons
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
-          
-          ## Comparing Values
           > Exploring  how different types behave when compared through different approaches
           
           | `y` \ `x`   |                                   | **`true`**                                                 | **`false`**                                                 | **`1`**                                                 | **`0`**                                                 | **`'foo'`**                                                 | **`null`**                                                 |
