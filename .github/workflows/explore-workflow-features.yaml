@@ -438,28 +438,7 @@ jobs:
           echo '::endgroup::'
           echo '::group::Check if a value of any type is `truthy` and not empty: `inputs.<input-name>`'
           echo '::endgroup::'
-          echo
-          echo "\`contains(true, true)\`: ${{ contains(true, true) && 'true' || 'false' }}"
-          echo "\`contains(false, true)\`: ${{ contains(false, true) && 'true' || 'false' }}"
-          echo "\`contains(true, 1)\`: ${{ contains(true, 1) && 'true' || 'false' }}"
-          echo "\`contains(false, 1)\`: ${{ contains(false, 1) && 'true' || 'false' }}"
-          echo "\`contains('true', true)\`: ${{ contains('true', true) && 'true' || 'false' }}"
-          echo "\`contains('false', true)\`: ${{ contains('false', true) && 'true' || 'false' }}"
-          echo "\`contains('true', 1)\`: ${{ contains('true', 1) && 'true' || 'false' }}"
-          echo "\`contains('false', 1)\`: ${{ contains('false', 1) && 'true' || 'false' }}"
-          echo "\`contains('something', true)\`: ${{ contains('something', true) && 'true' || 'false' }}"
-          echo "\`contains(true, 'something')\`: ${{ contains(true, 'something') && 'true' || 'false' }}"
-          echo "\`contains('', true)\`: ${{ contains('', true) && 'true' || 'false' }}"
-          echo "\`contains(true, '')\`: ${{ contains(true, '') && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('[true, false]'), true)\`: ${{ contains(fromJSON('[true, false]'), true) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('[true, false]'), false)\`: ${{ contains(fromJSON('[true, false]'), false) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", "false"]'), true)\`: ${{ contains(fromJSON('["true", "false"]'), true) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["something", "false"]'), true)\`: ${{ contains(fromJSON('["something", "false"]'), true) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", "false"]'), false)\`: ${{ contains(fromJSON('["true", "false"]'), false) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", ""]'), false)\`: ${{ contains(fromJSON('["true", "false"]'), false) && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", "false"]'), '')\`: ${{ contains(fromJSON('["true", "false"]'), '') && 'true' || 'false' }}"
-          echo "\`contains(fromJSON('["true", "false"]'), 'something')\`: ${{ contains(fromJSON('[true, false]'), 'something') && 'true' || 'false' }}"
-
+          
       - name: Skippable
         id: skippable
         if: inputs.string-input != 'skip'
