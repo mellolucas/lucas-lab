@@ -365,8 +365,7 @@ jobs:
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           
           ## Comparing Values
-          > Best patterns for comparing values of different types in GitHub Actions Workflows
-          First off, lets explore how different types behave when compared through different approaches
+          > Exploring  how different types behave when compared through different approaches
           
           | `y` \ `x`   |                                   | **`true`**                                                 | **`false`**                                                 | **`1`**                                                 | **`0`**                                                 | **`'foo'`**                                                 | **`null`**                                                 |
           | :---------: | :-------------------------------- | :--------------------------------------------------------: | :---------------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :---------------------------------------------------------: | :--------------------------------------------------------: |
@@ -426,6 +425,8 @@ jobs:
         id: patterns
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+          > Best patterns for comparing values of different types in GitHub Actions Workflows
+
           TODO: Add arrays and objects indexing and filtering
 
           TODO: Add best patterns for comparisons and general var/input handling in control flow
