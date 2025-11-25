@@ -366,9 +366,7 @@ jobs:
           
           ## Comparing Values
           > Best patterns for comparing values of different types in GitHub Actions Workflows
-
-          ### Exploring how different types behave when compared
-          First off, lets see how different values compare under different scenarios:
+          First off, lets explore how different types behave when compared through different approaches
           
           | `y` \ `x`   |                                   | **`true`**                                                 | **`false`**                                                 | **`1`**                                                 | **`0`**                                                 | **`'foo'`**                                                 | **`null`**                                                 |
           | :---------: | :-------------------------------- | :--------------------------------------------------------: | :---------------------------------------------------------: | :-----------------------------------------------------: | :-----------------------------------------------------: | :---------------------------------------------------------: | :--------------------------------------------------------: |
@@ -422,23 +420,18 @@ jobs:
           |             |`contains(NaN,x)`                  |`${{contains(NaN,true) && '✅' || '❌'}}`                  |`${{contains(NaN,false) && '✅' || '❌'}}`                  |`${{contains(NaN,1) && '✅' || '❌'}}`                  |`${{contains(NaN,0) && '✅' || '❌'}}`                  |`${{contains(NaN,'foo') && '✅' || '❌'}}`                  |`${{contains(NaN,null) && '✅' || '❌'}}`                  |
           |             |`contains(fromJSON('[x]'),NaN)`    |`${{contains(fromJSON('[true]'),NaN) && '✅' || '❌'}}`    |`${{contains(fromJSON('[false]'),NaN) && '✅' || '❌'}}`    |`${{contains(fromJSON('[1]'),NaN) && '✅' || '❌'}}`    |`${{contains(fromJSON('[0]'),NaN) && '✅' || '❌'}}`    |`${{contains(fromJSON('["foo"]'),NaN) && '✅' || '❌'}}`    |`${{contains(fromJSON('[null]'),NaN) && '✅' || '❌'}}`    |
 
+          EOM
 
+      - name: Recommended patterns
+        id: patterns
+        run: |
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           TODO: Add arrays and objects indexing and filtering
 
           TODO: Add best patterns for comparisons and general var/input handling in control flow
 
           EOM
 
-
-          echo '::group::Check if a value is of type `boolean` and is explicitly set to `true`, otherwise return false: `contains(inputs.<input-name>, true)`'
-          echo '::endgroup::'
-          echo '::group::Check if a value is of type `boolean` and is explicitly set to `false`, otherwise return true: `!contains(inputs.<input-name>, false)`'
-          echo '::endgroup::'
-          echo '::group::Check if a value of any type is `truthy`: `inputs.<input-name>`'
-          echo '::endgroup::'
-          echo '::group::Check if a value of any type is `truthy` and not empty: `inputs.<input-name>`'
-          echo '::endgroup::'
-          
       - name: Skippable
         id: skippable
         if: inputs.string-input != 'skip'
