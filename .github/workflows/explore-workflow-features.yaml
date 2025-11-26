@@ -364,7 +364,7 @@ jobs:
           |         |               | `["a", 9, true]`  | `${{ fromJSON('NaN') }}`                        | _`error` if fun param does not expect an array_ | `${{ fromJSON('["a", 9, true]') }}`           |
           | object  |               |                   | _only equal to themselves (same instance)_      | _Objects cannot be converted to strings_        |                                               |
           |         |               | `{"key": "value"}`| `${{ fromJSON('NaN') }}`                        | _`error` if param does not expect an object_    | `${{ fromJSON('{"key": "value"}') }}`         |
-
+          EOM
       - name: Comparing Values
         id: comparisons
         run: |
