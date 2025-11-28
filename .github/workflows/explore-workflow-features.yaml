@@ -365,6 +365,7 @@ jobs:
           | object  |               |                   | _only equal to themselves (same instance)_      | _Objects cannot be converted to strings_        |                                               |
           |         |               | `{"key": "value"}`| `${{ fromJSON('NaN') }}`                        | _`error` if param does not expect an object_    | `${{ fromJSON('{"key": "value"}') }}`         |
           EOM
+
       - name: Comparing Values
         id: comparisons
         run: |
@@ -539,8 +540,6 @@ jobs:
           |                             | `fromJSON('[0]') == method(false)` | `${{ fromJSON('[0]')==false }}`                    | `${{ fromJSON('[0]')==fromJSON('false') }}`            | `${{ fromJSON('[0]')==fromJSON('[false]') }}`            |
           |                             | `contains(0,method(false))`)       | `${{ contains(0,false) }}`                       | `${{ contains(0,fromJSON('false')) }}`                  | `${{ contains(0,fromJSON('[false]')) }}`                  |
           |                             | `contains(method(false),0))`       | `${{ contains(fromJSON('false'),0) }}`             | `${{ contains(fromJSON('false'),0) }}`                 | `${{ contains(fromJSON('[false]'),0) }}`                 |
-          EOM
-
 
           TODO: Add arrays and objects indexing and filtering
 
