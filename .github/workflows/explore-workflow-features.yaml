@@ -437,11 +437,11 @@ jobs:
       - name: Check assumptions
         id: test-then-remove
         env:
-          PARSED_BOOL_TRUE: ${{ fromJSON(github.event.repository.has_issues) }}
-          PARSED_BOOL_FALSE: ${{ fromJSON(github.event.repository.archived) }}
-          PARSED_NULL: ${{ fromJSON(github.event.release.draft) }}
-          PARSED_NUMBER: ${{ fromJSON(job.check_run_id) }}
-          PARSED_STRING: ${{ fromJSON(github.repository) }}
+          PARSED_BOOL_TRUE: ${{ fromJSON('github.event.repository.has_issues') }}
+          PARSED_BOOL_FALSE: ${{ fromJSON('github.event.repository.archived') }}
+          PARSED_NULL: ${{ fromJSON('github.event.release.draft') }}
+          PARSED_NUMBER: ${{ fromJSON('job.check_run_id') }}
+          PARSED_STRING: ${{ fromJSON('github.repository') }}
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           Check how would fromJSON behave if unkown values are passed into it. Doing this directly from env so that shell doesnt mask errors.
