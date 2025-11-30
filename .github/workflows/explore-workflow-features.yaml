@@ -423,25 +423,27 @@ jobs:
           
           > [!TIP]
           > _simple null checks:_
-          >     ⭐**¹**: When simple _falsy checks_ are enough to determine control flow, using `x && 'do/return this' || 'do/return that'` is the safest and most straightforward approach, as you don't need to account for type casting peculiarities.
-          >              ⚠️ That said, it's important to note that **the first value after `&&` must be _truthy_!** _Otherwise, the value after `||` will always be returned_, **regardless of `x`'s actual value**!. 
-          >                  So, whenever using the pattern `x && y || z`, ask yourself: "If `x` is _truthy_ and `y` is _falsy_, should `y` be returned, or should `z` be returned?". If `y` should be returned, even when it's _falsy_, then this pattern is not suitable, and might cause unexpected behavior.
+          > ⭐**¹**: When simple _falsy checks_ are enough to determine control flow, using `x && 'do/return this' || 'do/return that'` is the safest and most straightforward approach, as you don't need to account for type casting peculiarities.
+          >  > ⚠️ That said, it's important to note that **the first value after `&&` must be _truthy_!** _Otherwise, the value after `||` will always be returned_, **regardless of `x`'s actual value**!. 
+          >  > So, whenever using the pattern `x && y || z`, ask yourself: "If `x` is _truthy_ and `y` is _falsy_, should `y` be returned, or should `z` be returned?". If `y` should be returned, even when it's _falsy_, then this pattern is not suitable, and might cause unexpected behavior.
+          >
           > _boolean checks:_
-          >     ⭐**²**: Using `contains(x,true)` is the safest way to check whether `x` is explicitly `true`, as it works even when `x` is an array containing `true` as an element or a string containing the substring matching `true`.
-          >               Because it falls back to `false` whenever `x` is anyhting but explicitly `true`, its best **use case** is when you want something to **default to `false` _unless explicitly set to `true`_**.
-          >               ⚠️ Be cautious when `x` can be a string that might contain the substring `'true'` (e.g., `'not true'`), as `contains(x,true)` would return `true` in such cases, which might not be the intended behavior.
-          >                   However, if you are not sure this is a concern, you are probably overthinking it.
-          >     ⭐**³**: Similarly, using `contains(x,false)` is the safest way to check whether `x` is explicitly `false`, as it works even when `x` is an array containing `false` as an element or a string containing the substring matching `false`.
-          >               Most importantly, it won't mistake _falsy_ values like `0`, `""`, `null`, or `NaN` for `false`, unlike direct comparisons using `==`.
-          >               Its real value, though, shines when negated as **`!contains(x,false)`**, that will return `true` for anything but explicit `false`, allowing to easily implement logic that **defaults to `true` _unless explicitly set to `false`_**.
-          >               Because of that, its best **use case** is when you want **something to be always enabled, unless explicitly disabled, _safeguarding against accidental falsy_ values**.
-          >               ⚠️ Be cautious when `x` can be a string that might contain the substring `'false'` (e.g., `'not false'`), as `contains(x,false)` would return `true` in such cases, which might not be the intended behavior.
-          >                   However, if you are not sure this is a concern, you are probably overthinking it.
+          > ⭐**²**: Using `contains(x,true)` is the safest way to check whether `x` is explicitly `true`, as it works even when `x` is an array containing `true` as an element or a string containing the substring matching `true`.
+          >   Because it falls back to `false` whenever `x` is anyhting but explicitly `true`, its best **use case** is when you want something to **default to `false` _unless explicitly set to `true`_**.
+          >  > ⚠️ Be cautious when `x` can be a string that might contain the substring `'true'` (e.g., `'not true'`), as `contains(x,true)` would return `true` in such cases, which might not be the intended behavior.
+          >  >   However, if you are not sure this is a concern, you are probably overthinking it.
+          > ⭐**³**: Similarly, using `contains(x,false)` is the safest way to check whether `x` is explicitly `false`, as it works even when `x` is an array containing `false` as an element or a string containing the substring matching `false`.
+          >   Most importantly, it won't mistake _falsy_ values like `0`, `""`, `null`, or `NaN` for `false`, unlike direct comparisons using `==`.
+          >   Its real value, though, shines when negated as **`!contains(x,false)`**, that will return `true` for anything but explicit `false`, allowing to easily implement logic that **defaults to `true` _unless explicitly set to `false`_**.
+          >   Because of that, its best **use case** is when you want **something to be always enabled, unless explicitly disabled, _safeguarding against accidental falsy_ values**.
+          >  > ⚠️ Be cautious when `x` can be a string that might contain the substring `'false'` (e.g., `'not false'`), as `contains(x,false)` would return `true` in such cases, which might not be the intended behavior.
+          >  >   However, if you are not sure this is a concern, you are probably overthinking it.
+          > 
           > _string checks:_
-          >     ⭐**⁴**: Using `x == 'foo'` is the most straightforward way to check whether `x` is exactly equal to the string `'foo'`.
-          >               Its best **use case** is when you want to check for an exact string match, without the need to account for type coercion or substring matches.
-          >     ⭐**⁵**: Using `contains(x,'foo')` is the safest way to check whether `x` contains the substring `'foo'`, as it works even when `x` is an array containing `'foo'` as an element.
-          >               Its best **use case** is when you want to check for the presence of a substring within a string, or an element within an array, without worrying about exact matches or type coercion.
+          > ⭐**⁴**: Using `x == 'foo'` is the most straightforward way to check whether `x` is exactly equal to the string `'foo'`.
+          >   Its best **use case** is when you want to check for an exact string match, without the need to account for type coercion or substring matches.
+          > ⭐**⁵**: Using `contains(x,'foo')` is the safest way to check whether `x` contains the substring `'foo'`, as it works even when `x` is an array containing `'foo'` as an element.
+          >   Its best **use case** is when you want to check for the presence of a substring within a string, or an element within an array, without worrying about exact matches or type coercion.
 
           > [!WARNING]
           > **Careful with comparing `fromJSON('[x]')` to `x` using operators!**
