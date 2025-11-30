@@ -434,28 +434,6 @@ jobs:
           > Thus, `NaN == NaN` is _${{ NaN==NaN }}_, the same way `fromJSON('["anything"]') == 'foo'` is _${{ fromJSON('["anything"]')=='foo' }}_, even though both the lefthand `Array` and righthand `string` results in `NaN` when coerced to numbers upon operator based comparison.
           EOM
 
-      - name: Check assumptions
-        id: test-then-remove
-        env:
-          PARSED_BOOL_TRUE: ${{ fromJSON('[github.event.repository.has_issues]') }}
-          PARSED_BOOL_FALSE: ${{ fromJSON('[github.event.repository.archived]') }}
-          PARSED_NULL: ${{ fromJSON('[github.event.release.draft]') }}
-          PARSED_NUMBER: ${{ fromJSON('[job.check_run_id]') }}
-          PARSED_STRING: ${{ fromJSON('[github.repository]') }}
-        run: |
-          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
-          Check how would fromJSON behave if unkown values are passed into it. Doing this directly from env so that shell doesnt mask errors.
-          For testing purposes:
-          - `github.event.repository.has_issues` is known to be `true` for this and most repos (env: `${{ env.PARSED_BOOL_TRUE }}`; context: `${{ github.event.repository.has_issues }}`);
-          - `github.event.repository.archived` is known to be `false` for any repo running this workflow (env: `${{ env.PARSED_BOOL_FALSE }}`; context: `${{ github.event.repository.archived }}`);
-          - `github.event.release.draft` is known to be `null`, since it doesnt exist for this triggering event (type (env: `${{ env.PARSED_NULL }} `; context: `${{ github.event.release.draft }} `);
-          - `job.check_run_id` is a number, according to context docs (env: `${{ env.PARSED_NUMBER }}`; context: `${{ job.check_run_id }}`);
-          - `github.repository` is a string (env: `${{ env.PARSED_STRING }}`; context: `${{ github.repository }}`).
-          EOM
-        # TODO: Add arrays and objects indexing and filtering
-
-        # TODO: Add best patterns for comparisons and general var/input handling in control flow
-
       - name: Recommended patterns
         id: patterns
         run: |
