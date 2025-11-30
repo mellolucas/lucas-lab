@@ -418,55 +418,20 @@ jobs:
           |             |`contains(fromJSON('["x"]'),'foo')`  | ${{contains(fromJSON('["true"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'foo') && '✅' || '❌'}}  | ⏸                          | ❌                          |
           
           > [!WARNING]
-          > Careful with comparing `fromJSON('[x]')` to `x` using operators! 
-          > `fromJSON('[x]')` returns an `Array` containing parsed `x` as its element;
+          > **Careful with comparing `fromJSON('[x]')` to `x` using operators!**
+          > `fromJSON('[x]')` **returns an `Array`** containing parsed `x` as its element;
           > `fromJSON('x')` returns parsed `x` directly;
-          > This is why `contains(fromJSON('[x]'),x)` is _${{ contains(fromJSON('["x"]'),'x') }}_ (`x` an element of the array), but `fromJSON('[x]') == x` is _${{ fromJSON('["x"]')=='x' }}_ (an array is only equal to itself).
-          > To compare array's element to `x` using operators, one must index into the array: `fromJSON('[x]')[0] == x` is _${{ fromJSON('["x"]')[0]=='x' }}_.
-          > If `fromJSON()` is used to parse `x` directly, instead of wrapped in an array, then `fromJSON('x') == x` is _${{ fromJSON('"x"')=='x' }}_.
+          > Hence, finding out whether `x` is contained in the array is only possible through `contains()` function, that iterates over the array's elements to compare; it does not compare `x` to the array itself, which is what operators do.
+          > This is why, `contains(fromJSON('[x]'),x)` is _${{ contains(fromJSON('["x"]'),'x') }}_ (`x` an element of the array), but `fromJSON('[x]') == x` is _${{ fromJSON('["x"]')=='x' }}_ (an array is only equal to itself).
+          > An **operator based comparison between an array and a non-array value** would only be possible if the target array's element **position is known** beforehand, by indexing into it: `fromJSON('[x]')[0] == x` is _${{ fromJSON('["x"]')[0]=='x' }}_.
+          > Even then, that could lead to confusion, due to type coercion during comparison.
+          > Anyhow, if `fromJSON()` is used to parse `x` directly - instead of wrapped in an array -, then `fromJSON('x') == x` is _${{ fromJSON('"x"')=='x' }}_.
 
           > [!WARNING]
-          > Careful when comparing `NaN`!
-          > In JavaScript (and thus in GitHub Actions expressions), `NaN` is not equal to anything, including itself.
+          > **Careful when comparing `NaN`!**
+          > In JavaScript (and thus in GitHub Actions expressions), **`NaN` is NOT equal to anything, including _itself_**.
           > Thus, `NaN == NaN` is _${{ NaN==NaN }}_, the same way `fromJSON('["anything"]') == 'foo'` is _${{ fromJSON('["anything"]')=='foo' }}_, even though both the lefthand `Array` and righthand `string` results in `NaN` when coerced to numbers upon operator based comparison.
           EOM
-        # - trim with:
-        #   - regex: `\}[ ]{26,}\|`
-        #   - replace with: `}                          |`
-
-        #   - regex: `\}[ ]{20,25}\|`
-        #   - replace with: `}                    |`
-
-        #   - regex: `\}[ ]{14,19}\|`
-        #   - replace with: `}              |`
-
-        #   - regex: `\}[ ]{8,13}\|`
-        #   - replace with: `}        |`
-
-        #   - regex: `\}[ ]{2,7}\|`
-        #   - replace with: `}  |`
-
-        #   - regex: `(?<!\})[ ]{26,}\|`
-        #   - replace with: `                          |`
-
-        # - restore with:
-        #   - regex: `\}[ ]{26}\|`
-        #   - replace with: `}                            |`
-
-        #   - regex: `\}[ ]{20}\|`
-        #   - replace with: `}                         |`
-
-        #   - regex: `\}[ ]{14}\|`
-        #   - replace with: `}                   |`
-
-        #   - regex: `\}[ ]{8}\|`
-        #   - replace with: `}             |`
-
-        #   - regex: `\}[ ]{2}\|`
-        #   - replace with: `}       |`
-
-        #   - regex: `(?<!\})[ ]{26}\|`
-        #   - replace with: `                            |`
 
       - name: Recommended patterns
         id: patterns
