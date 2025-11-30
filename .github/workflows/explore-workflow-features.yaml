@@ -418,7 +418,7 @@ jobs:
           |             |`contains(fromJSON('["x"]'),'foo')`  | ${{contains(fromJSON('["true"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'foo') && '✅' || '❌'}}  | ⏸                          | ❌                          |
           
           > [!WARNING]
-          > Careful with comparing `fromJSON(`[x]`)` to `x` using operators! 
+          > Careful with comparing `fromJSON('[x]')` to `x` using operators! 
           > `fromJSON('[x]')` returns an `Array` containing parsed `x` as its element;
           > `fromJSON('x')` returns parsed `x` directly;
           > This is why `contains(fromJSON('[x]'),x)` is _${{ contains(fromJSON('["x"]'),'x') }}_ (`x` an element of the array), but `fromJSON('[x]') == x` is _${{ fromJSON('["x"]')=='x' }}_ (an array is only equal to itself).
@@ -474,21 +474,6 @@ jobs:
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           > Best patterns for comparing values of different types in GitHub Actions Workflows
           
-          
-          > [!WARNING]
-          > Careful with comparing `fromJSON(`[x]`)` to `x` using operators! 
-          > `fromJSON('[x]')` returns an `Array` containing parsed `x` as its element,
-          > `fromJSON('x')` returns parsed `x` directly.
-          > This is why `contains(fromJSON('[x]'),x)` is true (`x` an element of the array), but `fromJSON('[x]') == x` is false (an array is only equal to itself).
-
-          > [!WARNING]
-          > Careful when comparing `NaN`!
-          > In JavaScript (and thus in GitHub Actions expressions), `NaN` is not equal to anything, including itself.
-          > Thus, `NaN == NaN` is ${{ NaN==NaN }}.
-          > To check if a value is `NaN`, use `contains(fromJSON('[NaN]'),value)` which is ${{ contains(fromJSON('[NaN]'),NaN) }} for `value` being `NaN`.
-          > The same is true for `contains(value,NaN)` which is ${{ contains(NaN,NaN) }} for `value` being `NaN`, but would be ${{ contains(null,NaN) }} for `value` being `null`.
-
-
           is fromJSON('x') and fromJSON('[x]') equivalent? 
           | `x` \ method                |                                   | **`x`**                                                       | **`fromJSON('x')`**                                                | **`fromJSON('[x]')`**                                              | 
           | :--:                | :-- | :--: | :--: | :--: | 
