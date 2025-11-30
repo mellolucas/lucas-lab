@@ -372,9 +372,9 @@ jobs:
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           > Exploring  how different types behave when compared through different approaches
 
-          | y` \ `x`    | _approaches to check `x` for `y`_   | **`true`**                          | **`false`**                          | **`1`**                          | **`0`**                          | **`'foo'`**                          | **`null`**                          |
+          | y` \ `x`    | _approaches to check `x` for `y`_   | **`true`**  | **`false`**  | **`1`**  | **`0`**  | **`'foo'`**  | **`null`**  |
           | :--: | :-- | :--: | :--: | :--: | :--: | :--: | :--: |
-          |             |`x && 'truthy' \|\| 'falsy'`         | _**truthy**_                          | _falsy_                          | _**truthy**_                          | _falsy_                          | _${{ 'foo' && '**truthy**' || 'falsy'}}_                    | _falsy_                          |
+          |             |`x && 'truthy' \|\| 'falsy'`         | _**truthy**_  | _falsy_  | _**truthy**_  | _falsy_  | _${{ 'foo' && '**truthy**' || 'falsy'}}_  | _falsy_  |
           |**`true`**   |`x == true`                          | ✅                          | ❌                          | ${{1==true && '✅' || '❌'}}                          | ${{0==true && '✅' || '❌'}}                          | ${{'foo'==true && '✅' || '❌'}}                          | ${{null==true && '✅' || '❌'}}                          |
           |             |`fromJSON('x') == true`              | ${{fromJSON('true')==true && '✅' || '❌'}}                  | ${{fromJSON('false')==true && '✅' || '❌'}}                  | ${{fromJSON('1')==true && '✅' || '❌'}}                  | ${{fromJSON('0')==true && '✅' || '❌'}}                  | ${{fromJSON('"foo"')==true && '✅' || '❌'}}              | ${{fromJSON('null')==true && '✅' || '❌'}}              |
           |             |`contains(x,true)`                   | ✅                          | ${{contains(false,true) && '✅' || '❌'}}                    | ${{contains(1,true) && '✅' || '❌'}}                    | ${{contains(0,true) && '✅' || '❌'}}                    | ${{contains('foo',true) && '✅' || '❌'}}              | ${{contains(null,true) && '✅' || '❌'}}              |
