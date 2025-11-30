@@ -425,7 +425,7 @@ jobs:
           > ⭐**¹**: When simple _falsy checks_ are enough to determine control flow, using `x && 'do/return this' || 'do/return that'` is the safest and most straightforward approach, as you don't need to account for type casting peculiarities.
           >          ⚠️ That said, it's important to note that **the first value after `&&` must be _truthy_!** _Otherwise, the value after `||` will always be returned_, **regardless of `x`'s actual value**!. 
           >              So, whenever using the pattern `x && y || z`, ask yourself: "If `x` is _truthy_ and `y` is _falsy_, should `y` be returned, or should `z` be returned?". If `y` should be returned, even when it's _falsy_, then this pattern is not suitable, and might cause unexpected behavior.
-          > ⭐**²**: Using `contains(x,true)` is the safest way to check whether `x` is explicitly `true`, as it works even when 
+          > ⭐**²**: Using `contains(x,true)` is the safest way to check whether `x` is explicitly `true`, as it works even when `x` is an array containing `true` as an element or a string equal containing `'true'` ${{ contains('trueeeee',true) && '✅' || '❌' }}.
 
           > [!WARNING]
           > **Careful with comparing `fromJSON('[x]')` to `x` using operators!**
