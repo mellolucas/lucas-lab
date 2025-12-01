@@ -186,6 +186,8 @@ jobs:
           | y` \ `x`    | _approaches to check `x` for `y`_   | **`true`**    | **`false`**    | **`1`**    | **`0`**    | **`'foo'`**    | **`null`**  |
           | :--: | :-- | :--: | :--: | :--: | :--: | :--: | :--:  |
           |    |**`x && 'truthy' \|\| 'falsy'`** ⭐¹     | _**truthy**_    | _falsy_    | _**truthy**_    | _falsy_    | _${{ 'foo' && '**truthy**' || 'falsy'}}_    | _falsy_  |
+          |**`null`**  |**`x == null`**  | ${{true==null && '✅' || '❌'}}  | ${{false==null && '✅' || '❌'}}  | ${{1==null && '✅' || '❌'}}  | ${{0==null && '✅' || '❌'}}  | ${{'foo'==null && '✅' || '❌'}}  | ${{null==null && '✅' || '❌'}}  |
+          |    |**`contains(x,null)`**    | ${{contains(true,null) && '✅' || '❌'}}  | ${{contains(false,null) && '✅' || '❌'}}  | ${{contains(1,null) && '✅' || '❌'}}  | ${{contains(0,null) && '✅' || '❌'}}  | ${{contains('foo',null) && '✅' || '❌'}}  | ${{contains(null,null) && '✅' || '❌'}}  |
           |**`'foo'`**  |**`x == 'foo'`** ⭐²    | ${{true=='foo' && '✅' || '❌'}}  | ${{false=='foo' && '✅' || '❌'}}  | ${{1=='foo' && '✅' || '❌'}}  | ${{0=='foo' && '✅' || '❌'}}  | ✅    | ${{null=='foo' && '✅' || '❌'}}  |
           |    |**`contains(x,'foo')`** ⭐³    | ${{contains(true,'foo') && '✅' || '❌'}}  | ${{contains(false,'foo') && '✅' || '❌'}}  | ${{contains(1,'foo') && '✅' || '❌'}}  | ${{contains(0,'foo') && '✅' || '❌'}}  | ✅    | ${{contains(null,'foo') && '✅' || '❌'}}  |
           |    |`contains('foo',x)`    | ${{contains('foo',true) && '✅' || '❌'}}  | ${{contains('foo',false) && '✅' || '❌'}}  | ${{contains('foo',1) && '✅' || '❌'}}  | ${{contains('foo',0) && '✅' || '❌'}}  | ✅    | ${{contains('foo',null) && '✅' || '❌'}}  |
