@@ -1,0 +1,290 @@
+name: Workflows Cheat Sheet
+run-name: >-
+  ${{ github.workflow }}
+  ${{ format('(runs-on:{0})', 
+    inputs.runs-on
+  ) }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      runs-on:
+        description: "runs-on argument"
+        required: false
+        type: string
+        default: 'ubuntu-latest'
+
+jobs:
+  explore:
+    runs-on: >-
+      ${{
+        ( contains(inputs.runs-on, '"') || contains(inputs.runs-on, '''') ) &&
+        fromJSON(inputs.runs-on) ||
+        inputs.runs-on
+      }}
+    if: inputs.string-input != 'skipjob'
+    outputs:
+      steps-context: ${{ toJSON(steps) }}
+      job-context: ${{ toJSON(job) || 'null' }}
+      job-status: ${{ job.status || 'null' }}
+      outcome: >-
+        ${{ 
+          contains(steps.*.outcome, 'failure') && 
+            'failure' ||
+            job.status || 
+            'null' 
+        }}
+
+    steps:
+      - name: Print context
+        id: context
+        env:
+          GH_CONTEXT: ${{ toJSON(github) }}
+          GH_INPUTS: ${{ toJSON(inputs) }}
+          GH_RUNNER: ${{ toJSON(runner) }}
+          GH_EVENT: ${{ toJSON(github.event) }}
+        run: |
+          echo "::group::Inputs toJSON (raw block deserialized):"
+          jq . <<< "${GH_INPUTS}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::GitHub context toJSON:"
+          jq . <<< "${GH_CONTEXT}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::GitHub event toJSON:"
+          jq . <<< "${GH_EVENT}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::Runner context toJSON:"
+          jq . <<< "${GH_RUNNER}"
+          echo "::endgroup::"
+          echo
+          echo "---"
+          echo
+          echo "::group::Steps context:"
+          echo "${{ toJSON(steps) }}"
+          echo "::endgroup::"
+          echo
+          
+      - name: Data Types
+        id: types
+        run: |
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+            ## Data Types 
+            > GitHub Actions Workflows supported data structures and types
+
+            | YAML Primitives (node kind) | Equivalent Types/Structures | GitHub Equivalent | 
+            | :-------------------------- | :-------------------------- | :---------------: |
+            | mappings                    | hashes/dictionaries         | objects           |
+            | sequences                   | arrays/lists                | arrays            |
+            | scalars                     | any atomic data types       | literals          |
+
+            ### Objects/Mappings
+            > How GitHub Actions Workflows handle objects (yaml mappings)
+            Representing mappings (hashes/dictionaries) in GitHub Actions Workflows:
+            - TODO: demonstrate how to define objects directly or from strings using workflow functions
+
+            ### Arrays/Sequences
+            > How GitHub Actions Workflows handle arrays (yaml sequences)
+            Representing sequences (arrays/lists) in GitHub Actions Workflows:
+            - TODO: demonstrate how to define arrays directly or from strings using workflow functions
+
+            ### Literals/Scalar Types
+            > How GitHub Actions Workflows handle string literals (yaml scalars)
+
+            When writting workflows, as part of an expression, one can use the following data types:
+
+            | Data Type  | Value Variation                   | Value Representation           | Evaluated Result                                                            |
+            | :--------- | :-------------------------------- | :----------------------------: | :-------------------------------------------------------------------------: |
+            | boolean    |                                   |                                |                                                                             |
+            |            | true                              | `＄{{ true }}`                 | `${{ true }}` (_${{ true && '**truthy**' || 'falsy' }}_)                    |
+            |            | false                             | `＄{{ false }}`                | `${{ false }}` (_${{ false && '**truthy**' || 'falsy' }}_)                  |
+            | null       |                                   |                                |                                                                             |
+            |            | null                              | `＄{{ null }}`                 | `${{ null }}​` (_${{ null && '**truthy**' || 'falsy' }}_)                    |
+            | number     |                                   |                                |                                                                             |
+            |            | integer                           | `＄{{ 711 }}`                  | `${{ 711 }}` (_${{ 711 && '**truthy**' || 'falsy' }}_)                      |
+            |            |                                   | `＄{{ 1 }}`                    | `${{ 1 }}` (_${{ 1 && '**truthy**' || 'falsy' }}_)                          |
+            |            |                                   | `＄{{ 0 }}`                    | `${{ 0 }}` (_${{ 0 && '**truthy**' || 'falsy' }}_)                          |
+            |            | float                             | `＄{{ -9.2 }}`                 | `${{ -9.2 }}` (_${{ -9.2 && '**truthy**' || 'falsy' }}_)                    |
+            |            | hex                               | `＄{{ 0xff }}`                 | `${{ 0xff }}` (_${{ 0xff && '**truthy**' || 'falsy' }}_)                    |
+            |            | exponential                       | `＄{{ -2.99e-2 }}`             | `${{ -2.99e-2 }}` (_${{ -2.99e-2 && '**truthy**' || 'falsy' }}_)            |
+            |            | large exponential                 | `＄{{ 6.02e23 }}`              | `${{ 6.02e23 }}` (_${{ 6.02e23 && '**truthy**' || 'falsy' }}_)              |
+            | string     |                                   |                                |                                                                             |
+            |            | unquoted (implicit string)        | `Mona the Octocat`             | `Mona the Octocat`                                                          |
+            |            | unquoted (implicit) in expression | `＄{{ Mona the Octocat }}`     | `error`: _items unparsable and unavailable as named context_                |
+            |            | single quoted (raw string)        | `'Mona the Octocat'`           | `${{ 'Mona the Octocat' }}`                                                 |
+            |            | single quoted (raw) escaping      | `'It''s Mona, "the" Octocat'`  | `${{ 'It''s Mona, "the" Octocat' }}`                                        |
+            |            | single quoted (raw) in expression | `＄{{ 'Mona the Octocat' }}`   | `${{ 'Mona the Octocat' }}` (_${{ 'Mona the' && '**truthy**' || 'falsy' }}_)|
+            |            | double quoted                     | `"Mona the Octocat"`           | `"Mona the Octocat"` _(all inside is evaluated; result is implicit string)_ |
+            |            | double quoted in expression       | `＄{{ "Mona the Octocat" }}`   | `error`: _double quotes not allowed inside expression (handles as symbol)_  |
+
+          EOM
+
+
+      - name: Type casting and Coercion
+        id: casting
+        run: |
+
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+
+          ## Type Casting & Coercion
+          > How GitHub Actions Workflows normalize data when performing comparisons
+          GitHub performs _loose equality_ comparisons:
+          - When comparing with **operators**, _if types do **not** match_, operands are _coerced to **numbers**_ using the conversions described below;
+          - When comparisons are part of a function internal behavior, those functions _cast argument values to **strings**_ to perform comparisons, using the conversions described below;
+          In addition to that, the `fromJSON()` function can be used to convert any data type that can be represented in JSON or JavaScript.
+            Since `fromJSON()` takes in a string and returns the value inside it parsed as its corresponding deserialized type, its argument must be a string containing a legal/parseable JSON value.
+            Because of that, the value (`x`) to be parsed must be either wrapped in quotes (`'x'`) or previously converted to a JSON string using the `toJSON(x)` function.
+
+          Conversion rules:
+          | Type    |  Variation    | Value (`x`)       | Operators converts to (number)                  | Functions converts to (string)                  | `fromJSON('x')` parses `x` as                 |
+          | :------ | :------------ | :---------------: | :---------------------------------------------: | :---------------------------------------------: | :-------------------------------------------: |
+          | null    |               |                   |                                                 |                                                 |                                               |
+          |         | null          | `null`            | `${{ fromJSON('0') }}`                          | `'${{ join(null) }}'`                           | `${{ fromJSON('null') }}​` (= `null`)          |
+          | boolean |               |                   |                                                 |                                                 |                                               |
+          |         | true          | `true`            | `${{ fromJSON('1') }}`                          | `'${{ join(true) }}'`                           | `${{ fromJSON('true') }}`                     |
+          |         | false         | `false`           | `${{ fromJSON('0') }}`                          | `'${{ join(false) }}'`                          | `${{ fromJSON('false') }}`                    |
+          | number  |               |                   | _already number, no coercion needed_            | _decimal format, exponential for large numbers_ |                                               |
+          |         | integer       | `711`             | `${{ fromJSON('711') }}`                        | `'${{ join(711) }}'`                            | `${{ fromJSON('711') }}`                      |
+          |         |               | `1`               | `${{ fromJSON('1') }}`                          | `'${{ join(1) }}'`                              | `${{ fromJSON('1') }}`                        |
+          |         |               | `0`               | `${{ fromJSON('0') }}`                          | `'${{ join(0) }}'`                              | `${{ fromJSON('0') }}`                        |
+          |         | float         | `-9.2`            | `${{ fromJSON('-9.2') }}`                       | `'${{ join(-9.2) }}'`                           | `${{ fromJSON('-9.2') }}`                     |
+          |         | hex           | `0xff`            | `${{ fromJSON('0xff') }}`                       | `'${{ join(0xff) }}'`                           | `${{ fromJSON('0xff') }}`                     |
+          |         | exponential   | `-2.99e-2`        | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join(-2.99e-2) }}'`                       | `${{ fromJSON('-2.99e-2') }}`                 |
+          |         | large num     | `6.02e23`         | `${{ fromJSON('6.02e23') }}`                    | `'${{ join(6.02e23) }}'`                        | `${{ fromJSON('6.02e23') }}`                  |
+          | string  |               |                   | _`0` if empty, number if legal JSON,else `NaN`_ | _already string, no conversion needed_          | _double quote value to parse as str: `'"x"'`_ | 
+          |         | string        | `'The Octocat'`   | `${{ fromJSON('NaN') }}`                        | `'${{ join('The Octocat') }}'`                  | `${{ fromJSON('"The Octocat"') }}`            |
+          |         | empty str     | `""`              | `${{ fromJSON('0') }}`                          | `'${{ join('') }}'`                             | `${{ fromJSON('""') }}​` (_empty string_)      |
+          |         | numeric str   | `'711'`           | `${{ fromJSON('711') }}`                        | `'${{ join('711') }}'`                          | `${{ fromJSON('"711"') }}`                    |
+          |         |               | `'1'`             | `${{ fromJSON('1') }}`                          | `'${{ join('1') }}'`                            | `${{ fromJSON('"1"') }}`                      |
+          |         |               | `'0'`             | `${{ fromJSON('0') }}`                          | `'${{ join('0') }}'`                            | `${{ fromJSON('"0"') }}`                      |
+          |         | float num str | `'-9.2'`          | `${{ fromJSON('-9.2') }}`                       | `'${{ join('-9.2') }}'`                         | `${{ fromJSON('"-9.2"') }}`                   |
+          |         | hex num str   | `'0xff'`          | `${{ fromJSON('0xff') }}`                       | `'${{ join('0xff') }}'`                         | `${{ fromJSON('"0xff"') }}`                   |
+          |         | exp num str   | `'-2.99e-2'`      | `${{ fromJSON('-2.99e-2') }}`                   | `'${{ join('-2.99e-2') }}'`                     | `${{ fromJSON('"-2.99e-2"') }}`               |
+          |         | large num str | `'6.02e23'`       | `${{ fromJSON('6.02e23') }}`                    | `'${{ join('6.02e23') }}'`                      | `${{ fromJSON('"6.02e23"') }}`                |
+          |         | bool num str  | `'true'`          | `${{ fromJSON('NaN') }}`                        | `'${{ join('true') }}'`                         | `${{ fromJSON('"true"') }}`                   |
+          |         |               | `'false'`         | `${{ fromJSON('NaN') }}`                        | `'${{ join('false') }}'`                        | `${{ fromJSON('"false"') }}`                  |
+          | array   |               |                   | _only equal to themselves (same instance)_      | _Arrays cannot be converted to strings_         |                                               |
+          |         |               | `["a", 9, true]`  | `${{ fromJSON('NaN') }}`                        | _`error` if fun param does not expect an array_ | `${{ fromJSON('["a", 9, true]') }}`           |
+          | object  |               |                   | _only equal to themselves (same instance)_      | _Objects cannot be converted to strings_        |                                               |
+          |         |               | `{"key": "value"}`| `${{ fromJSON('NaN') }}`                        | _`error` if param does not expect an object_    | `${{ fromJSON('{"key": "value"}') }}`         |
+          EOM
+
+      - name: Comparing Values
+        id: comparisons
+        run: |
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+          ## Explore how different types behave when compared through different approaches:
+
+          | y` \ `x`    | _approaches to check `x` for `y`_   | **`true`**    | **`false`**    | **`1`**    | **`0`**    | **`'foo'`**    | **`null`**  |
+          | :--: | :-- | :--: | :--: | :--: | :--: | :--: | :--:  |
+          |    |`x && 'truthy' \|\| 'falsy'` ⭐¹     | _**truthy**_    | _falsy_    | _**truthy**_    | _falsy_    | _${{ 'foo' && '**truthy**' || 'falsy'}}_    | _falsy_  |
+          |**`true`**   |`x == true`    | ✅    | ❌    | ${{1==true && '✅' || '❌'}}  | ${{0==true && '✅' || '❌'}}  | ${{'foo'==true && '✅' || '❌'}}  | ${{null==true && '✅' || '❌'}}  |
+          |    |`contains(x,true)` ⭐²    | ✅    | ${{contains(false,true) && '✅' || '❌'}}  | ${{contains(1,true) && '✅' || '❌'}}  | ${{contains(0,true) && '✅' || '❌'}}  | ${{contains('foo',true) && '✅' || '❌'}}  | ${{contains(null,true) && '✅' || '❌'}}  |
+          |    |`contains('x',true)`    | ${{contains('true',true) && '✅' || '❌'}}  | ${{contains('false',true) && '✅' || '❌'}}  | ${{contains('1',true) && '✅' || '❌'}}  | ${{contains('0',true) && '✅' || '❌'}}  | ⏸    | ${{contains('null',true) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),true)`     | ${{contains(fromJSON('[true]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),true) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),true)`   | ${{contains(fromJSON('["true"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),true) && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),true) && '✅' || '❌'}}  |
+          |**`'true'`** |`x == 'true'`    | ${{true=='true' && '✅' || '❌'}}  | ${{false=='true' && '✅' || '❌'}}  | ${{1=='true' && '✅' || '❌'}}  | ${{0=='true' && '✅' || '❌'}}  | ${{'foo'=='true' && '✅' || '❌'}}  | ${{null=='true' && '✅' || '❌'}}  |
+          |    |`contains(x,'true')`    | ${{contains(true,'true') && '✅' || '❌'}}  | ${{contains(false,'true') && '✅' || '❌'}}  | ${{contains(1,'true') && '✅' || '❌'}}  | ${{contains(0,'true') && '✅' || '❌'}}  | ${{contains('foo','true') && '✅' || '❌'}}  | ${{contains(null,'true') && '✅' || '❌'}}  |
+          |    |`contains('true',x)`    | ${{contains('true',true) && '✅' || '❌'}}  | ${{contains('true',false) && '✅' || '❌'}}  | ${{contains('true',1) && '✅' || '❌'}}  | ${{contains('true',0) && '✅' || '❌'}}  | ${{contains('true','foo') && '✅' || '❌'}}  | ${{contains('true',null) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),'true')`   | ${{contains(fromJSON('[true]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),'true') && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),'true')` | ${{contains(fromJSON('["true"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'true') && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),'true') && '✅' || '❌'}}  |
+          |**`false`**  |`x == false`    | ❌    | ✅    | ${{1==false && '✅' || '❌'}}  | ${{0==false && '✅' || '❌'}}  | ${{'foo'==false && '✅' || '❌'}}  | ${{null==false && '✅' || '❌'}}  |
+          |    |`contains(x,false)` ⭐³    | ${{contains(true,false) && '✅' || '❌'}}  | ✅    | ${{contains(1,false) && '✅' || '❌'}}  | ${{contains(0,false) && '✅' || '❌'}}  | ${{contains('foo',false) && '✅' || '❌'}}  | ${{contains(null,false) && '✅' || '❌'}}  |
+          |    |`contains('x',false)`    | ${{contains('true',false) && '✅' || '❌'}}  | ${{contains('false',false) && '✅' || '❌'}}  | ${{contains('1',false) && '✅' || '❌'}}  | ${{contains('0',false) && '✅' || '❌'}}  | ⏸    | ${{contains('null',false) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),false)`    | ${{contains(fromJSON('[true]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),false) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),false)`  | ${{contains(fromJSON('["true"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),false) && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),false) && '✅' || '❌'}}  |
+          |**`'false'`**|`x == 'false'`    | ${{true=='false' && '✅' || '❌'}}  | ${{false=='false' && '✅' || '❌'}}  | ${{1=='false' && '✅' || '❌'}}  | ${{0=='false' && '✅' || '❌'}}  | ${{'foo'=='false' && '✅' || '❌'}}  | ${{null=='false' && '✅' || '❌'}}  |
+          |    |`contains(x,'false')`    | ${{contains(true,'false') && '✅' || '❌'}}  | ${{contains(false,'false') && '✅' || '❌'}}  | ${{contains(1,'false') && '✅' || '❌'}}  | ${{contains(0,'false') && '✅' || '❌'}}  | ${{contains('foo','false') && '✅' || '❌'}}  | ${{contains(null,'false') && '✅' || '❌'}}  |
+          |    |`contains('false',x)`    | ${{contains('false',true) && '✅' || '❌'}}  | ${{contains('false',false) && '✅' || '❌'}}  | ${{contains('false',1) && '✅' || '❌'}}  | ${{contains('false',0) && '✅' || '❌'}}  | ${{contains('false','foo') && '✅' || '❌'}}  | ${{contains('false',null) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),'false')`  | ${{contains(fromJSON('[true]'),'false') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'false') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'false') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'false') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'false') && '✅' || '❌'}} | ${{contains(fromJSON('[null]'),'false') && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),'false')`| ${{contains(fromJSON('["true"]'),'false') && '✅' || '❌'}} | ${{contains(fromJSON('["false"]'),'false') && '✅' || '❌'}} | ${{contains(fromJSON('["1"]'),'false') && '✅' || '❌'}} | ${{contains(fromJSON('["0"]'),'false') && '✅' || '❌'}} | ⏸    | ${{contains(fromJSON('["null"]'),'false') && '✅' || '❌'}}  |
+          |**`1`**      |`x == 1`    | ${{true==1 && '✅' || '❌'}}  | ${{false==1 && '✅' || '❌'}}  | ✅    | ❌    | ${{'foo'==1 && '✅' || '❌'}}  | ${{null==1 && '✅' || '❌'}}  |
+          |    |`contains(x, 1)`    | ${{contains(true,1) && '✅' || '❌'}}  | ${{contains(false,1) && '✅' || '❌'}}  | ✅    | ${{contains(0,1) && '✅' || '❌'}}  | ${{contains('foo',1) && '✅' || '❌'}}  | ${{contains(null,1) && '✅' || '❌'}}  |
+          |    |`contains('x', 1)`    | ${{contains('true',1) && '✅' || '❌'}}  | ${{contains('false',1) && '✅' || '❌'}}  | ✅    | ${{contains('0',1) && '✅' || '❌'}}  | ⏸    | ${{contains('null',1) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),1)`        | ${{contains(fromJSON('[true]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),1) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),1)`      | ${{contains(fromJSON('["true"]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),1) && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),1) && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),1) && '✅' || '❌'}}  |
+          |**`'1'`**    |`x == '1'`    | ${{true=='1' && '✅' || '❌'}}  | ${{false=='1' && '✅' || '❌'}}  | ${{1=='1' && '✅' || '❌'}}  | ${{0=='1' && '✅' || '❌'}}  | ${{'foo'=='1' && '✅' || '❌'}}  | ${{null=='1' && '✅' || '❌'}}  |
+          |    |`contains(x,'1')`    | ${{contains(true,'1') && '✅' || '❌'}}  | ${{contains(false,'1') && '✅' || '❌'}}  | ${{contains(1,'1') && '✅' || '❌'}}  | ${{contains(0,'1') && '✅' || '❌'}}  | ${{contains('foo','1') && '✅' || '❌'}}  | ${{contains(null,'1') && '✅' || '❌'}}  |
+          |    |`contains('1',x)`    | ${{contains('1',true) && '✅' || '❌'}}  | ${{contains('1',false) && '✅' || '❌'}}  | ${{contains('1',1) && '✅' || '❌'}}  | ${{contains('1',0) && '✅' || '❌'}}  | ${{contains('1','foo') && '✅' || '❌'}}  | ${{contains('1',null) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),'1')`      | ${{contains(fromJSON('[true]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),'1') && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),'1')`    | ${{contains(fromJSON('["true"]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'1') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'1') && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),'1') && '✅' || '❌'}}  |
+          |**`0`**      |`x == 0`    | ${{true==0 && '✅' || '❌'}}  | ${{false==0 && '✅' || '❌'}}  | ❌    | ✅    | ${{'foo'==0 && '✅' || '❌'}}  | ${{null==0 && '✅' || '❌'}}  |
+          |    |`contains(x,0)`    | ${{contains(true,0) && '✅' || '❌'}}  | ${{contains(false,0) && '✅' || '❌'}}  | ${{contains(1,0) && '✅' || '❌'}}  | ✅    | ${{contains('foo',0) && '✅' || '❌'}}  | ${{contains(null,0) && '✅' || '❌'}}  |
+          |    |`contains('x',0)`    | ${{contains('true',0) && '✅' || '❌'}}  | ${{contains('false',0) && '✅' || '❌'}}  | ${{contains('1',0) && '✅' || '❌'}}  | ✅    | ⏸    | ${{contains('null',0) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),0)`        | ${{contains(fromJSON('[true]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),0) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]')`         | ${{contains(fromJSON('["true"]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),0) && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),0) && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),0) && '✅' || '❌'}}  |
+          |**`'0'`**    |`x == '0'`    | ${{true=='0' && '✅' || '❌'}}  | ${{false=='0' && '✅' || '❌'}}  | ${{1=='0' && '✅' || '❌'}}  | ${{0=='0' && '✅' || '❌'}}  | ${{'foo'=='0' && '✅' || '❌'}}  | ${{null=='0' && '✅' || '❌'}}  |
+          |    |`contains(x,'0')`    | ${{contains(true,'0') && '✅' || '❌'}}  | ${{contains(false,'0') && '✅' || '❌'}}  | ${{contains(1,'0') && '✅' || '❌'}}  | ${{contains(0,'0') && '✅' || '❌'}}  | ${{contains('foo','0') && '✅' || '❌'}}  | ${{contains(null,'0') && '✅' || '❌'}}  |
+          |    |`contains('0',x)`    | ${{contains('0',true) && '✅' || '❌'}}  | ${{contains('0',false) && '✅' || '❌'}}  | ${{contains('0',1) && '✅' || '❌'}}  | ${{contains('0',0) && '✅' || '❌'}}  | ${{contains('0','foo') && '✅' || '❌'}}  | ${{contains('0',null) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),'0')`      | ${{contains(fromJSON('[true]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),'0') && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),'0')`    | ${{contains(fromJSON('["true"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'0') && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),'0') && '✅' || '❌'}}  |
+          |**`'foo'`**  |`x == 'foo'` ⭐⁴    | ${{true=='foo' && '✅' || '❌'}}  | ${{false=='foo' && '✅' || '❌'}}  | ${{1=='foo' && '✅' || '❌'}}  | ${{0=='foo' && '✅' || '❌'}}  | ✅    | ${{null=='foo' && '✅' || '❌'}}  |
+          |    |`contains(x,'foo')` ⭐⁵    | ${{contains(true,'foo') && '✅' || '❌'}}  | ${{contains(false,'foo') && '✅' || '❌'}}  | ${{contains(1,'foo') && '✅' || '❌'}}  | ${{contains(0,'foo') && '✅' || '❌'}}  | ✅    | ${{contains(null,'foo') && '✅' || '❌'}}  |
+          |    |`contains('foo',x)`    | ${{contains('foo',true) && '✅' || '❌'}}  | ${{contains('foo',false) && '✅' || '❌'}}  | ${{contains('foo',1) && '✅' || '❌'}}  | ${{contains('foo',0) && '✅' || '❌'}}  | ✅    | ${{contains('foo',null) && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('[x]'),'foo')`    | ${{contains(fromJSON('[true]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),'foo') && '✅' || '❌'}}  |
+          |    |`contains(fromJSON('["x"]'),'foo')`  | ${{contains(fromJSON('["true"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'foo') && '✅' || '❌'}}  | ⏸    | ❌  |
+          
+          > [!TIP]
+          > _simple null checks:_
+          >
+          > ⭐**¹**: When simple _falsy checks_ are enough to determine control flow, using `x && 'do/return this' || 'do/return that'` is the safest and most straightforward approach, as you don't need to account for type casting peculiarities.
+          >  > ⚠️ That said, it's important to note that **the first value after `&&` must be _truthy_!** _Otherwise, the value after `||` will always be returned_, **regardless of `x`'s actual value**!. 
+          >  > So, whenever using the pattern `x && y || z`, ask yourself: "If `x` is _truthy_ and `y` is _falsy_, should `y` be returned, or should `z` be returned?". If `y` should be returned, even when it's _falsy_, then this pattern is not suitable, and might cause unexpected behavior.
+
+          > [!TIP]
+          > _boolean checks:_
+          >
+          > ⭐**²**: Using `contains(x,true)` is the safest way to check whether `x` is explicitly `true`, as it works even when `x` is an array containing `true` as an element or a string containing the substring matching `true`.
+          >   Because it falls back to `false` whenever `x` is anyhting but explicitly `true`, its best **use case** is when you want something to **default to `false` _unless explicitly set to `true`_**.
+          >  > ⚠️ Be cautious when `x` can be a string that might contain the substring `'true'` (e.g., `'not true'`), as `contains(x,true)` would return `true` in such cases, which might not be the intended behavior.
+          >  >   However, if you are not sure this is a concern, you are probably overthinking it.
+          >
+          > ⭐**³**: Similarly, using `contains(x,false)` is the safest way to check whether `x` is explicitly `false`, as it works even when `x` is an array containing `false` as an element or a string containing the substring matching `false`.
+          >   Most importantly, it won't mistake _falsy_ values like `0`, `""`, `null`, or `NaN` for `false`, unlike direct comparisons using `==`.
+          >   Its real value, though, shines when negated as **`!contains(x,false)`**, that will return `true` for anything but explicit `false`, allowing to easily implement logic that **defaults to `true` _unless explicitly set to `false`_**.
+          >   Because of that, its best **use case** is when you want **something to be always enabled, unless explicitly disabled, _safeguarding against accidental falsy_ values**.
+          >  > ⚠️ Be cautious when `x` can be a string that might contain the substring `'false'` (e.g., `'not false'`), as `contains(x,false)` would return `true` in such cases, which might not be the intended behavior.
+          >  >   However, if you are not sure this is a concern, you are probably overthinking it.
+
+          > [!TIP]
+          > _string checks:_
+          >
+          > ⭐**⁴**: Using `x == 'foo'` is the most straightforward way to check whether `x` is exactly equal to the string `'foo'`.
+          >   Its best **use case** is when you want to check for an exact string match, without the need to account for type coercion or substring matches.
+          >
+          > ⭐**⁵**: Using `contains(x,'foo')` is the safest way to check whether `x` contains the substring `'foo'`, as it works even when `x` is an array containing `'foo'` as an element.
+          >   Its best **use case** is when you want to check for the presence of a substring within a string, or an element within an array, without worrying about exact matches or type coercion.
+
+          > [!WARNING]
+          > **Careful with comparing `fromJSON('[x]')` to `x` using operators!**
+          > `fromJSON('[x]')` **returns an `${{ fromJSON('["X"]') }}`** containing parsed `${{ fromJSON('["x"]')[0] }}` as its element;'
+          > `fromJSON('x')`, on the other hand, directly returns the parsed value of `${{ fromJSON('"x"') }}` itself.
+          > Hence, finding out whether `x` is contained in the array is **only possible through `contains()`** function, that iterates over the array's elements to compare; it does not compare `x` to the array itself, which is what operators do.
+          > This is why, `contains(fromJSON('[x]'),x)` is _${{ contains(fromJSON('["x"]'),'x') }}_ (`x` an element of the array), but `fromJSON('[x]') == x` is _${{ fromJSON('["x"]')=='x' }}_ (an array is only equal to itself).
+          > An **operator based comparison between an array and a non-array value** would only be possible if the target array's element **position is known** beforehand, by indexing into it: `fromJSON('[x]')[0] == x` is _${{ fromJSON('["x"]')[0]=='x' }}_.
+          > Even then, that could lead to confusion, due to type coercion during comparison.
+          > Anyhow, if `fromJSON()` is used to parse `x` directly - instead of wrapped in an array -, then `fromJSON('x') == x` is _${{ fromJSON('"x"')=='x' }}_.
+
+          > [!WARNING]
+          > **Careful when comparing `NaN`!**
+          > In JavaScript (and thus in GitHub Actions expressions), **`NaN` is NOT equal to anything, including _itself_**.
+          > Thus, `NaN == NaN` is _${{ NaN==NaN }}_, the same way `fromJSON('["anything"]') == 'foo'` is _${{ fromJSON('["anything"]')=='foo' }}_, even though both the lefthand `Array` and righthand `string` results in `NaN` when coerced to numbers upon operator based comparison.
+          EOM
+
+      - name: Recommended patterns
+        id: patterns
+        run: |
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+          TODO recommended patterns sppoted so far for common use cases
+          EOM
+        # TODO: Add arrays and objects indexing and filtering
+
+        # TODO: Add best patterns for comparisons and general var/input handling in control flow
