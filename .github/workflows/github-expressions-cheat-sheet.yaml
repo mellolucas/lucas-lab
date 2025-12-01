@@ -260,7 +260,8 @@ jobs:
           > ⭐**⁴**: Using `x == 'foo'` is the most straightforward way to check whether `x` is exactly equal to the string `'foo'`.
           >   Its best **use case** is when you want to check for an exact string match, without the need to account for type coercion or substring matches.
           >
-          > ⭐**⁵**: Using `contains(x,'foo')` is the safest way to check whether `x` contains the substring `'foo'`, as it works even when `x` is an array containing `'foo'` as an element.
+          > ⭐**⁵**: Using `contains(x,'foo')` is the safest way to check whether `x` contains a substring totally or partially matching `'foo'`.
+          >   The major advantage of this approach is that it works even when `x` is an array containing `'foo'` as an element.
           >   Its best **use case** is when you want to check for the presence of a substring within a string, or an element within an array, without worrying about exact matches or type coercion.
 
           > [!WARNING]
