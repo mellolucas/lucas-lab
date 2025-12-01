@@ -1,4 +1,4 @@
-name: Workflows Cheat Sheet
+name: GitHub Expressions Cheat Sheet
 run-name: >-
   ${{ github.workflow }}
   ${{ format('(runs-on:{0})', 
