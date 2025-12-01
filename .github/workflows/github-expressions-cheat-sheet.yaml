@@ -186,6 +186,7 @@ jobs:
           | y` \ `x`    | _approaches to check `x` for `y`_   | **`true`**    | **`false`**    | **`1`**    | **`0`**    | **`'foo'`**    | **`null`**  |
           | :--: | :-- | :--: | :--: | :--: | :--: | :--: | :--:  |
           |    |**`x && 'truthy' \|\| 'falsy'`** ⭐¹     | _**truthy**_    | _falsy_    | _**truthy**_    | _falsy_    | _${{ 'foo' && '**truthy**' || 'falsy'}}_    | _falsy_  |
+          |**`Array`**  |**`x == fromJSON('[]')`**    | ${{true==fromJSON('[]') && '✅' || '❌'}}  | ${{false==fromJSON('[]') && '✅' || '❌'}}  | ${{1==fromJSON('[]') && '✅' || '❌'}}  | ${{0==fromJSON('[]') && '✅' || '❌'}}  | ${{'foo'==fromJSON('[]') && '✅' || '❌'}}  | ${{null==fromJSON('[]') && '✅' || '❌'}}  |
           |**`null`**  |**`x == null`**  | ${{true==null && '✅' || '❌'}}  | ${{false==null && '✅' || '❌'}}  | ${{1==null && '✅' || '❌'}}  | ${{0==null && '✅' || '❌'}}  | ${{'foo'==null && '✅' || '❌'}}  | ${{null==null && '✅' || '❌'}}  |
           |    |**`contains(x,null)`**    | ${{contains(true,null) && '✅' || '❌'}}  | ${{contains(false,null) && '✅' || '❌'}}  | ${{contains(1,null) && '✅' || '❌'}}  | ${{contains(0,null) && '✅' || '❌'}}  | ${{contains('foo',null) && '✅' || '❌'}}  | ${{contains(null,null) && '✅' || '❌'}}  |
           |**`'foo'`**  |**`x == 'foo'`** ⭐²    | ${{true=='foo' && '✅' || '❌'}}  | ${{false=='foo' && '✅' || '❌'}}  | ${{1=='foo' && '✅' || '❌'}}  | ${{0=='foo' && '✅' || '❌'}}  | ✅    | ${{null=='foo' && '✅' || '❌'}}  |
@@ -290,7 +291,7 @@ jobs:
           Same would apply for the expression `true && (true && fromJSON('["whatever"]')) && 'Array is truthy' || 'Array is falsy'`, that would return `'Array is falsy'` because the inner expression `true && fromJSON('["whatever"]')` evaluates to `NaN`, which is falsy.
             When evaluating, we see that it returns `${{ true && (true && fromJSON('["whatever"]')) && 'Array is truthy' || 'Array is falsy' }}`;
           Even if the Array is empty, it should behave the same, because `fromJSON('[]')` also evaluates to `NaN`.
-            When evaluating, we see that it returns `${{ true && fromJSON('[]') || 'Array is falsy' }}`;
+            When evaluating, we see that it returns `${{ true && (true && fromJSON('[]')) && 'Empty Array is truthy' || 'Empty Array is falsy' }}`;
           EOM
 
       - name: Recommended patterns
