@@ -283,7 +283,8 @@ jobs:
       - name: Null checks
         id: null-checks
         run: |
-          cat << EOM >> $GITHUB_STEP_SUMMARY
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
+          ## Explore how different types behave when compared through different approaches:
           | y` \ `x`    | _approaches to check `x` for `y`_   | **`true`**    | **`false`**    | **`1`**    | **`0`**    | **`'foo'`**    | **`null`**  |
           | :--: | :-- | :--: | :--: | :--: | :--: | :--: | :--:  |
           |    |`x && 'truthy' \|\| 'falsy'` ⭐¹     | _**truthy**_    | _falsy_    | _**truthy**_    | _falsy_    | _${{ 'foo' && '**truthy**' || 'falsy'}}_    | _falsy_  |
