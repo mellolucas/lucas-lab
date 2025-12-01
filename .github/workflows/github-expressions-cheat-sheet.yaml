@@ -186,13 +186,13 @@ jobs:
           | y` \ `x`    | _approaches to check `x` for `y`_   | **`true`**    | **`false`**    | **`1`**    | **`0`**    | **`'foo'`**    | **`null`**  |
           | :--: | :-- | :--: | :--: | :--: | :--: | :--: | :--:  |
           |    |`x && 'truthy' \|\| 'falsy'` ⭐¹     | _**truthy**_    | _falsy_    | _**truthy**_    | _falsy_    | _${{ 'foo' && '**truthy**' || 'falsy'}}_    | _falsy_  |
-          |**`'foo'`**  |`x == 'foo'` ⭐⁴    | ${{true=='foo' && '✅' || '❌'}}  | ${{false=='foo' && '✅' || '❌'}}  | ${{1=='foo' && '✅' || '❌'}}  | ${{0=='foo' && '✅' || '❌'}}  | ✅    | ${{null=='foo' && '✅' || '❌'}}  |
-          |    |`contains(x,'foo')` ⭐⁵    | ${{contains(true,'foo') && '✅' || '❌'}}  | ${{contains(false,'foo') && '✅' || '❌'}}  | ${{contains(1,'foo') && '✅' || '❌'}}  | ${{contains(0,'foo') && '✅' || '❌'}}  | ✅    | ${{contains(null,'foo') && '✅' || '❌'}}  |
+          |**`'foo'`**  |`x == 'foo'` ⭐²    | ${{true=='foo' && '✅' || '❌'}}  | ${{false=='foo' && '✅' || '❌'}}  | ${{1=='foo' && '✅' || '❌'}}  | ${{0=='foo' && '✅' || '❌'}}  | ✅    | ${{null=='foo' && '✅' || '❌'}}  |
+          |    |`contains(x,'foo')` ⭐³    | ${{contains(true,'foo') && '✅' || '❌'}}  | ${{contains(false,'foo') && '✅' || '❌'}}  | ${{contains(1,'foo') && '✅' || '❌'}}  | ${{contains(0,'foo') && '✅' || '❌'}}  | ✅    | ${{contains(null,'foo') && '✅' || '❌'}}  |
           |    |`contains('foo',x)`    | ${{contains('foo',true) && '✅' || '❌'}}  | ${{contains('foo',false) && '✅' || '❌'}}  | ${{contains('foo',1) && '✅' || '❌'}}  | ${{contains('foo',0) && '✅' || '❌'}}  | ✅    | ${{contains('foo',null) && '✅' || '❌'}}  |
           |    |`contains(fromJSON('[x]'),'foo')`    | ${{contains(fromJSON('[true]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),'foo') && '✅' || '❌'}}  |
           |    |`contains(fromJSON('["x"]'),'foo')`  | ${{contains(fromJSON('["true"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'foo') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'foo') && '✅' || '❌'}}  | ⏸    | ❌  |
           |**`true`**   |`x == true`    | ✅    | ❌    | ${{1==true && '✅' || '❌'}}  | ${{0==true && '✅' || '❌'}}  | ${{'foo'==true && '✅' || '❌'}}  | ${{null==true && '✅' || '❌'}}  |
-          |    |`contains(x,true)` ⭐²    | ✅    | ${{contains(false,true) && '✅' || '❌'}}  | ${{contains(1,true) && '✅' || '❌'}}  | ${{contains(0,true) && '✅' || '❌'}}  | ${{contains('foo',true) && '✅' || '❌'}}  | ${{contains(null,true) && '✅' || '❌'}}  |
+          |    |`contains(x,true)` ⭐⁴    | ✅    | ${{contains(false,true) && '✅' || '❌'}}  | ${{contains(1,true) && '✅' || '❌'}}  | ${{contains(0,true) && '✅' || '❌'}}  | ${{contains('foo',true) && '✅' || '❌'}}  | ${{contains(null,true) && '✅' || '❌'}}  |
           |    |`contains('x',true)`    | ${{contains('true',true) && '✅' || '❌'}}  | ${{contains('false',true) && '✅' || '❌'}}  | ${{contains('1',true) && '✅' || '❌'}}  | ${{contains('0',true) && '✅' || '❌'}}  | ⏸    | ${{contains('null',true) && '✅' || '❌'}}  |
           |    |`contains(fromJSON('[x]'),true)`     | ${{contains(fromJSON('[true]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),true) && '✅' || '❌'}}  |
           |    |`contains(fromJSON('["x"]'),true)`   | ${{contains(fromJSON('["true"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),true) && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),true) && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),true) && '✅' || '❌'}}  |
@@ -202,7 +202,7 @@ jobs:
           |    |`contains(fromJSON('[x]'),'true')`   | ${{contains(fromJSON('[true]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),'true') && '✅' || '❌'}}  |
           |    |`contains(fromJSON('["x"]'),'true')` | ${{contains(fromJSON('["true"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'true') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'true') && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),'true') && '✅' || '❌'}}  |
           |**`false`**  |`x == false`    | ❌    | ✅    | ${{1==false && '✅' || '❌'}}  | ${{0==false && '✅' || '❌'}}  | ${{'foo'==false && '✅' || '❌'}}  | ${{null==false && '✅' || '❌'}}  |
-          |    |`contains(x,false)` ⭐³    | ${{contains(true,false) && '✅' || '❌'}}  | ✅    | ${{contains(1,false) && '✅' || '❌'}}  | ${{contains(0,false) && '✅' || '❌'}}  | ${{contains('foo',false) && '✅' || '❌'}}  | ${{contains(null,false) && '✅' || '❌'}}  |
+          |    |`contains(x,false)` ⭐⁵    | ${{contains(true,false) && '✅' || '❌'}}  | ✅    | ${{contains(1,false) && '✅' || '❌'}}  | ${{contains(0,false) && '✅' || '❌'}}  | ${{contains('foo',false) && '✅' || '❌'}}  | ${{contains(null,false) && '✅' || '❌'}}  |
           |    |`contains('x',false)`    | ${{contains('true',false) && '✅' || '❌'}}  | ${{contains('false',false) && '✅' || '❌'}}  | ${{contains('1',false) && '✅' || '❌'}}  | ${{contains('0',false) && '✅' || '❌'}}  | ⏸    | ${{contains('null',false) && '✅' || '❌'}}  |
           |    |`contains(fromJSON('[x]'),false)`    | ${{contains(fromJSON('[true]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),false) && '✅' || '❌'}}  |
           |    |`contains(fromJSON('["x"]'),false)`  | ${{contains(fromJSON('["true"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),false) && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),false) && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('["null"]'),false) && '✅' || '❌'}}  |
@@ -240,29 +240,29 @@ jobs:
           >  > So, whenever using the pattern `x && y || z`, ask yourself: "If `x` is _truthy_ and `y` is _falsy_, should `y` be returned, or should `z` be returned?". If `y` should be returned, even when it's _falsy_, then this pattern is not suitable, and might cause unexpected behavior.
 
           > [!TIP]
+          > _string checks:_
+          >
+          > ⭐**²**: Using `x == 'foo'` is the most straightforward way to check whether `x` is exactly equal to the string `'foo'`.
+          >   Its best **use case** is when you want to check for an exact string match, without the need to account for type coercion or substring matches.
+          >
+          > ⭐**³**: Using `contains(x,'foo')` is the safest way to check whether `x` contains a substring totally or partially matching `'foo'`.
+          >   The major advantage of this approach is that it works even when `x` is an array containing `'foo'` as an element.
+          >   Its best **use case** is when you want to check for the presence of a substring within a string, or an element within an array, without worrying about exact matches or type coercion.
+
+          > [!TIP]
           > _boolean checks:_
           >
-          > ⭐**²**: Using `contains(x,true)` is the safest way to check whether `x` is explicitly `true`, as it works even when `x` is an array containing `true` as an element or a string containing the substring matching `true`.
+          > ⭐**⁴**: Using `contains(x,true)` is the safest way to check whether `x` is explicitly `true`, as it works even when `x` is an array containing `true` as an element or a string containing the substring matching `true`.
           >   Because it falls back to `false` whenever `x` is anyhting but explicitly `true`, its best **use case** is when you want something to **default to `false` _unless explicitly set to `true`_**.
           >  > ⚠️ Be cautious when `x` can be a string that might contain the substring `'true'` (e.g., `'not true'`), as `contains(x,true)` would return `true` in such cases, which might not be the intended behavior.
           >  >   However, if you are not sure this is a concern, you are probably overthinking it.
           >
-          > ⭐**³**: Similarly, using `contains(x,false)` is the safest way to check whether `x` is explicitly `false`, as it works even when `x` is an array containing `false` as an element or a string containing the substring matching `false`.
+          > ⭐**⁵**: Similarly, using `contains(x,false)` is the safest way to check whether `x` is explicitly `false`, as it works even when `x` is an array containing `false` as an element or a string containing the substring matching `false`.
           >   Most importantly, it won't mistake _falsy_ values like `0`, `""`, `null`, or `NaN` for `false`, unlike direct comparisons using `==`.
           >   Its real value, though, shines when negated as **`!contains(x,false)`**, that will return `true` for anything but explicit `false`, allowing to easily implement logic that **defaults to `true` _unless explicitly set to `false`_**.
           >   Because of that, its best **use case** is when you want **something to be always enabled, unless explicitly disabled, _safeguarding against accidental falsy_ values**.
           >  > ⚠️ Be cautious when `x` can be a string that might contain the substring `'false'` (e.g., `'not false'`), as `contains(x,false)` would return `true` in such cases, which might not be the intended behavior.
           >  >   However, if you are not sure this is a concern, you are probably overthinking it.
-
-          > [!TIP]
-          > _string checks:_
-          >
-          > ⭐**⁴**: Using `x == 'foo'` is the most straightforward way to check whether `x` is exactly equal to the string `'foo'`.
-          >   Its best **use case** is when you want to check for an exact string match, without the need to account for type coercion or substring matches.
-          >
-          > ⭐**⁵**: Using `contains(x,'foo')` is the safest way to check whether `x` contains a substring totally or partially matching `'foo'`.
-          >   The major advantage of this approach is that it works even when `x` is an array containing `'foo'` as an element.
-          >   Its best **use case** is when you want to check for the presence of a substring within a string, or an element within an array, without worrying about exact matches or type coercion.
 
           > [!WARNING]
           > **Careful with comparing `fromJSON('[x]')` to `x` using operators!**
