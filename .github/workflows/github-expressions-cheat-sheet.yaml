@@ -233,10 +233,29 @@ jobs:
           |    |`contains(fromJSON('[x]'),'0')`      | ${{contains(fromJSON('[true]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[false]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[1]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[0]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["foo"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('[null]'),'0') && '✅' || '❌'}}  |
           |    |`contains(fromJSON('["x"]'),'0')`    | ${{contains(fromJSON('["true"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["false"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["1"]'),'0') && '✅' || '❌'}}  | ${{contains(fromJSON('["0"]'),'0') && '✅' || '❌'}}  | ⏸    | ${{contains(fromJSON('[""]'),'0') && '✅' || '❌'}} (x:`'[""]'`) |
           
+          EOM
+
+      - name: Recommended patterns
+        id: patterns
+        run: |
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           > [!TIP]
           > _simple null checks:_
           >
           > ⭐**¹**: When simple _falsy checks_ are enough to determine control flow, using `x && 'do/return this' || 'do/return that'` is the safest and most straightforward approach, as you don't need to account for type casting peculiarities.
+          >   Best use cases include:
+          >   - Ternary-like operations: use `x && y || z` to **return a _truthy `y`_ _if `x` is truthy_, otherwise return `z`**, like a simple if-then-else of sorts (⚠️).
+          >   - This-or-fallback: use `x || z` to **return `x` _if `x` is truthy_, otherwise return `z`**, like a **this-or-fallback** approach.
+          >   - Truthy-coalescing (else `null`): use `x && y` to **return `y` _if `x` is truthy_**, otherwise do nothing/return **`null` (empty)**, like a null-check-then-return of sorts.
+          >   - Truthy-coalescing (else `false`): use `!x || y` to **return `y` _only if `x` is truthy_, otherwise return `false`**, similar to the truthy check above, but falling back to `false` instead of `null` when `x` is falsy.
+          >
+          >   - Inverted ternary-like operations: use `!x && z || y` to **return _truthy or falsy `y`_ _if `x` is truthy_, otherwise return _truthy `z`_**.
+          >     This is a smart way to work around the ternary-like pattern limitation of only being able to return a _truthy_ value after `&&` (⚠️), always returning `z` when `y` is evaluated to falsy.
+          >   - Falsy-coalescing (else `true`): use `!x && z` to **return `z` _only if `x` is falsy_**, otherwise return **`true`**. 
+          >     Its similar to the _this-or-fallback pattern_, but more like _true-or-fallback_, for cases where you want to return `true` instead of the actual value of `x` when `x` is truthy.
+          >   - Falsy-coalescing (else `null`): use `!x && z || null` or `!x && z || ''` to **return `z` _only if `x` is falsy_**, otherwise do nothing/return **`null` (empty)**.
+          >     This is good for cases when you want to act only when a given value is not set appropriately.
+          > 
           >  > ⚠️ That said, it's important to note that **the first value after `&&` must be _truthy_!** _Otherwise, the value after `||` will always be returned_, **regardless of `x`'s actual value**!. 
           >  > So, whenever using the pattern `x && y || z`, ask yourself: "If `x` is _truthy_ and `y` is _falsy_, should `y` be returned, or should `z` be returned?". If `y` should be returned, even when it's _falsy_, then this pattern is not suitable, and might cause unexpected behavior.
 
@@ -279,28 +298,22 @@ jobs:
           > **Careful when comparing `NaN`!**
           > In JavaScript (and thus in GitHub Actions expressions), **`NaN` is NOT equal to anything, including _itself_**.
           > Thus, `NaN == NaN` is _${{ NaN==NaN }}_, the same way `fromJSON('["anything"]') == 'foo'` is _${{ fromJSON('["anything"]')=='foo' }}_, even though both the lefthand `Array` and righthand `string` results in `NaN` when coerced to numbers upon operator based comparison.
+
+          Patterns cheat sheet:
+          > Always assume `x` is unknown, and could at most have a predictable type, but even then possibly non-existent or malformed.
+
+          |    Pattern         |   Expression   | If `x` is      | Then return                    | Else return    | Notes                          |
+          | :----------------- | -------------: | :------------: | :----------------------------: | :------------: | :----------------------------- |
+          | Ternary-like       | `x && y || z`  | _truthy_       | `y` if also evals _truthy_     | `z`            |                                |
+          | Truthy-coalescing  | `x && y`       | _truthy_       | `y`                            | `null`         |                                |
+          | This-or-fallback   | `x || z`       | _truthy_       | `x`                            | `z`            |                                |
+          
+
+          
+
+
           EOM
 
-      - name: Null checks
-        id: null-checks
-        run: |
-          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
-          ## Test doc is precise
-          Github docs says that when using operators, which includes `&&`, true is converted to 1, false to 0, and null to 0; but `Array` and `Object` returns `NaN`, meaning they are always false.
-          Then, its only logical that the expression `true && fromJSON('["whatever"]') || 'Array is falsy'` would return `'Array is falsy'`, because `fromJSON('["whatever"]')` evaluates to `NaN`, which is falsy.
-            When evaluating, we see that it returns `${{ true && fromJSON('["whatever"]') || 'Array is falsy' }}`;
-          Same would apply for the expression `true && (true && fromJSON('["whatever"]')) && 'Array is truthy' || 'Array is falsy'`, that would return `'Array is falsy'` because the inner expression `true && fromJSON('["whatever"]')` evaluates to `NaN`, which is falsy.
-            When evaluating, we see that it returns `${{ true && (true && fromJSON('["whatever"]')) && 'Array is truthy' || 'Array is falsy' }}`;
-          Even if the Array is empty, it should behave the same, because `fromJSON('[]')` also evaluates to `NaN`.
-            When evaluating, we see that it returns `${{ true && (true && fromJSON('[]')) && 'Empty Array is truthy' || 'Empty Array is falsy' }}`;
-          EOM
-
-      - name: Recommended patterns
-        id: patterns
-        run: |
-          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
-          TODO recommended patterns sppoted so far for common use cases
-          EOM
         # TODO: Add arrays and objects indexing and filtering
 
         # TODO: Add best patterns for comparisons and general var/input handling in control flow
