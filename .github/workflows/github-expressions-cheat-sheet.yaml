@@ -237,6 +237,8 @@ jobs:
 
       - name: Recommended patterns
         id: patterns
+        env:
+          TEX_NULL: '$${\color{cyan}\small{\texttt{null\}}}$$'
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           > [!TIP]
@@ -305,7 +307,7 @@ jobs:
           |    Pattern                                  |   Expression                 | If `x` is      | Then return                     | Else return    | Notes                                   |
           | :------------------------------------------ | ---------------------------: | :-------------------------: | :-----------------------------: | :------------: | :-------------------------------------- |
           | **This-or-fallback**                        | `x \|\| fallback`            | $${\color{green}truthy}$$   | `x`                             | `fallback`     |                                         |
-          | **Truthy-coalescing**                       | `x && return`                | $${\color{green}truthy}$$   | `result`                        | _`null`_       |                                         |
+          | **Truthy-coalescing**                       | `x && return`                | $${\color{green}truthy}$$   | `result`                        | ${{ env.TEX_NULL }}       |                                         |
           | **Truthy-coalescing** (fallback to `false`) | `!x \|\| return`             | $${\color{green}truthy}$$   | `result`                        | _`false`_      |                                         |
           | **Ternary-like**                            | `x && return \|\| fallback`  | $${\color{green}truthy}$$   | `return` if also evals $${\color{green}truthy}$$ | `fallback`     |                                         |
           | **Inverted ternary-like**                   | `!x && fallback \|\| return` | $${\color{red}falsy}$$      | `fallback` if evals $${\color{green}truthy}$$ | `return`       | As ternary-like, but `y` can be _falsy_ |
@@ -313,10 +315,9 @@ jobs:
           | **Falsy-coalescing** (fallback to `true`)   | `!x && return`               | $${\color{red}falsy}$$      | `return`                        | _`true`_       |                                         |
           | **String equality**                         | `x == expected`              | exactly equal to `expected` | `true`                         | `false`        | Type coercion applies               |
           | **String contains**                         | `contains(x,expected)`       | contains `expected`         | `true`                         | `false`        | Works for strings and arrays    |
-          | code style="color : name_color">text</code> |             $${\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}$$ | | | | |
+          | code style="color : name_color">text</code> |             $${\color{red}\small{\texttt{falsy\}}}$$ | | | | |
 
-          <code style="color : name_color">text</code>
-                    $${\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}$$
+                    
           
 
 
