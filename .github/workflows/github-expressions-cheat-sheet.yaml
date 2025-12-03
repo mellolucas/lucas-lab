@@ -313,10 +313,10 @@ jobs:
           | **Falsy-coalescing** (fallback to `true`)   | `!x && return`               | $${\color{red}falsy}$$      | `return`                        | _`true`_       |                                         |
           | **String equality**                         | `x == expected`              | exactly equal to `expected` | `true`                         | `false`        | Type coercion applies               |
           | **String contains**                         | `contains(x,expected)`       | contains `expected`         | `true`                         | `false`        | Works for strings and arrays    |
-          | code style="color : name_color">text</code> |   ${{\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}}$ | | | | |
+          | code style="color : name_color">text</code> |             $${\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}$$ | | | | |
 
           <code style="color : name_color">text</code>
-          ${{\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}}$
+                    $${\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}$$
           
 
 
