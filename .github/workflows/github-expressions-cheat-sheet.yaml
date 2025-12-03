@@ -14,6 +14,13 @@ on:
         type: string
         default: 'ubuntu-latest'
 
+env:
+  TEX_NULL: '$${\color{Yellow}\small{\texttt{null\}}}$$'
+  TEX_TRUE: '$${\color{Lime}\small{\texttt{true\}}}$$'
+  TEX_FALSE: '$${\color{Red}\small{\texttt{false\}}}$$'
+  TEX_TRUTHY: '$${\color{Green}truthy}$$'
+  TEX_FALSY: '$${\color{red}falsy}$$'
+  
 jobs:
   explore:
     runs-on: >-
@@ -127,11 +134,9 @@ jobs:
 
           EOM
 
-
       - name: Type casting and Coercion
         id: casting
         run: |
-
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
 
           ## Type Casting & Coercion
@@ -237,12 +242,6 @@ jobs:
 
       - name: Recommended patterns
         id: patterns
-        env:
-          TEX_NULL: '$${\color{Cyan}\small{\texttt{null\}}}$$'
-          TEX_TRUE: '$${\color{Lime}\small{\texttt{true\}}}$$'
-          TEX_FALSE: '$${\color{Red}\small{\texttt{false\}}}$$'
-          TEX_TRUTHY: '$${\color{green}truthy}$$'
-          TEX_FALSY: '$${\color{RedOrange}falsy}$$'
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           > [!TIP]
@@ -319,6 +318,7 @@ jobs:
           | **Falsy-coalescing** (fallback to ${{env.TEX_TRUE}})   | `!x && return`               | ${{env.TEX_FALSY}}          | `return`                                   | ${{env.TEX_TRUE}}   |                                                    |
           | **String equality**                                    | `x == expected`              | exactly equal to `expected` | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Type coercion applies                              |
           | **String contains**                                    | `contains(x, expected)`      | contains `expected`         | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Works for strings and arrays                       |
+
 
           EOM
 
