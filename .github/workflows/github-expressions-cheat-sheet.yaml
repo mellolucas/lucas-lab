@@ -15,9 +15,9 @@ on:
         default: 'ubuntu-latest'
 
 env:
-  TEX_NULL: '$${\color{Yellow}\small{\texttt{null\}}}$$'
-  TEX_TRUE: '$${\color{Lime}\small{\texttt{true\}}}$$'
-  TEX_FALSE: '$${\color{Red}\small{\texttt{false\}}}$$'
+  TEX_NULL: '$${\color{Yellow}\colorbox{gray}{\texttt{null\}}}$$'
+  TEX_TRUE: '$${\color{Lime}\colorbox{Gray}{\texttt{true\}}}$$'
+  TEX_FALSE: '$${\color{Red}\colorbox{lightGray}{\texttt{false\}}}$$'
   TEX_TRUTHY: '$${\color{Green}truthy}$$'
   TEX_FALSY: '$${\color{red}falsy}$$'
   
@@ -323,6 +323,17 @@ jobs:
           $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\texttt{smalltexttt\}}}$$  $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}false}$$
           $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\textbf{textbf\}}}$$  $${\color{Red}{\textbf{textbf\}}}$$ $${\color{Red}false}$$
           
+            $${\color{Yellow}\colorbox{gray}{\texttt{null\}}}$$
+            $${\color{Lime}\colorbox{Gray}{\texttt{true\}}}$$
+            $${\color{Red}\colorbox{lightGray}{\texttt{false\}}}$$
+            $${\color{Lime}\colorbox{CadetBlue}{\texttt{true\}}}$$
+            $${\color{Red}\colorbox{lightGray}{\texttt{false\}}}$$
+            $${\color{Yellow}\small\colorbox{gray}{\texttt{null\}}}$$
+            $${\color{Lime}\small\colorbox{Gray}{\texttt{true\}}}$$
+            $${\color{Red}\small\colorbox{lightGray}{\texttt{false\}}}$$
+            $${\color{Lime}\small\colorbox{CadetBlue}{\texttt{true\}}}$$
+            $${\color{Red}\small\colorbox{lightGray}{\texttt{false\}}}$$
+
           ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}\small{\text{smalltext\}}}$  ${\color{Red}{\text{text\}}}$ ${\color{Red}false}$
           ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}\small{\texttt{smalltexttt\}}}$  ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}false}$
           ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}\small{\textbf{textbf\}}}$  ${\color{Red}{\textbf{textbf\}}}$ ${\color{Red}false}$
