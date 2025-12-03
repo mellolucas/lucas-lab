@@ -304,12 +304,12 @@ jobs:
 
           |    Pattern                                  |   Expression               | If `x` is      | Then return                     | Else return    | Notes                                   |
           | :------------------------------------------ | -------------------------: | :-------------------------: | :-----------------------------: | :------------: | :-------------------------------------- |
-          | **This-or-fallback**                        | `x || fallback`            | _ $${\color{green}truthy}$$ _ | `x`                             | `fallback`     |                                         |
+          | **This-or-fallback**                        | `x \|\| fallback`            | _ $${\color{green}truthy}$$ _ | `x`                             | `fallback`     |                                         |
           | **Truthy-coalescing**                       | `x && return`              | _$${\color{green}truthy}$$_ | `result`                        | _`null`_       |                                         |
-          | **Truthy-coalescing** (fallback to `false`) | `!x || return`             | _$${\color{green}truthy}$$_ | `result`                        | _`false`_      |                                         |
-          | **Ternary-like**                            | `x && return || fallback`  | _$${\color{green}truthy}$$_ | `return` if also evals _$${\color{green}truthy}$$_ | `fallback`     |                                         |
-          | **Inverted ternary-like**                   | `!x && fallback || return` | $${\color{red}falsy}$$      | `fallback` if evals _$${\color{green}truthy}$$_ | `return`       | As ternary-like, but `y` can be _falsy_ |
-          | **Falsy-coalescing**                        | `!x && return || null`     | _$${\color{red}falsy}$$_    | `return`                        | $${\color{cyan}`null`}$$_ |                                         |
+          | **Truthy-coalescing** (fallback to `false`) | `!x \|\| return`             | _$${\color{green}truthy}$$_ | `result`                        | _`false`_      |                                         |
+          | **Ternary-like**                            | `x && return \|\| fallback`  | _$${\color{green}truthy}$$_ | `return` if also evals _$${\color{green}truthy}$$_ | `fallback`     |                                         |
+          | **Inverted ternary-like**                   | `!x && fallback \|\| return` | $${\color{red}falsy}$$      | `fallback` if evals _$${\color{green}truthy}$$_ | `return`       | As ternary-like, but `y` can be _falsy_ |
+          | **Falsy-coalescing**                        | `!x && return \|\| null`     | _$${\color{red}falsy}$$_    | `return`                        | $${\color{cyan}`null`}$$_ |                                         |
           | **Falsy-coalescing** (fallback to `true`)   | `!x && return`             | _$${\color{red}falsy}$$_    | `return`                        | _`true`_       |                                         |
           | **String equality**                         | `x == expected`       | exactly equal to `expected` | `true`                         | `false`        | Type coercion applies               |
           | **String contains**                         | `contains(x,expected)`     | contains `expected` | `true`                         | `false`        | Works for strings and arrays    |
