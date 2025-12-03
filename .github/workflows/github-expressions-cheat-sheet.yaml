@@ -15,9 +15,9 @@ on:
         default: 'ubuntu-latest'
 
 env:
-  TEX_NULL: '$${\color{Yellow}\colorbox{gray}{\texttt{null\}}}$$'
-  TEX_TRUE: '$${\color{Lime}\colorbox{Gray}{\texttt{true\}}}$$'
-  TEX_FALSE: '$${\color{Red}\colorbox{lightGray}{\texttt{false\}}}$$'
+  TEX_NULL: '$${\color{Yellow}{gray}{\texttt{null\}}}$$'
+  TEX_TRUE: '$${\color{Lime}{Gray}{\texttt{true\}}}$$'
+  TEX_FALSE: '$${\color{Red}{lightGray}{\texttt{false\}}}$$'
   TEX_TRUTHY: '$${\color{Green}truthy}$$'
   TEX_FALSY: '$${\color{red}falsy}$$'
   
