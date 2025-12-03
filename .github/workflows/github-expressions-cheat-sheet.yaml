@@ -319,7 +319,13 @@ jobs:
           | **String equality**                                    | `x == expected`              | exactly equal to `expected` | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Type coercion applies                              |
           | **String contains**                                    | `contains(x, expected)`      | contains `expected`         | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Works for strings and arrays                       |
 
-
+          $${\color{Red}\small{\text{smalltext\}}}$$
+          $${\color{Red}\small{\texttt{smalltexttt\}}}$$
+          $${\color{Red}\small{\textbf{smalltextbf\}}}$$
+          $${\color{Red}{\text{text\}}}$$
+          $${\color{Red}{\texttt{texttt\}}}$$
+          $${\color{Red}{\textbf{textbf\}}}$$
+          $${\color{Green}truthy}$$
           EOM
 
         # TODO: Add arrays and objects indexing and filtering
