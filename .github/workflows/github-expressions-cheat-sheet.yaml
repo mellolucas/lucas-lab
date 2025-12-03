@@ -238,7 +238,11 @@ jobs:
       - name: Recommended patterns
         id: patterns
         env:
-          TEX_NULL: '$${\color{cyan}\small{\texttt{null\}}}$$'
+          TEX_NULL: '$${\color{Cyan}\small{\texttt{null\}}}$$'
+          TEX_TRUE: '$${\color{Lime}\small{\texttt{true\}}}$$'
+          TEX_FALSE: '$${\color{Red}\small{\texttt{false\}}}$$'
+          TEX_TRUTHY: '$${\color{green}truthy}$$'
+          TEX_FALSY: '$${\color{RedOrange}falsy}$$'
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOM'
           > [!TIP]
@@ -304,22 +308,17 @@ jobs:
           Patterns cheat sheet:
           > Always assume `x` is unknown, and could at most have a predictable type, but even then possibly non-existent or malformed.
 
-          |    Pattern                                  |   Expression                 | If `x` is      | Then return                     | Else return    | Notes                                   |
-          | :------------------------------------------ | ---------------------------: | :-------------------------: | :-----------------------------: | :------------: | :-------------------------------------- |
-          | **This-or-fallback**                        | `x \|\| fallback`            | $${\color{green}truthy}$$   | `x`                             | `fallback`     |                                         |
-          | **Truthy-coalescing**                       | `x && return`                | $${\color{green}truthy}$$   | `result`                        | ${{ env.TEX_NULL }}       |                                         |
-          | **Truthy-coalescing** (fallback to `false`) | `!x \|\| return`             | $${\color{green}truthy}$$   | `result`                        | _`false`_      |                                         |
-          | **Ternary-like**                            | `x && return \|\| fallback`  | $${\color{green}truthy}$$   | `return` if also evals $${\color{green}truthy}$$ | `fallback`     |                                         |
-          | **Inverted ternary-like**                   | `!x && fallback \|\| return` | $${\color{red}falsy}$$      | `fallback` if evals $${\color{green}truthy}$$ | `return`       | As ternary-like, but `y` can be _falsy_ |
-          | **Falsy-coalescing**                        | `!x && return \|\| null`     | $${\color{red}falsy}$$      | `return`                        | $${\color{cyan}null}$$ |                                         |
-          | **Falsy-coalescing** (fallback to `true`)   | `!x && return`               | $${\color{red}falsy}$$      | `return`                        | _`true`_       |                                         |
-          | **String equality**                         | `x == expected`              | exactly equal to `expected` | `true`                         | `false`        | Type coercion applies               |
-          | **String contains**                         | `contains(x,expected)`       | contains `expected`         | `true`                         | `false`        | Works for strings and arrays    |
-          | code style="color : name_color">text</code> |             $${\color{red}\small{\texttt{falsy\}}}$$ | | | | |
-
-                    
-          
-
+          |    Pattern                                             |   Expression                 | If `x` is                   | Then return                                | Else return         | Notes                                              |
+          | :----------------------------------------------------- | ---------------------------: | :-------------------------: | :----------------------------------------: | :-----------------: | :------------------------------------------------- |
+          | **This-or-fallback**                                   | `x \|\| fallback`            | ${{env.TEX_TRUTHY}}         | `x`                                        | `fallback`          |                                                    |
+          | **Truthy-coalescing**                                  | `x && return`                | ${{env.TEX_TRUTHY}}         | `result`                                   | ${{env.TEX_NULL}}   |                                                    |
+          | **Truthy-coalescing** (fallback to ${{env.TEX_FALSE}}) | `!x \|\| return`             | ${{env.TEX_TRUTHY}}         | `result`                                   | _`false`_           |                                                    |
+          | **Ternary-like**                                       | `x && return \|\| fallback`  | ${{env.TEX_TRUTHY}}         | `return` if also evals ${{env.TEX_TRUTHY}} | `fallback`          |                                                    |
+          | **Inverted ternary-like**                              | `!x && fallback \|\| return` | ${{env.TEX_FALSY}}          | `fallback` if evals ${{env.TEX_TRUTHY}}    | `return`            | As ternary-like, but `y` can return ${{env.FALSY}} |
+          | **Falsy-coalescing**                                   | `!x && return \|\| null`     | ${{env.TEX_FALSY}}          | `return`                                   | ${{env.TEX_NULL}}   |                                                    |
+          | **Falsy-coalescing** (fallback to ${{env.TEX_TRUE}})   | `!x && return`               | ${{env.TEX_FALSY}}          | `return`                                   | ${{env.TEX_TRUE}}   |                                                    |
+          | **String equality**                                    | `x == expected`              | exactly equal to `expected` | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Type coercion applies                              |
+          | **String contains**                                    | `contains(x, expected)`      | contains `expected`         | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Works for strings and arrays                       |
 
           EOM
 
