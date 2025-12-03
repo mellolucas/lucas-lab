@@ -319,11 +319,15 @@ jobs:
           | **String equality**                                    | `x == expected`              | exactly equal to `expected` | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Type coercion applies                              |
           | **String contains**                                    | `contains(x, expected)`      | contains `expected`         | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Works for strings and arrays                       |
 
-          ${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\text{smalltext\}}}$$  $${\color{Red}{\text{text\}}}$$ $${\color{Red}false}$$
-          ${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\texttt{smalltexttt\}}}$$  $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}false}$$
-          ${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\textbf{textbf\}}}$$  $${\color{Red}{\textbf{textbf\}}}$$ $${\color{Red}false}$$
+          $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\text{smalltext\}}}$$  $${\color{Red}{\text{text\}}}$$ $${\color{Red}false}$$
+          $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\texttt{smalltexttt\}}}$$  $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}false}$$
+          $${\color{Red}{\texttt{texttt\}}}$$ $${\color{Red}\small{\textbf{textbf\}}}$$  $${\color{Red}{\textbf{textbf\}}}$$ $${\color{Red}false}$$
           
+          ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}\small{\text{smalltext\}}}$  ${\color{Red}{\text{text\}}}$ ${\color{Red}false}$
+          ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}\small{\texttt{smalltexttt\}}}$  ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}false}$
+          ${\color{Red}{\texttt{texttt\}}}$ ${\color{Red}\small{\textbf{textbf\}}}$  ${\color{Red}{\textbf{textbf\}}}$ ${\color{Red}false}$
           
+
           
           
           EOM
