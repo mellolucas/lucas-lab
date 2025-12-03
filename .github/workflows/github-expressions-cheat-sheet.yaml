@@ -309,14 +309,14 @@ jobs:
           | **Truthy-coalescing** (fallback to `false`) | `!x \|\| return`             | $${\color{green}truthy}$$   | `result`                        | _`false`_      |                                         |
           | **Ternary-like**                            | `x && return \|\| fallback`  | $${\color{green}truthy}$$   | `return` if also evals $${\color{green}truthy}$$ | `fallback`     |                                         |
           | **Inverted ternary-like**                   | `!x && fallback \|\| return` | $${\color{red}falsy}$$      | `fallback` if evals $${\color{green}truthy}$$ | `return`       | As ternary-like, but `y` can be _falsy_ |
-          | **Falsy-coalescing**                        | `!x && return \|\| null`     | $${\color{red}falsy}$$      | `return`                        | $${\color{cyan}`null`}$$ |                                         |
+          | **Falsy-coalescing**                        | `!x && return \|\| null`     | $${\color{red}falsy}$$      | `return`                        | $${\color{cyan}null}$$ |                                         |
           | **Falsy-coalescing** (fallback to `true`)   | `!x && return`               | $${\color{red}falsy}$$      | `return`                        | _`true`_       |                                         |
           | **String equality**                         | `x == expected`              | exactly equal to `expected` | `true`                         | `false`        | Type coercion applies               |
           | **String contains**                         | `contains(x,expected)`       | contains `expected`         | `true`                         | `false`        | Works for strings and arrays    |
-          | **True-or-f
+          | code style="color : name_color">text</code> |   ${{\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}}$ | | | | |
 
-          $${\color{red}Welcome \space \color{lightblue}To \space \color{lightgreen}{github}}$$
-          $${\color{green}truthy}$$
+          <code style="color : name_color">text</code>
+          ${{\color{Goldenrod}\small{\texttt{  Some\ code\ \}}}}$
           
 
 
