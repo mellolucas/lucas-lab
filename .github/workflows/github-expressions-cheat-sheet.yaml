@@ -304,24 +304,46 @@ jobs:
           > In JavaScript (and thus in GitHub Actions expressions), **`NaN` is NOT equal to anything, including _itself_**.
           > Thus, `NaN == NaN` is _${{ NaN==NaN }}_, the same way `fromJSON('["anything"]') == 'foo'` is _${{ fromJSON('["anything"]')=='foo' }}_, even though both the lefthand `Array` and righthand `string` results in `NaN` when coerced to numbers upon operator based comparison.
 
-          Patterns cheat sheet:
-          > Always assume `x` is unknown, and could at most have a predictable type, but even then possibly non-existent or malformed.
+          ## Expression patterns
+          > ℹ️ Always assume `x` is unknown, and could at most have a predictable type, but even then possibly non-existent or malformed.
+
+          ### Safe return patterns:
+          > Usage: `＄{{ <EXPRESSION> }}`
 
           |    Pattern                                             |   Expression                 | If `x` is                   | Then return                                | Else return         | Notes                                              |
           | :----------------------------------------------------- | ---------------------------: | :-------------------------: | :----------------------------------------: | :-----------------: | :------------------------------------------------- |
-          | **This-or-fallback**                                   | `x \|\| fallback`            | ${{env.TEX_TRUTHY}}         | `x`                                        | `fallback`          |                                                    |
+          | **This-or-fallback** (truthy-else-fallback)            | `x \|\| fallback`            | ${{env.TEX_TRUTHY}}         | `x`                                        | `fallback`          |                                                    |
           | **Truthy-coalescing**                                  | `x && return`                | ${{env.TEX_TRUTHY}}         | `result`                                   | ${{env.TEX_NULL}}   |                                                    |
           | **Truthy-coalescing** (fallback to ${{env.TEX_FALSE}}) | `!x \|\| return`             | ${{env.TEX_TRUTHY}}         | `result`                                   | _`false`_           |                                                    |
           | **Ternary-like**                                       | `x && return \|\| fallback`  | ${{env.TEX_TRUTHY}}         | `return` if also evals ${{env.TEX_TRUTHY}} | `fallback`          |                                                    |
           | **Inverted ternary-like**                              | `!x && fallback \|\| return` | ${{env.TEX_FALSY}}          | `fallback` if evals ${{env.TEX_TRUTHY}}    | `return`            | As ternary-like, but `y` can return ${{env.FALSY}} |
           | **Falsy-coalescing**                                   | `!x && return \|\| null`     | ${{env.TEX_FALSY}}          | `return`                                   | ${{env.TEX_NULL}}   |                                                    |
           | **Falsy-coalescing** (fallback to ${{env.TEX_TRUE}})   | `!x && return`               | ${{env.TEX_FALSY}}          | `return`                                   | ${{env.TEX_TRUE}}   |                                                    |
+          
+          ### String comparison patterns:
+          > Usage: `＄{{ <EXPRESSION> }}`
+          > Can be used purely as described below, to return the evaluation result; or combined with the _safe return patterns_ above, for a safer and more predictable control flow.
+        
+          |    Pattern                                             |   Expression                 | If `x` is                   | Then return                                | Else return         | Notes                                              |
+          | :----------------------------------------------------- | ---------------------------: | :-------------------------: | :----------------------------------------: | :-----------------: | :------------------------------------------------- |
           | **String equality**                                    | `x == expected`              | exactly equal to `expected` | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Type coercion applies                              |
           | **String contains**                                    | `contains(x, expected)`      | contains `expected`         | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Works for strings and arrays                       |
-          
 
-          
-          
+          > [!TIP]
+          > To use in combination with the _safe return patterns_, simply choose the appropriate pattern, and replace its expression's `x` with the desired expression below, wrapping it in parentheses if needed.
+          > E.g., to perform a _string contains_ for checking whether the triggering event is a manual `workflow_dispatch`, then return an boolean input named `continue-on-error`, otherwise return `false`, you could combine it with the `truthy-coalescing` variant pattern that falls back to `false`: 
+          > ```yaml
+          > ＄{{ !contains(github.event_name, 'workflow_dispatch') || inputs.continue-on-error }}
+          > ```
+
+          ### Boolean comparison patterns:
+          > Usage: `＄{{ <EXPRESSION> }}`
+          > Can be used purely as described below, to return the evaluation result; or combined with the _safe return patterns_ above, for a safer and more predictable control flow.
+
+          |    Pattern                                                            |   Expression                 | If `x` is                           | Then return                                | Else return         | Notes                                               |
+          | :-------------------------------------------------------------------- | ---------------------------: | :---------------------------------: | :----------------------------------------: | :-----------------: | :-------------------------------------------------- |
+          | **Is explicitly** ${{env.TEX_TRUE}} (defaults to ${{env.TEX_FALSE}})  | `contains(x, true)`          | ${{env.TEX_TRUE}} or `'.*true.*'`   | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Works for booleans, strings, substrings, and arrays |
+          | **Is explicitly** ${{env.TEX_FALSE}} (defaults to ${{env.TEX_FALSE}}) | `contains(x, false)`         | ${{env.TEX_FALSE}} or `'.*false.*'` | ${{env.TEX_TRUE}}                          | ${{env.TEX_FALSE}}  | Works for booleans, strings, substrings, and arrays |
           EOM
 
         # TODO: Add arrays and objects indexing and filtering
