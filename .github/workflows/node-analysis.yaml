@@ -1,8 +1,8 @@
 name: Node Analysis
 run-name: >-
   ${{ github.workflow }}
-  ${{ contains(inputs.dry-run, 'true') && ' 🧪' || '' }}
-  ${{ contains(github.event.pull_request.draft, 'true') && ' 🚧' || '' }}
+  ${{ contains(inputs.dry-run, true) && ' 🧪' || '' }}
+  ${{ contains(github.event.pull_request.draft, true) && ' 🚧' || '' }}
 
 on:
   workflow_call:
@@ -145,8 +145,8 @@ jobs:
       }}
 
     outputs:
-      dry-run: ${{ contains(inputs.dry-run, 'true') }}
-      draft: ${{ contains(github.event.pull_request.draft, 'true') }}
+      dry-run: ${{ contains(inputs.dry-run, true) }}
+      draft: ${{ contains(github.event.pull_request.draft, true) }}
       source-ref: ${{ steps.checkout.outputs.ref }}
       source-commit: ${{ steps.checkout.outputs.commit }}
       node-version: ${{ steps.setup.outputs.node-version }}
@@ -161,9 +161,8 @@ jobs:
 
       - name: >-
           ${{ format('Setup node ({0})',
-            ( inputs.node-version != 0 &&
-              inputs.node-version ||
-              ( hashFiles(inputs.node-version-file) != 0 &&
+            ( inputs.node-version ||
+              ( hashFiles(inputs.node-version-file) &&
                 inputs.node-version-file ||
                 'latest'
               )
@@ -183,8 +182,8 @@ jobs:
           PACKAGE_MANAGER_JSON: &package_manager_json >-
             ${{
               ( 
-                inputs.package-manager == 'pnpm' || 
-                ( inputs.package-manager == 0 && hashFiles('**/pnpm-lock.yaml') != 0 ) 
+                contains(inputs.package-manager, 'pnpm') || 
+                ( !inputs.package-manager && hashFiles('**/pnpm-lock.yaml') ) 
               ) && 
                 format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
                   'pnpm',
@@ -192,8 +191,8 @@ jobs:
                   hashFiles('**/pnpm-lock.yaml') || 0
                 ) ||
                 ( 
-                  inputs.package-manager == 'yarn' || 
-                  ( inputs.package-manager == 0 && hashFiles('**/yarn.lock') != 0 ) 
+                  contains(inputs.package-manager, 'yarn') || 
+                  ( !inputs.package-manager && hashFiles('**/yarn.lock') ) 
                 ) && 
                   format('{{"name":"{0}","lockfile":"{1}","hash":"{2}"}}',
                     'yarn',
@@ -211,8 +210,8 @@ jobs:
         with:
           node-version: >-
             ${{
-              ( inputs.node-version == 0 && 
-                hashFiles(inputs.node-version-file) == 0 
+              ( !inputs.node-version && 
+                !hashFiles(inputs.node-version-file) 
               ) &&
               'latest' ||
               inputs.node-version
@@ -220,7 +219,7 @@ jobs:
           node-version-file: ${{ inputs.node-version-file }}
           cache: >-
             ${{
-              contains(inputs.cache-dependencies, 'true') &&
+              contains(inputs.cache-dependencies, true) &&
               fromJSON(env.PACKAGE_MANAGER_JSON).name ||
               ''
             }}
@@ -233,7 +232,7 @@ jobs:
           PACKAGE_MANAGER_JSON: *package_manager_json
           REQUIRE_LOCKFILE: >-
             ${{
-              inputs.require-lockfile != 0 &&
+              inputs.require-lockfile &&
               true ||
               false
             }}"
@@ -314,7 +313,7 @@ jobs:
       - name: Check spell
         id: spell
         if: inputs.check-spell
-        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, true) }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "spell:check check:spell cspell spell"
@@ -334,7 +333,7 @@ jobs:
       - name: Check format
         id: format
         if: inputs.check-format
-        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, true) }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "format:check check:format format"
@@ -344,7 +343,7 @@ jobs:
       - name: Check lint
         id: lint
         if: inputs.check-lint
-        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, true) }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "lint:check check:lint lint"
@@ -354,7 +353,7 @@ jobs:
       - name: Check types
         id: types
         if: inputs.check-types
-        continue-on-error: ${{ contains(github.event.pull_request.draft, 'true') }}
+        continue-on-error: ${{ contains(github.event.pull_request.draft, true) }}
         env:
           PACKAGE_MANAGER: "${{ steps.install.outputs.package-manager }}"
           RUN_CMDS: "types:check check:types types"

@@ -1,12 +1,13 @@
 name: Node CI
 run-name: >-
   ${{ github.workflow }}
-  ${{ contains(inputs.dry-run, 'true') && ' 🧪' || '' }}
-  ${{ contains(github.event.pull_request.draft, 'true') && ' 📝' || '' }}
+  ${{ contains(inputs.dry-run, true) && ' 🧪' || '' }}
+  ${{ contains(github.event.pull_request.draft, true) && ' 📝' || '' }}
 
 on:
   pull_request:
-    branches: main
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       # Static Code Analysis Options
@@ -78,8 +79,9 @@ jobs:
 
     with:
       # Tips for handling boolean inputs that may not exist depending on event:
-      # - "!contains(inputs.dry-run, 'false')" to use input or fallback to true;
-      # - "contains(inputs.dry-run, 'true')" to use input or fallback to false.
+      # - "!contains(inputs.<boolean-input>, false)" to disable only when <boolean-input> is explicitly false.
+      # - "contains(inputs.<boolean-input>, 'true')" to enable only when <input-name> is explicitly true.
+      # - "contains(inputs.<string-input>, '<value>')" to enable only when <string-input> contains <value> as substring.
       runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
       dry-run: ${{ contains(inputs.dry-run, 'true') }}
       require-lockfile: ${{ !contains(inputs.require-lockfile, 'false') }}
@@ -87,7 +89,7 @@ jobs:
       check-format: ${{ !contains(inputs.check-format, 'false') }}
       check-lint: ${{ !contains(inputs.check-lint, 'false') }}
       check-types: ${{ !contains(inputs.check-types, 'false') }}
-      node-version-file: "package.json"
+      node-version-file: 'package.json'
 
   call-build:
     name: Call build
